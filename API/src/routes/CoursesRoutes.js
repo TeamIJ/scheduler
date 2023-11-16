@@ -6,11 +6,11 @@ module.exports = app => {
     // Create a new courses
     router.post("/courses", course.create)
   
-    // Retrieve all coursess
+    // Retrieve all courses
     router.get("/courses", course.findAll)
   
     // Retrieve a single courses with id
-    router.get("/courses/:id", course.findOne)
+    router.get("/courses/:id", course.findById)
   
     // Update a courses with id
     router.put("/courses/:id", course.update)
@@ -18,5 +18,5 @@ module.exports = app => {
     // Delete a courses with id
     router.delete("/courses/:id", course.delete)
    
-    app.use('/api/scheduler', router)
+    app.use('/api/scheduler/', router)
   };

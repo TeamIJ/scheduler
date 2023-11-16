@@ -10,8 +10,8 @@ module.exports = app => {
     router.get("/professor", professor.findAll)
   
     // Retrieve a single professor with id
-    router.get("/professor/:id", professor.findOne)
-  
+    router.get("/professor/:param", professor.findByIdOrName)
+
     // Update a professor with id
     router.put("/professor/:id", professor.update)
   
