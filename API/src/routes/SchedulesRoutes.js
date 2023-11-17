@@ -10,7 +10,7 @@ module.exports = app => {
     router.get("/schedules", schedule.findAll)
   
     // Retrieve a single schedules with id
-    router.get("/schedules/:id", schedule.findOne)
+    router.get("/schedules/:params", schedule.findIdOrName)
   
     // Update a schedules with id
     router.put("/schedules/:id", schedule.update)

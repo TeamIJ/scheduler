@@ -61,7 +61,7 @@ module.exports = {
     },
 
     delete(_, res, id){
-        const query = 'DELETE FROM PROFESSORES WHERE ID_PROF'
+        const query = 'DELETE FROM PROFESSORES WHERE ID_PROF = ?'
         connection.query(query, id, (err, _) => {
             if (err) console.error(err)
 

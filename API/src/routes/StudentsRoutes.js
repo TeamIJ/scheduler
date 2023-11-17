@@ -10,13 +10,13 @@ module.exports = app => {
     router.get("/students", student.findAll)
   
     // Retrieve a single students with id
-    router.get("/students/:id", student.findOne)
+    router.get("/students/:params", student.findByRegistryOrName)
   
     // Update a students with id
-    router.put("/students/:id", student.update)
+    router.put("/students/:registry", student.update)
   
     // Delete a students with id
-    router.delete("/students/:id", student.delete)
+    router.delete("/students/:registry", student.delete)
    
     app.use('/api/scheduler', router)
   };

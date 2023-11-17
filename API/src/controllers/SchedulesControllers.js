@@ -3,7 +3,7 @@ module.exports = {
 
     },
     
-    findOne(req, res, next){
+    findIdOrName(req, res, next){
     
     },
     

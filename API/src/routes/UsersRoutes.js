@@ -10,13 +10,13 @@ module.exports = app => {
     router.get("/users", user.findAll)
   
     // Retrieve a single users with id
-    router.get("/users/:id", user.findOne)
-  
+    router.get("/users/:usuario", user.findByName)
+    
     // Update a users with id
-    router.put("/users/:id", user.update)
+    router.put("/users/:usuario", user.update)
   
     // Delete a users with id
-    router.delete("/users/:id", user.delete)
+    router.delete("/users/:usuario", user.delete)
    
     app.use('/api/scheduler', router)
   };
