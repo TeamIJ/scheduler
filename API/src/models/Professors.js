@@ -10,6 +10,8 @@ module.exports = {
         const query = 'INSERT INTO PROFESSORES (ID_CURSO, NOME, STATUS_PROF) VALUES (?, ?, ?)'
         const args = [professor.id_curso, professor.nome, professor.status]
         connection.query(query, args, (err, _) => {
+            if(err) console.error(err)
+
             res.status(200).send({message: 'Professor incluído com sucesso!'})
         })
     },
