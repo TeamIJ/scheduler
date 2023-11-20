@@ -5,11 +5,6 @@ module.exports = {
         const prof = req.body
         professor.create(req, res, prof)
     },
-
-    findByIdOrName(req, res, next){
-        const { param } = req.params
-        professor.findByIdOrName(req, res, param)
-    },
     
     findAll(req, res, next){
         professor.findAll(req, res)
