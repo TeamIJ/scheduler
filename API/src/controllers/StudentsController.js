@@ -12,18 +12,18 @@ module.exports = {
     },
     
     findAll(req, res, next){
-        students.findAll(res, res)
+        students.findAll(req, res)
     },
     
     update(req, res, next){
         const student = req.body
         const { registry } = req.params
-        students.update(res, req, student, registry)
+        students.update(req, res, student, registry)
     },
 
     delete(req, res, next){
         const { registry } = req.params
-        students.delete(res, req, registry)
+        students.delete(req, res, registry)
     }
     
 }
