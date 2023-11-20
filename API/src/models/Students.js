@@ -1,7 +1,7 @@
 const connetion = require('../config/db.js')
 
 function hasData(data){
-    return data.lenght > 0 
+    return data.lenght !== 0 
 }
 
 module.exports = {

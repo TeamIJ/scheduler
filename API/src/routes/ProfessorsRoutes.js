@@ -6,12 +6,9 @@ module.exports = app => {
     // Create a new professor
     router.post("/professor", professor.create)
   
-    // Retrieve all professors
-    router.get("/professor", professor.findAll)
+    // Retrieve professors (filtering by id or name is possible too)
+    router.get("/professor", professor.findProfessor)
   
-    // Retrieve a single professor with id
-    router.get("/professor/:param", professor.findByIdOrName)
-
     // Update a professor with id
     router.put("/professor/:id", professor.update)
   

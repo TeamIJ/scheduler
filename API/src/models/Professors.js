@@ -7,8 +7,8 @@ function hasData(data) {
 module.exports = {
 
     create(_, res, professor){
-        const query = 'INSERT INTO PROFESSORES (ID_CURSO, NOME, STATUS_PROF) VALUES (?, ?, ?)'
-        const args = [professor.id_curso, professor.nome, professor.status]
+        const query = 'INSERT INTO PROFESSORES (CPF_PROF, ID_CURSO, NOME, STATUS_PROF) VALUES (?, ?, ?, ?)'
+        const args = [professor.cpf, professor.id_curso, professor.nome, professor.status]
         connection.query(query, args, (err, _) => {
             if(err) console.error(err)
 
@@ -17,18 +17,24 @@ module.exports = {
     },
 
 
-    findByIdOrName(_, res, param){
-        let query = 'SELECT * FROM PROFESSORES WHERE '
-        let filter = null
-        if(parseInt(param)){
-            query = query + ' ID_PROF = ? '
-            filter = param
-        } else {
-            query = query + ' NOME LIKE ? '
-            filter = `${param}%`
-        }
-        
-        connection.query(query, filter, (err, data) => {
+    findById(_, res, id){
+        let query = `SELECT * FROM PROFESSORES WHERE ID_PROF = '${id}'`
+       
+        connection.query(query, (err, data) => {
+            if (err) console.error(err)
+
+            if (!hasData(data)) {
+                res.send({message: 'Nenhum professor encontrado'}) 
+            } else {
+                res.json(data)
+            }
+        })
+    },
+
+    findByName(_, res, nome){
+        let query = `SELECT * FROM PROFESSORES WHERE NOME LIKE '${nome}%'`
+       
+        connection.query(query, (err, data) => {
             if (err) console.error(err)
 
             if (!hasData(data)) {

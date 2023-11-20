@@ -14,6 +14,20 @@ module.exports = {
     findAll(req, res, next){
         professor.findAll(req, res)
     },
+
+    findProfessor(req, res, next){
+        if(Object.keys(req.query).length > 0) {
+            let idProf = req.query.id_prof
+            let nomeProf = req.query.nome_prof
+            if(idProf){
+                professor.findById(req, res, idProf)
+            }else if(nomeProf){
+                professor.findByName(req, res, nomeProf)
+            }
+        }else{
+            professor.findAll(req, res)
+        }
+    },
     
     update(req, res, next){
         const { id } = req.params
