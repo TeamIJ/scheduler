@@ -80,8 +80,8 @@ module.exports = {
     },
 
     findByDate(req, res, data, hora){
-        const query = `SELECT * FROM AGENDAMENTOS WHERE 1=1 `
-        const filter = []
+        let query = `SELECT * FROM AGENDAMENTOS WHERE 1=1 `
+        let filter = []
         if (data){
             filter.push(data)
             query = query + `AND DATA_AULA = '${data}'`
