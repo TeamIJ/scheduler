@@ -6,11 +6,8 @@ module.exports = app => {
     // Create a new students
     router.post("/students", student.create)
   
-    // Retrieve all studentss
-    router.get("/students", student.findAll)
-  
-    // Retrieve a single students with id
-    router.get("/students/:params", student.findByRegistryOrName)
+    // Retrieve studentss (filtering by registry or name is possible too)
+    router.get("/students", student.findStudent)
   
     // Update a students with id
     router.put("/students/:registry", student.update)

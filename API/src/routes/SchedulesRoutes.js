@@ -6,11 +6,8 @@ module.exports = app => {
     // Create a new schedules
     router.post("/schedules", schedule.create)
   
-    // Retrieve all scheduless
-    router.get("/schedules", schedule.findAll)
-  
-    // Retrieve a single schedules with id
-    router.get("/schedules/:params", schedule.findIdOrName)
+    // Retrieve scheduless (filtering by id or name is possible too)
+    router.get("/schedules", schedule.findSchedule)
   
     // Update a schedules with id
     router.put("/schedules/:id", schedule.update)

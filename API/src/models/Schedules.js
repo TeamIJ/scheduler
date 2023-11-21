@@ -6,17 +6,12 @@ function hasData(data) {
 
 module.exports = {
     create(_, res, agenda){
-        //ID_AGENDA, ID_CURSO, ID_PROF, MATRICULA, ID_MODULO, ID_HORARIO, AULA, DATA_AULA, LOGIN_USUARIO, DATA_ATUALIZACAO, STATUS_AGENDA, TIPO_AGENDAMENTO
         const query = `INSERT INTO AGENDAMENTOS (ID_CURSO, ID_PROF, MATRICULA, ID_MODULO, HORARIO, AULA, DATA_AULA, LOGIN_USUARIO, DATA_ATUALIZACAO, STATUS_AGENDA, TIPO_AGENDAMENTO)` +
             `VALUES ('${agenda.idCurso}', '${agenda.idProf}', '${agenda.matricula}', '${agenda.idModulo}', '${agenda.horario}', '${agenda.aula}', '${agenda.dataAula}', '${agenda.login}', CURDATE(), '${agenda.statusAgenda}', '${agenda.tipoAgendamento}')`
         connection.query(query, (err, _) => {
             if(err) console.error(err)
             res.status(200).send({message:'Agendamento confirmado!'})
         })
-    },
-
-    findIdOrName(_, res){
-    
     },
     
     findAll(_, res){
@@ -31,7 +26,81 @@ module.exports = {
             }
         })
     },
-    
+
+    findById(req, res, id){
+        const query = `SELECT * FROM AGENDAMENTOS WHERE ID_AGENDA = '${id}'`
+        connection.query(query, (err, data) => {
+            if(err) console.error(err)
+
+            if(!hasData(data)) {
+                res.send({message: 'Não existe agendamento'})
+            } else {
+                res.json(data)
+            }
+        })
+    },
+
+    findByIdProf(req, res, idProf){
+        const query = `SELECT * FROM AGENDAMENTOS WHERE ID_PROF = '${idProf}'`
+        connection.query(query, (err, data) => {
+            if(err) console.error(err)
+
+            if(!hasData(data)) {
+                res.send({message: 'Não existe agendamento'})
+            } else {
+                res.json(data)
+            }
+        })
+    },
+
+    findByIdCurso(req, res, idCurso){
+        const query = `SELECT * FROM AGENDAMENTOS WHERE ID_CURSO = '${idCurso}'`
+        connection.query(query, (err, data) => {
+            if(err) console.error(err)
+
+            if(!hasData(data)) {
+                res.send({message: 'Não existe agendamento'})
+            } else {
+                res.json(data)
+            }
+        })
+    },
+
+    findByRegistry(req, res, registry){
+        const query = `SELECT * FROM AGENDAMENTOS WHERE MATRICULA = '${registry}'`
+        connection.query(query, (err, data) => {
+            if(err) console.error(err)
+
+            if(!hasData(data)) {
+                res.send({message: 'Não existe agendamento'})
+            } else {
+                res.json(data)
+            }
+        })
+    },
+
+    findByDate(req, res, data, hora){
+        const query = `SELECT * FROM AGENDAMENTOS WHERE 1=1 `
+        const filter = []
+        if (data){
+            filter.push(data)
+            query = query + `AND DATA_AULA = '${data}'`
+        } 
+        if (hora) {
+            filter.push(hora)
+            query = query + `AND HORARIO = '${hora}'`
+        }
+        connection.query(query, filter, (err, data) => {
+            if(err) console.error(err)
+
+            if(!hasData(data)) {
+                res.send({message: 'Não existe agendamento'})
+            } else {
+                res.json(data)
+            }
+        })
+    },
+
     update(_, res, agenda, id){
         const query = `UPDATE AGENDAMENTOS SET STATUS_AGENDA = '${agenda.statusAgenda}', DATA_AULA = '${agenda.dataAula}', ID_PROF = '${agenda.idProf}', ` +
                     ` HORARIO = '${agenda.horario}', LOGIN_USUARIO = '${agenda.login}', DATA_ATUALIZACAO = CURDATE() WHERE ID_AGENDA = '${id}'`

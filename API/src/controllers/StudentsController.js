@@ -6,11 +6,6 @@ module.exports = {
         students.create(req, res, student)
     },
     
-    findByRegistryOrName(req, res, next){
-        const { params } = req.params
-        students.findByRegistryOrName(req, res, params)
-    },
-    
     findAll(req, res, next){
         students.findAll(req, res)
     },
@@ -24,7 +19,20 @@ module.exports = {
     delete(req, res, next){
         const { registry } = req.params
         students.delete(req, res, registry)
-    }
+    },
     
+    findStudent(req, res, next){
+        if (Object.keys(req.query).length > 0) {
+            let registry = req.query.registry
+            let nome = req.query.nome_aluno
+            if (registry) {
+                students.findByRegistry(req, res, registry)
+            } else if(nome) {
+                students.findByName(req, res, nome)
+            }
+        } else {
+            students.findAll(req, res)
+        }
+    }
 }
 

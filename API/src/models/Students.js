@@ -12,15 +12,21 @@ module.exports = {
             res.status(200).send({message:'Aluno incluído com sucesso!'})
         })
     },
+    
+    findAll(_, res) {
+        const query = `SELECT * FROM ALUNOS`
+        connetion.query(query, (err, data) => {
+            if(err) console.error(err)
+            if(!hasData(data)){
+                res.send({message: 'Nenhum Aluno cadastrado!'})
+            } else {
+                res.json(data)
+            }
+        })
+    },
 
-    findByRegistryOrName(_, res, params){
-        let query = `SELECT * FROM ALUNOS WHERE `
-
-        if(parseInt(params)) {
-            query = query + ` MATRICULA = '${params}'`
-        } else {
-            query = query + ` NOME LIKE '${params}%'`
-        }
+    findByRegistry(_, res, registry){
+        let query = `SELECT * FROM ALUNOS WHERE MATRICULA = '${registry}'`
         connetion.query(query, (err, data) => {
             if(err) console.error(err)
             if(!hasData(data)){
@@ -31,12 +37,12 @@ module.exports = {
         })
     },
 
-    findAll(_, res) {
-        const query = `SELECT * FROM ALUNOS`
+    findByName(_, res, nome){
+        let query = `SELECT * FROM ALUNOS WHERE NOME LIKE '${nome}%'`
         connetion.query(query, (err, data) => {
             if(err) console.error(err)
             if(!hasData(data)){
-                res.send({message: 'Nenhum Aluno cadastrado!'})
+                res.send({message:'Aluno não encontrado!'})
             } else {
                 res.json(data)
             }
