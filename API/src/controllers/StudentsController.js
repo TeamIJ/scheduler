@@ -5,11 +5,7 @@ module.exports = {
         const student = req.body
         students.create(req, res, student)
     },
-    
-    findAll(req, res, next){
-        students.findAll(req, res)
-    },
-    
+
     update(req, res, next){
         const student = req.body
         const { registry } = req.params
@@ -22,17 +18,19 @@ module.exports = {
     },
     
     findStudent(req, res, next){
+        let registry 
+        let nome
+
         if (Object.keys(req.query).length > 0) {
-            let registry = req.query.registry
-            let nome = req.query.nome_aluno
-            if (registry) {
-                students.findByRegistry(req, res, registry)
-            } else if(nome) {
-                students.findByName(req, res, nome)
-            }
-        } else {
-            students.findAll(req, res)
-        }
+            registry = req.query.registry
+            nome = req.query.nome_aluno
+        } 
+        students.findByFilter(req, res, registry, nome)
+    },
+
+    existStudent(req, res, next){
+        const {registry} = req.params
+        students.existStudent(req, res, registry)
     }
 }
 
