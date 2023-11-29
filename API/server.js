@@ -19,6 +19,7 @@ app.get("/scheduler", (req, res) => {
 })
 
 require("./src/routes/CoursesRoutes.js")(app)
+require("./src/routes/ModulesRoutes.js")(app)
 require("./src/routes/ProfessorsRoutes.js")(app)
 require("./src/routes/SchedulesRoutes.js")(app)
 require("./src/routes/StudentsRoutes.js")(app)

@@ -1,29 +1,29 @@
-const courses = require('../models/Courses.js')
+const modules = require('../models/Modules.js')
 
 module.exports = {
     create(req, res, next){
-        const course = req.body
-        courses.create(req, res, course)
+        const module = req.body
+        modules.create(req, res, module)
     },
     
     findById(req, res, next){
         const { id } = req.params
-        courses.findById(req, res, id)
+        modules.findById(req, res, id)
     },
     
     findAll(req, res, next){
-        courses.listAllModules(req, res)
+        modules.listAllModules(req, res)
     },
     
     update(req, res, next){
         const { id } = req.params
-        const course = req.body
-        courses.update(req, res, id, course)
+        const module = req.body
+        modules.update(req, res, id, module)
     },
 
     delete(req, res, next){
         const { id } = req.params
-        courses.delete(req, res, id)
+        modules.delete(req, res, id)
     }
     
 }
