@@ -1,13 +1,19 @@
 const modules = require('../models/Modules.js')
 
 module.exports = {
-    create(req, res, next){
+    async create(req, res, next){
         const module = req.body
-        modules.create(req, res, module)
+
+        if(await modules.exists(module.id_modulo)){
+            res.status(404).send({message: 'Módulo já cadastrado!'})
+        }else {
+            modules.create(req, res, module)
+        }
     },
     
     findById(req, res, next){
         const { id } = req.params
+
         modules.findById(req, res, id)
     },
     

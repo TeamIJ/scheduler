@@ -55,6 +55,20 @@ module.exports = {
             if (err) console.error(err)
             res.status(200).send({message: 'Módulo excluído com sucesso!'})
         })
-    }
+    },
+
+    exists(id){
+        return new Promise((resolve, reject) => {
+            const query = 'SELECT COUNT(*) count FROM MODULOS WHERE ID_MODULO = ?'
+            connection.query(query, id, async (err, data) => {
+                if (err) console.error(err)
+                if(data[0].count === 0){
+                    resolve(false)
+                }else{
+                    resolve(true)
+                }
+            })
+        })
+    }   
 
 }

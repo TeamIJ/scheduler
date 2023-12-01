@@ -27,6 +27,6 @@ module.exports = {
 
             res.status(200).send({message: 'Status do horário alterado com sucesso!'})
         })
-    }
+    },
 
 }
