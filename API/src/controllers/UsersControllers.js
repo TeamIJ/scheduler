@@ -1,8 +1,26 @@
 const users = require('../models/Users.js')
+const { hash, compare } = require('bcryptjs')
+
+async function authenticate(user) {
+
+    //existe 
+
+    const usuario = await users.getUserInfo(user.nome)
+
+    const passwordMatch = await compare(user.senha, usuario.senha)
+
+    return passwordMatch
+
+}
 
 module.exports = {
-    create(req, res, next){
+    async create(req, res, next){
         const user = req.body
+
+        const passwordHash = await hash(user.senha, 8)
+
+        user.senha = passwordHash
+
         users.create(req, res, user)
     },
     
@@ -24,6 +42,17 @@ module.exports = {
     delete(req, res, next){
         const { usuario } = req.params
         users.delete(req, res, usuario)
+    },
+
+    async auth(req, res, next){
+        const user = req.body
+
+        if(await authenticate(user)){
+            res.status(200).send({"ok": true})
+        }else{
+            res.status(404).send({"ok": false})
+        }
+
     }
     
 }

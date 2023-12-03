@@ -7,8 +7,11 @@ function hasData(data) {
 module.exports = {
 
     create(_, res, module){
-        const query = 'INSERT INTO MODULOS (ID_CURSO, NOME_MODULO, QTD_AULAS) VALUES (?, ?, ?)'
-        connection.query(query, [module.id_curso, module.nome_modulo, module.qtd_aulas], (err, _) => {
+        const query = `INSERT INTO MODULOS (ID_MODULO, ID_CURSO, NOME_MODULO, QTD_AULAS) VALUES (LCASE(REPLACE(?, ' ', '')), ?, ?, ?)`
+
+        const id = module.nome_modulo.normalize('NFD').replace(/[\u0300-\u036f]/g, "")
+
+        connection.query(query, [id, module.id_curso, module.nome_modulo, module.qtd_aulas], (err, _) => {
             if (err) console.error(err)
 
             res.status(200).send({message: 'Módulo incluído com sucesso!'})
@@ -58,7 +61,7 @@ module.exports = {
     },
 
     exists(id){
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
             const query = 'SELECT COUNT(*) count FROM MODULOS WHERE ID_MODULO = ?'
             connection.query(query, id, async (err, data) => {
                 if (err) console.error(err)

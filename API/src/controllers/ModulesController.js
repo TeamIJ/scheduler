@@ -4,7 +4,9 @@ module.exports = {
     async create(req, res, next){
         const module = req.body
 
-        if(await modules.exists(module.id_modulo)){
+        const nome = module.nome_modulo.normalize('NFD').replace(/[\u0300-\u036f]/g, "")
+
+        if(await modules.exists(nome.toLowerCase().replaceAll(' ', ''))){
             res.status(404).send({message: 'Módulo já cadastrado!'})
         }else {
             modules.create(req, res, module)

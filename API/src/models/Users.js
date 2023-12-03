@@ -1,29 +1,8 @@
 const connection = require('../config/db.js')
-//const bcrypt = require("bcrypt")
 
 function hasData(data) {
     return data.length !== 0
 }
-
-/*const bcrypt = require("bcrypt")
-
-module.export = app => {
-    const getPasswordHash = (password, callback) => {
-        bcrypt.genSalt(10, (err, salt) => {
-            bcrypt.hash(password, salt, null, (err, hash) => callback(hash))
-        })
-    }
-
-    const savePassword = (req, res) => {
-        getPasswordHash(req.body.password, hash => {
-            const password = hash
-
-            app.db('USUARIOS').insert({usuario: req.body.usuario, password, tipo: req.body.tipo}).
-                then(_ => res.status(204).send())
-        })
-    }
-}
-*/
 
 module.exports = {
     
@@ -74,6 +53,16 @@ module.exports = {
         connection.query(query, (err, _) => {
             if(err) console.error(err)
             res.status(200).send({message: 'Usuário deletado com sucesso!'})
+        })
+    },
+
+    getUserInfo(username){
+        const query = `SELECT usuario, senha FROM USUARIOS WHERE USUARIO = '${username}'`
+        return new Promise((resolve) => {
+            connection.query(query, (err, data) => {
+                if(err) console.error(err)
+                if(hasData) resolve(data[0])
+            })
         })
     }
 

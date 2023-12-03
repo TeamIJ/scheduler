@@ -17,6 +17,8 @@ module.exports = app => {
   
     // Delete a users with id
     router.delete("/users/:usuario", user.delete)
+
+    router.post("/users/auth", user.auth)
    
     app.use('/api/scheduler', router)
   };
