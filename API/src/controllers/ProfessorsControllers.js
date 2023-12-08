@@ -1,38 +1,65 @@
 const professor = require('../models/Professors.js')
+const validateCpf = require('cpf-cnpj-validator')
 
-module.exports = {
-    create(req, res, next){
+module.exports = { 
+    async create(req, res, next){
         const prof = req.body
-        professor.create(req, res, prof)
-    },
-    
-    findAll(req, res, next){
-        professor.findAll(req, res)
+        const cpf = prof.cpf
+        
+        if(await professor.exists(cpf)){
+            res.status(404).send({message: 'Professor já cadastrado!'})
+        } else {
+            professor.create(req, res, prof)
+        }
+
     },
 
     findProfessor(req, res, next){
+        let id
+        let nome 
         if(Object.keys(req.query).length > 0) {
-            let idProf = req.query.id_prof
-            let nomeProf = req.query.nome_prof
-            if(idProf){
-                professor.findById(req, res, idProf)
-            }else if(nomeProf){
-                professor.findByName(req, res, nomeProf)
-            }
-        }else{
-            professor.findAll(req, res)
+            id = req.query.id_prof
+            nome = req.query.nome_prof
         }
+
+        professor.findByIdOrName(req, res, id, nome)
     },
     
-    update(req, res, next){
-        const { id } = req.params
+    async update(req, res, next){
         const prof = req.body
-        professor.update(req, res, id, prof)
+        let pk = req.query.cpf
+        let filter
+       
+        if(validateCpf.cpf.isValid(pk)) {
+            filter = `CPF: ${validateCpf.cpf.format(pk)}`
+        } else {
+            pk = req.query.id
+            filter = `ID`
+        }
+
+        if(await professor.exists(pk)){
+            professor.update(req, res, pk, prof)
+        } else {
+            res.status(404).send({message:`${filter} não existe!`})
+        }
+
     },
 
-    delete(req, res, next){
-        const { id } = req.params
-        professor.delete(req, res, id)
+    async delete(req, res, next){
+        let pk = req.query.cpf
+        let filter
+       
+        if(validateCpf.cpf.isValid(pk)) {
+            filter = `CPF: ${validateCpf.cpf.format(pk)}`
+        } else {
+            pk = req.query.id
+            filter = `ID`
+        }
+        if(await professor.exists(pk)){
+            professor.delete(req, res, pk)
+        } else {
+            res.status(404).send({message:`${filter} não existe!`})
+        }
     }
     
 }
