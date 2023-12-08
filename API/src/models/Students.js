@@ -53,16 +53,17 @@ module.exports = {
         })
     },
 
-    existStudent(_, res, registry){
-        const query = `SELECT 1 FROM ALUNOS WHERE MATRICULA = '${registry}'`
-        connetion.query(query, (err, result)=>{
-            if(err) console.log(err)
-            if(result == 0){
-                res.send({message:'Aluno não existe!'})
-            } else {
-                res.status(200).send({message:'Aluno existe!'})
-            }
+    existStudent(registry){
+        return new Promise ((resolve) => {
+            let query = `SELECT COUNT(*) count FROM ALUNOS WHERE MATRICULA = '${registry}'`
+            connetion.query(query, async(err, data) => {
+                if(err) console.error(err)
+                if(data[0].count === 0){
+                    resolve(false)
+                } else {
+                    resolve(true)
+                }
+            })
         })
-
     }
 }

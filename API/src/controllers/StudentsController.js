@@ -1,9 +1,15 @@
 const students = require('../models/Students.js')
 
 module.exports = {
-    create(req, res, next){
+    async create(req, res, next){
         const student = req.body
-        students.create(req, res, student)
+        const registry = student.matricula
+        if(await students.existStudent(registry)) {
+            res.status(404).send({message:'Aluno já cadastrado!'})
+        } else {
+            students.create(req, res, student)
+        }
+
     },
 
     update(req, res, next){
@@ -26,11 +32,6 @@ module.exports = {
             nome = req.query.nome_aluno
         } 
         students.findByFilter(req, res, registry, nome)
-    },
-
-    existStudent(req, res, next){
-        const {registry} = req.params
-        students.existStudent(req, res, registry)
     }
 }
 

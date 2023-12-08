@@ -64,6 +64,21 @@ module.exports = {
                 if(hasData) resolve(data[0])
             })
         })
+    },
+    
+    exists(user) {
+        return new Promise((resolve) => {
+            let query = `SELECT COUNT(*) count FROM USUARIOS WHERE USUARIO = '${user}'`
+
+            connection.query(query, async(err, data) => {
+                if(err) console.error(err)
+                if(data[0].count === 0){
+                    resolve(false)
+                } else {
+                    resolve(true)
+                }
+            })
+        })
     }
 
 }
