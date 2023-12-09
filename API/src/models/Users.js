@@ -1,4 +1,5 @@
 const connection = require('../config/db.js')
+const { hash } = require('bcryptjs')
 
 function hasData(data) {
     return data.length !== 0
@@ -45,6 +46,15 @@ module.exports = {
         connection.query(query, (err, _) => {
             if(err) console.error(err)
             res.status(200).send({message: 'Usuário alterado com sucesso!'})
+        })
+    },
+
+    async updatePassword(_, res, user){
+        const query = `UPDATE USUARIOS SET SENHA = '${await hash(user.novaSenha, 8)}' WHERE USUARIO = '${user.nome}'`
+  
+        connection.query(query, (err, _) => {
+            if(err) console.error(err)
+            res.status(200).send({message: 'Senha alterada com sucesso!', newPassword: user.novaSenha})
         })
     },
 

@@ -9,13 +9,16 @@ module.exports = app => {
     // Retrieve all userss
     router.get("/users", user.findAll)
   
-    // Retrieve a single users with id
+    // Retrieve a single users with name
     router.get("/users/:usuario", user.findByName)
     
-    // Update a users with id
+    // Update a users with name
     router.put("/users/:usuario", user.update)
-  
-    // Delete a users with id
+    
+    // Update password of user
+    router.post("/users/changepassword", user.updatePassword)
+
+    // Delete a users with name
     router.delete("/users/:usuario", user.delete)
 
     router.post("/users/auth", user.auth)
