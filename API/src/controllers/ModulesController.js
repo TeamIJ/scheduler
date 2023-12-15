@@ -9,9 +9,10 @@ module.exports = {
 
         if(await modules.existsModules(nome.toLowerCase().replaceAll(' ', ''))){
             res.status(404).send({message: 'Módulo já cadastrado!'})
-        }else {
-            modules.create(req, res, module)
+            return
         }
+
+        modules.create(req, res, module)
     },
     
     findById(req, res, next){
@@ -35,10 +36,10 @@ module.exports = {
 
         if(await existsModuleSchedule(id)){
             res.status(404).send({message: 'Existe agendamento ativo para o módulo!'})
-        }else{
-            modules.delete(req, res, id)
+            return
         }
-
+        
+        modules.delete(req, res, id)
     }
     
 }

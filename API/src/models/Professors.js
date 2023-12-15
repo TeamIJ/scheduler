@@ -19,7 +19,7 @@ module.exports = {
         connection.query(query, args, (err, _) => {
             if(err) console.error(err)
 
-            res.status(200).send({message: 'Professor incluído com sucesso!'})
+            res.status(200).send({message: 'Professor(a) incluído(a) com sucesso!'})
         })
     },
 
@@ -40,7 +40,7 @@ module.exports = {
             if (err) console.error(err)
 
             if (!hasData(data)) {
-                res.send({message: 'Nenhum professor encontrado'}) 
+                res.send({message: 'Nenhum(a) professor(a) encontrado'}) 
             } else {
                 res.json(data)
             }
@@ -59,12 +59,12 @@ module.exports = {
         connection.query(query, (err, _) => {
             if (err) console.error(err)
 
-            res.status(200).send({message: 'Professor alterado com sucesso!'})
+            res.status(200).send({message: 'Professor(a) alterado(a) com sucesso!'})
         })
     },
 
     delete(_, res, pk){
-        const query = `DELETE FROM PROFESSORES WHERE `
+        let query = `DELETE FROM PROFESSORES WHERE `
 
         if (validateCpf.cpf.isValid(pk)) {
             query = query + `CPF_PROF = '${pk}'`
@@ -75,7 +75,7 @@ module.exports = {
         connection.query(query, (err, _) => {
             if (err) console.error(err)
 
-            res.status(200).send({message: 'Professor excluído com sucesso!'})
+            res.status(200).send({message: 'Professor(a) excluído(a) com sucesso!'})
         })
     },
 
@@ -94,6 +94,20 @@ module.exports = {
                 if(data[0].count === 0 ){
                     resolve(false)
                 } else {
+                    resolve(true)
+                }
+            })
+        })
+    },
+
+    professorAvailable(id){
+        return new Promise((resolve) => {
+            const query = 'SELECT COUNT(*) count FROM PROFESSORES WHERE ID_PROF = ? AND STATUS_PROF = ?'
+            connection.query(query, [id, 'D'], async (err, data) => {
+                if (err) console.error(err)
+                if(data[0].count === 0){
+                    resolve(false)
+                }else{
                     resolve(true)
                 }
             })

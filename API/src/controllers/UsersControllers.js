@@ -32,12 +32,11 @@ module.exports = {
 
         if (await users.existsUsers(usuario)) {
             res.status(404).send({ message: 'Usuário já cadastrado!' })
-        } else {
-            const passwordHash = await hash(user.senha, 8)
-            user.senha = passwordHash
-            users.create(req, res, user)
+            return
         }
-
+        const passwordHash = await hash(user.senha, 8)
+        user.senha = passwordHash
+        users.create(req, res, user)
     },
 
     findByName(req, res, next) {

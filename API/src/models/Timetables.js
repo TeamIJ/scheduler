@@ -29,4 +29,22 @@ module.exports = {
         })
     },
 
+    totalScheduled(time){
+        return new Promise((resolve) => {
+            const query = `SELECT QTD_AGENDAMENTOS qtd FROM HORARIOS WHERE HORARIO = '${time}'`
+            connection.query(query, async (err, data) => {
+                if (err) console.error(err)
+                resolve(data[0].qtd)
+            })
+        })
+    },
+
+    updateTotalScheduled(time, method){
+        const operation = method === 'I' ? 'QTD_AGENDAMENTOS + 1' : 'QTD_AGENDAMENTOS - 1'
+        const query = `UPDATE HORARIOS SET QTD_AGENDAMENTOS = ${operation} WHERE HORARIO = '${time}'`
+        connection.query(query, (err, _) => {
+            if (err) console.error(err)
+        })
+    }
+
 }
