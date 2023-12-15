@@ -6,7 +6,7 @@ module.exports = {
         const prof = req.body
         const cpf = prof.cpf
         
-        if(await professor.exists(cpf)){
+        if(await professor.existsProfessor(cpf)){
             res.status(404).send({message: 'Professor já cadastrado!'})
         } else {
             professor.create(req, res, prof)

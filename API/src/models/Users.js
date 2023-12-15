@@ -76,7 +76,7 @@ module.exports = {
         })
     },
     
-    exists(user) {
+    existsUsers(user) {
         return new Promise((resolve) => {
             let query = `SELECT COUNT(*) count FROM USUARIOS WHERE USUARIO = '${user}'`
 

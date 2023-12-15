@@ -60,7 +60,7 @@ module.exports = {
         })
     },
 
-    exists(id){
+    existsModules(id){
         return new Promise((resolve) => {
             const query = 'SELECT COUNT(*) count FROM MODULOS WHERE ID_MODULO = ?'
             connection.query(query, id, async (err, data) => {

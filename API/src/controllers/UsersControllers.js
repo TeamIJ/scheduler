@@ -3,7 +3,7 @@ const { hash, compare } = require('bcryptjs')
 
 async function authenticate(user) {
 
-    if (users.exists(user)) {
+    if (users.existsUsers(user)) {
         const usuario = await users.getUserInfo(user.nome)
 
         const passwordMatch = await compare(user.senha, usuario.senha)
@@ -30,7 +30,7 @@ module.exports = {
         const user = req.body
         const usuario = user.usuario
 
-        if (await users.exists(usuario)) {
+        if (await users.existsUsers(usuario)) {
             res.status(404).send({ message: 'Usuário já cadastrado!' })
         } else {
             const passwordHash = await hash(user.senha, 8)

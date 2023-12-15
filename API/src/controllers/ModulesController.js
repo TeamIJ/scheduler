@@ -7,7 +7,7 @@ module.exports = {
 
         const nome = module.nome_modulo.normalize('NFD').replace(/[\u0300-\u036f]/g, "")
 
-        if(await modules.exists(nome.toLowerCase().replaceAll(' ', ''))){
+        if(await modules.existsModules(nome.toLowerCase().replaceAll(' ', ''))){
             res.status(404).send({message: 'Módulo já cadastrado!'})
         }else {
             modules.create(req, res, module)

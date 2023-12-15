@@ -79,7 +79,7 @@ module.exports = {
         })
     },
 
-    exists(pk) {
+    existsProfessor(pk) {
         return new Promise((resolve) => {
             let query = `SELECT COUNT(*) count FROM PROFESSORES WHERE `    
 
