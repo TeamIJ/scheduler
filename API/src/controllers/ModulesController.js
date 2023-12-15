@@ -1,4 +1,5 @@
 const modules = require('../models/Modules.js')
+const { existsModuleSchedule } = require('../models/Schedules.js')
 
 module.exports = {
     async create(req, res, next){
@@ -29,9 +30,15 @@ module.exports = {
         modules.update(req, res, id, module)
     },
 
-    delete(req, res, next){
+    async delete(req, res, next){
         const { id } = req.params
-        modules.delete(req, res, id)
+
+        if(await existsModuleSchedule(id)){
+            res.status(404).send({message: 'Existe agendamento ativo para o módulo!'})
+        }else{
+            modules.delete(req, res, id)
+        }
+
     }
     
 }

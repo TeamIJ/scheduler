@@ -116,6 +116,20 @@ module.exports = {
             if(err) console.error(err)
             res.status(200).send({mmessage:'Agendamento excluído com sucesso'})
         })
+    },
+
+    existsModuleSchedule(id){
+        return new Promise((resolve) => {
+            const query = 'SELECT COUNT(*) count FROM AGENDAMENTOS WHERE ID_MODULO = ? AND STATUS_AGENDA = ?'
+            connection.query(query, [id, 'A'], async (err, data) => {
+                if (err) console.error(err)
+                if(data[0].count === 0){
+                    resolve(false)
+                }else{
+                    resolve(true)
+                }
+            })
+        })
     }
 
 }
