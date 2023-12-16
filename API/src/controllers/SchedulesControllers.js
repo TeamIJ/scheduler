@@ -1,10 +1,21 @@
 const schedule = require('../models/Schedules.js')
-const { professorAvailable } = require('../models/Professors.js')
+const { professorAvailable, teacherAvailableToScheduling } = require('../models/Professors.js')
 const { totalScheduled, updateTotalScheduled } = require('../models/Timetables.js')
+const { existDuplicateSchedule } = require('../models/Schedules.js')
 
 module.exports = {
     async create(req, res, next) {
         const agendamento = req.body
+
+        if (await teacherAvailableToScheduling(agendamento)){
+            res.status(400).send({message:'Professor(a) já possui agendamento!'})
+            return
+        }
+
+        if (await existDuplicateSchedule(agendamento)) {
+            res.status(400).send({message:'Aluno(a) já cadastrado(a) para aula!'})
+            return
+        }
 
         if (!await professorAvailable(agendamento.idProf)) {
             res.status(400).send({ message: 'Professor(a) indisponível para agendamentos!' })

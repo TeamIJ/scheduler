@@ -112,6 +112,21 @@ module.exports = {
                 }
             })
         })
+    },
+
+    teacherAvailableToScheduling(agendamento){
+        return new Promise((resolve) => {
+            const query = `SELECT COUNT(*) count FROM PROFESSORES P JOIN AGENDAMENTOS A ON (A.ID_PROF = P.ID_PROF) ` +
+                        `WHERE P.ID_PROF = '${agendamento.idProf}' AND A.DATA_AULA = '${agendamento.dataAula}' AND A.HORARIO = '${agendamento.horario}' AND A.ID_CURSO <> '${agendamento.idCurso}'`
+            connection.query(query, async (err, data) => {
+                if (err) console.error(err)
+                if(data[0].count === 0){
+                    resolve(false)
+                }else{
+                    resolve(true)
+                }
+            })
+        })
     }
 
 }
