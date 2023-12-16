@@ -72,6 +72,20 @@ module.exports = {
                 }
             })
         })
-    }   
+    },
+    
+    existsModulesCourses(idCurso){
+        return new Promise((resolve) => {
+            const query = 'SELECT COUNT(*) count FROM MODULOS WHERE ID_CURSO = ?'
+            connection.query(query, idCurso, async (err, data) => {
+                if (err) console.error(err)
+                if(data[0].count === 0){
+                    resolve(false)
+                }else{
+                    resolve(true)
+                }
+            })
+        })
+    }
 
 }
