@@ -1,4 +1,5 @@
 const students = require('../models/Students.js')
+const { existsStudentSchedule } = require('../models/Schedules.js')
 
 module.exports = {
     async create(req, res, next){
@@ -18,9 +19,14 @@ module.exports = {
         students.update(req, res, student, registry)
     },
 
-    delete(req, res, next){
+    async delete(req, res, next){
         const { registry } = req.params
+        if (await existsStudentSchedule(registry)) {
+            res.status(400).send({message:'Existe agendamento ativo para o aluno!'})
+            return
+        }
         students.delete(req, res, registry)
+
     },
     
     findStudent(req, res, next){

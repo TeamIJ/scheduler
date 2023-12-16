@@ -38,7 +38,7 @@ module.exports = {
     },
 
     update(_, res, student, registry){
-        const query = `UPDATE SET ALUNOS ID_CURSO = '${student.idCurso}', NOME = '${student.nome}', STATUS_ALUNO = '${student.statusAluno}' WHERE MATRICULA = '${registry}'`
+        const query = `UPDATE ALUNOS SET ID_CURSO = '${student.idCurso}', NOME = '${student.nome}', STATUS_ALUNO = '${student.statusAluno}' WHERE MATRICULA = '${registry}'`
         connetion.query(query, (err, _) => {
             if(err) console.error(err)
             res.status(200).send({message:'Aluno alterado com sucesso!'})
@@ -66,4 +66,5 @@ module.exports = {
             })
         })
     }
+
 }
