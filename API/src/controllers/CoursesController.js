@@ -1,5 +1,5 @@
 const courses = require('../models/Courses.js')
-
+const { existsCourseSchedule } = require('../models/Schedules.js')
 module.exports = {
     create(req, res, next){
         const course = req.body
@@ -21,10 +21,13 @@ module.exports = {
         courses.update(req, res, id, course)
     },
 
-    delete(req, res, next){
+    async delete(req, res, next){
         const { id } = req.params
+        if (await existsCourseSchedule(id)) {
+            res.status(400).send({message:'Existe agendamento ativo para o curso!'})
+            return
+        }
         courses.delete(req, res, id)
     }
     
 }
-

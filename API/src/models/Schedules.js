@@ -118,10 +118,10 @@ module.exports = {
         })
     },
 
-    existsModuleSchedule(id) {
+    existsModuleSchedule(idModulo) {
         return new Promise((resolve) => {
             const query = 'SELECT COUNT(*) count FROM AGENDAMENTOS WHERE ID_MODULO = ? AND STATUS_AGENDA = ?'
-            connection.query(query, [id, 'A'], async (err, data) => {
+            connection.query(query, [idModulo, 'A'], async (err, data) => {
                 if (err) console.error(err)
                 if (data[0].count === 0) {
                     resolve(false)
@@ -132,10 +132,10 @@ module.exports = {
         })
     },
 
-    existsProfessorSchedule(id) {
+    existsProfessorSchedule(idProf) {
         return new Promise((resolve) => {
             const query = 'SELECT COUNT(*) count FROM AGENDAMENTOS WHERE ID_PROF = ? AND STATUS_AGENDA = ?'
-            connection.query(query, [id, 'A'], async (err, data) => {
+            connection.query(query, [idProf, 'A'], async (err, data) => {
                 if (err) console.error(err)
                 if (data[0].count === 0) {
                     resolve(false)
@@ -175,6 +175,20 @@ module.exports = {
         return new Promise((resolve) => {
             const query = `SELECT COUNT(*) count FROM AGENDAMENTOS WHERE MATRICULA = '${agendamento.matricula}' `+
                         `AND STATUS_AGENDA = 'A' AND ID_CURSO = ${agendamento.idCurso} AND TIPO_AGENDAMENTO = '${agendamento.tipoAgendamento}' AND ID_MODULO = ${agendamento.idModulo} AND (AULA = ${agendamento.aula} OR HORARIO = '${agendamento.horario}')`
+            connection.query(query, async (err, data) => {
+                if (err) console.error(err)
+                if (data[0].count === 0) {
+                    resolve(false)
+                } else {
+                    resolve(true)
+                }
+            })
+        })
+    },
+
+    existsCourseSchedule(idCurso) {
+        return new Promise((resolve) => {
+            const query = `SELECT COUNT(*) count FROM AGENDAMENTOS WHERE ID_CURSO = '${idCurso}'`
             connection.query(query, async (err, data) => {
                 if (err) console.error(err)
                 if (data[0].count === 0) {
