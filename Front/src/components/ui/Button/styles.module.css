@@ -1,3 +1,38 @@
-.button{
-    
+.button {
+    padding: 14px;
+    width: fit-content;
+    height: 45px;
+    border: 0;
+    color: white;
+}
+
+.buttonGrid {
+    background-color: rgba(0,0,0,0);
+    border: 0;
+    width: 40px;
+    height: 40px;
+    font-size: 200%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--dark-gray);
+}
+
+.buttonMenu{
+    border: 0;
+    width: 200px;
+    height: 150px;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.buttonMenu span{
+    font-size: 350%;
+}
+
+.buttonMenu a{
+    font-size: 1.2rem;
 }
