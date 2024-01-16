@@ -4,6 +4,7 @@ import Image from 'next/image'
 import { Input, TextArea } from '../components/ui/Input'
 import { Button, ButtonGrid, ButtonMenu } from '../components/ui/Button'
 import { RadioButton } from '../components/ui/RadioButton'
+import { CheckBox } from '../components/ui/CheckBox'
 
 export default function Home() {
   return (
@@ -29,6 +30,18 @@ export default function Home() {
             title: 'Aluno'
           }
           ]} />
+
+          <CheckBox  options={[
+            {
+              id: 'prof',
+              title: 'Professor'
+            },
+            {
+              id: 'student',
+              title: 'Aluno'
+            }
+          ]}/>
+
       </form>
     </div>
   )
