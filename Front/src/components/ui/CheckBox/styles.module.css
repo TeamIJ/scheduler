@@ -25,12 +25,17 @@
   color: currentColor;
   width: 1.15em;
   height: 1.15em;
-  border: 0.15em solid currentColor;
   border-radius: 0.15em;
   transform: translateY(-0.075em);
   display: grid;
   place-content: center;
+  cursor: pointer;
 }
+
+.checkbox:hover input {
+  background-color: #ccc;
+}
+
 
 .checkbox input::before {
     content: "";
@@ -40,7 +45,7 @@
   transform: scale(0);
   transform-origin: bottom left;
   transition: 120ms transform ease-in-out;
-  box-shadow: inset 1em 1em var(--blue);
+  box-shadow: inset 1em 1em var(--light-blue);
   background-color: CanvasText;
   }
 

@@ -8,6 +8,6 @@ export function Input({ ...rest }){
 
 export function TextArea({...rest}){
     return(
-        <textarea className={styles.input} {...rest}></textarea>
+        <textarea className={styles.textarea} {...rest}></textarea>
     )
 }

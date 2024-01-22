@@ -1,0 +1,26 @@
+.select {
+    width: 100%;
+    border-radius: 5px;
+    margin-bottom: 1rem; 
+    color: black;
+    background-color: white;
+    border: 1px solid var(--inputs-border-color);
+    padding: 1rem;
+    cursor: pointer;
+}
+
+.select:required:invalid{
+    color: rgba(0, 0, 0, 0.5);
+}
+
+.select option[value=""]{
+    display: none;
+}
+
+.select option:disabled{
+    color: rgba(0, 0, 0, 0.4);
+}
+
+.select option{
+    color: black;
+}

@@ -16,6 +16,10 @@
   --dark-gray: #9a9a9a;
 }
 
+textarea {
+  resize: none;
+}
+
 button{
   cursor: pointer;
 }

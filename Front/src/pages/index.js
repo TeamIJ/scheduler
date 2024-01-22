@@ -5,13 +5,14 @@ import { Input, TextArea } from '../components/ui/Input'
 import { Button, ButtonGrid, ButtonMenu } from '../components/ui/Button'
 import { RadioButton } from '../components/ui/RadioButton'
 import { CheckBox } from '../components/ui/CheckBox'
+import { ComboBox } from '../components/ui/ComboBox'
 
 export default function Home() {
   return (
     <div>
       <form>
-        <Input placeHolder='E-mail' type='text'/>
-        <Input placeHolder='Senha' type='password'/>
+        <Input placeholder='E-mail' type='text'/>
+        <Input placeholder='Senha' type='password'/>
         <Button color='light-blue' content={<ion-icon name="chevron-forward-outline"></ion-icon>} />
         <ButtonGrid content={<ion-icon name="pencil-outline"></ion-icon>}/>
         <ButtonMenu color='light-blue' content={
@@ -41,7 +42,21 @@ export default function Home() {
               title: 'Aluno'
             }
           ]}/>
-
+          <ComboBox options={[
+            {
+              id: 1,
+              title: 'Izzy'
+            },
+            {
+              id: 2,
+              title: 'Jack'
+            },
+            {
+              id: 3,
+              title: 'Will',
+              disabled: true
+            },
+          ]}/>
       </form>
     </div>
   )
