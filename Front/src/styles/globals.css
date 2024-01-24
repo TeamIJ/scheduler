@@ -30,7 +30,7 @@ a{
 }
 
 body{
-  background: var(--blue-main);
+  background: var(--blue);
 }
 
 body, input, textarea, select, button{

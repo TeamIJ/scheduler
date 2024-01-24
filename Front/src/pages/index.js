@@ -1,5 +1,6 @@
 import Head from 'next/head'
 import Image from 'next/image'
+import styles from '../styles/home.module.css'
 
 import { Input, TextArea } from '../components/ui/Input'
 import { Button, ButtonGrid, ButtonMenu } from '../components/ui/Button'
@@ -7,57 +8,40 @@ import { RadioButton } from '../components/ui/RadioButton'
 import { CheckBox } from '../components/ui/CheckBox'
 import { ComboBox } from '../components/ui/ComboBox'
 
+const loginOptions = [
+  {
+    id: 'P',
+    title: "Professor"
+  },
+  {
+    id: 'A',
+    title: "Aluno"
+  },
+
+]
+
 export default function Home() {
   return (
-    <div>
-      <form>
-        <Input placeholder='E-mail' type='text'/>
-        <Input placeholder='Senha' type='password'/>
-        <Button color='light-blue' content={<ion-icon name="chevron-forward-outline"></ion-icon>} />
-        <ButtonGrid content={<ion-icon name="pencil-outline"></ion-icon>}/>
-        <ButtonMenu color='light-blue' content={
-          <>
-            <span><ion-icon name="person-outline"></ion-icon></span>
-            <a>Usuários</a>
-          </>
-        }/>
-        <RadioButton options={[
-          {
-            id: 'prof',
-            title: 'Professor'
-          },
-          {
-            id: 'student',
-            title: 'Aluno'
-          }
-          ]} />
-
-          <CheckBox  options={[
-            {
-              id: 'prof',
-              title: 'Professor'
-            },
-            {
-              id: 'student',
-              title: 'Aluno'
-            }
-          ]}/>
-          <ComboBox options={[
-            {
-              id: 1,
-              title: 'Izzy'
-            },
-            {
-              id: 2,
-              title: 'Jack'
-            },
-            {
-              id: 3,
-              title: 'Will',
-              disabled: true
-            },
-          ]}/>
-      </form>
-    </div>
+    <>
+      <Head>
+        <title>Login</title>
+      </Head>
+      <div className={styles.container}>
+        <div className={styles.login}>
+          <RadioButton options={loginOptions} />
+          <form>
+            <Input placeholder="Nome de Usuário" />
+            <Input placeholder="Senha" />
+            <div className={[styles.textLeft, styles.linkPassword]}>
+              <a href='/reset_password'>Esqueci minha senha!</a>
+              <Button color="light-blue" content={
+                <a>Acessar</a>
+              } />
+            </div>
+          </form>
+        </div>
+        <div className={styles.background}></div>
+      </div>
+    </>
   )
 }

@@ -3,6 +3,11 @@
     height: 45px;
     border: 0;
     color: white;
+    box-shadow: 4px 2px 23px -18px rgba(0,0,0,0.75);
+}
+
+.button:hover{
+    background-color: white;
 }
 
 .buttonGrid {
