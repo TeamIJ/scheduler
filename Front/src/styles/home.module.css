@@ -4,7 +4,6 @@
     align-items: center;
     flex-direction: column;
     height: 100vh;
-    
 }
 
 .login {
@@ -39,11 +38,16 @@
     border-radius: 10px;
 }
 
-.buttons {
+.passwordContainer {
+    margin-bottom: 15px;
     display: flex;
-    flex-direction: row;
-    align-items: center;
     justify-content: space-between;
+    color: white;
+}
+
+.passwordReset{
+    font-size: 12px;
+    text-align: right;
 }
 
 .textLeft {
