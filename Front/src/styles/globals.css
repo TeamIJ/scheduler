@@ -29,8 +29,8 @@ a{
   text-decoration: none;
 }
 
-body{
-  background: var(--blue);
+body {
+  background-image: url('../../public/backuground_schedule_logo_white.jpg');
 }
 
 body, input, textarea, select, button{

@@ -4,28 +4,42 @@
     align-items: center;
     flex-direction: column;
     height: 100vh;
+    width: 100vw;
+    background-image: url('../../public/backuground_schedule_logo.jpg');
 }
 
 .login {
-    display: flex;
-    justify-content: center;
+    display: grid;
+    grid-template-rows: 1fr 3fr;
+    justify-items: center;
     align-items: center;
-    flex-direction: column;
     width: 600px;
     height: 400px;
     z-index: 1;
 }
 
-.login form{
-    margin-top: 3rem;
+.formProfessor {
     width: 85%;
     display: flex;
     justify-content: center;
     flex-direction: column;
 }
 
+.formStudent {
+    width: 85%;
+    display: flex;
+    align-self: flex-start;
+    justify-content: center;
+    flex-direction: column;
+    margin-top: 2.5em;
+}
+
+.formStudent button {
+    margin-top: 6.5em;
+}
+
 .login button{
-    width: 120px;
+    width: 100%;
 }
 
 .background {
@@ -50,24 +64,11 @@
     text-align: right;
 }
 
-.textLeft {
-    text-align: left!important;
-}
-
-.linkPassword {
-    color: white;
-    text-decoration: none;
-    margin: 15px 0 2px;
-    transition: all .3s;
-    position: relative;
-}
-
-.linkPassword::after {
+.radioLogin {
     position: absolute;
-    left: 0;
-    bottom: 2px;
-    height: 1px;
-    width: 0;
-    background: #ff8e32;
-    transition: all .3s;
+    z-index: 5;
+}
+
+.body {
+    background-image: url('../../public/backuground_schedule_logo.jpg');
 }

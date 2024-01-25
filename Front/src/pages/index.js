@@ -1,28 +1,29 @@
 import Head from "next/head";
-import Image from "next/image";
 import styles from "../styles/home.module.css";
 
-import { Input, TextArea } from "../components/ui/Input";
-import { Button, ButtonGrid, ButtonMenu } from "../components/ui/Button";
+import { Input } from "../components/ui/Input";
+import { Button } from "../components/ui/Button";
 import { RadioButton } from "../components/ui/RadioButton";
 import { CheckBox } from "../components/ui/CheckBox";
-import { ComboBox } from "../components/ui/ComboBox";
 import { useState } from "react";
 
 const loginOptions = [
   {
     id: "P",
     title: "Professor",
+    checked: false,
   },
   {
     id: "A",
     title: "Aluno",
+    checked: true
   },
-];
+]
 
 export default function Home() {
 
   const [showPassword, setShowPassword] = useState(false)
+  const [optionLoginChecked, setOptionLoginChecked] = useState('A')
 
   return (
     <>
@@ -30,11 +31,11 @@ export default function Home() {
         <title>Login</title>
       </Head>
       <div className={styles.container}>
-        <RadioButton className={styles.radio} options={loginOptions} />
         <div className={styles.login}>
+          <RadioButton className={styles.radioLogin} options={loginOptions} func={setOptionLoginChecked}/>
           { 
-            true ? 
-            <form>
+            optionLoginChecked === 'P' ? 
+            <form className={styles.formProfessor}>
               <Input placeholder="Nome de Usuário" type="text" />
               <Input placeholder="Senha" type={showPassword? 'text' : 'password'} />
               <div className={[styles.passwordContainer]}>
@@ -54,8 +55,8 @@ export default function Home() {
                 <Button color="light-blue" content={<span>Acessar</span>} />
             </form>
             :
-            <form>
-              <Input placeholder="Nome de Usuário" type="text" />
+            <form className={styles.formStudent}>
+              <Input placeholder="Matrícula" type="text" />
               <Button color="light-blue" content={<span>Acessar</span>} />
             </form>
           }
