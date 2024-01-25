@@ -1,0 +1,56 @@
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    height: 100vh;
+    width: 100vw;
+    background-image: url('../../../public/backuground_schedule_logo.jpg');
+}
+
+.reset {
+    z-index: 1;
+    display: flex;
+    width: 600px;
+    height: 400px;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.reset form {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 85%;
+}
+
+.background {
+    z-index: 0;
+    position: absolute;
+    width: 600px;
+    height: 400px;
+    background-color: rgba(255, 255, 255, 0.5);
+    border: 1px solid var(--inputs-border-color);
+    border-radius: 10px;
+}
+
+.passwordContainer {
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: space-between;
+    color: white;
+}
+
+.font {
+    color: white;
+    text-align:center;
+}
+
+.buttonContainer {
+    display: grid;
+    justify-content: space-between;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}

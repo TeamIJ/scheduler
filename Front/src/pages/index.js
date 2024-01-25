@@ -1,40 +1,42 @@
 import Head from "next/head";
+import { useState } from "react";
+import { useRouter } from "next/router";
 import styles from "../styles/home.module.css";
 
 import { Input } from "../components/ui/Input";
 import { Button } from "../components/ui/Button";
 import { RadioButton } from "../components/ui/RadioButton";
 import { CheckBox } from "../components/ui/CheckBox";
-import { useState } from "react";
 
 const loginOptions = [
   {
     id: "P",
     title: "Professor",
-    checked: false,
+    checked: true,
   },
   {
     id: "A",
     title: "Aluno",
-    checked: true
+    checked: false
   },
 ]
 
 export default function Home() {
-
+  
+  const router = useRouter()
   const [showPassword, setShowPassword] = useState(false)
-  const [optionLoginChecked, setOptionLoginChecked] = useState('A')
+  const [optionLoginChecked, setOptionLoginChecked] = useState('P')
 
   return (
     <>
       <Head>
-        <title>Login</title>
+        <title>Scheduler - Login</title>
       </Head>
       <div className={styles.container}>
         <div className={styles.login}>
           <RadioButton className={styles.radioLogin} options={loginOptions} func={setOptionLoginChecked}/>
           { 
-            optionLoginChecked === 'P' ? 
+            optionLoginChecked !== 'A' ? 
             <form className={styles.formProfessor}>
               <Input placeholder="Nome de Usuário" type="text" />
               <Input placeholder="Senha" type={showPassword? 'text' : 'password'} />
@@ -48,7 +50,7 @@ export default function Home() {
                     },
                   ]}
                 ></CheckBox>
-                <a href="/reset_password" target="_blank" className={[styles.passwordReset]}>
+                <a href="/reset_password" className={[styles.passwordReset]}>
                   Esqueci minha senha
                 </a>
               </div>
