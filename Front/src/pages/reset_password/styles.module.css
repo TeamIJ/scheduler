@@ -26,6 +26,17 @@
     width: 85%;
 }
 
+.reset .info{
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+}
+
+.reset .info:hover #popover{
+    opacity: 1;
+    visibility: visible;
+}
+
 .background {
     z-index: 0;
     position: absolute;

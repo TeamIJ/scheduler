@@ -1,68 +1,61 @@
-.container {
-    display: flex;
-    width: 85%;
-    justify-content: space-around;
-}
-.container label{
-    font-size: 1.5em;
-}
-
-.radio {
-    display: flex;
-    color: white;
-
-
-    position: relative;
-    padding-left: 30px;
-    cursor: pointer;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-}
-
-.radio input {
+.popoverWrapper{
+    max-width: 308px;
     position: absolute;
+    display: flex;
+    gap: 10px;
+    background-color: white;
+    color: black;
+    align-items: center;
+    padding: 14px;
+    border: 1px solid var(--inputs-border-color);
+    border-radius: 5px;
+    box-shadow: 0px 0px 30px -17px rgba(0,0,0,1);
+    font-size: 16px;
+
+    margin-left: 30px;
     opacity: 0;
-    cursor: pointer;
-    height: 0;
-    width: 0;
+    visibility: hidden;
+    transition: opacity .5s, visibility .5s;
 }
 
-.checkmark {
+.popoverWrapper::before{
+    content: '';
     position: absolute;
+    border: 0.50rem solid;
+    border-color: white;
+    left: -0.50rem;
+    transform: rotate(45deg);
+}
+
+.popoverWrapper span{
+    width: 40px;
+    height: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
-    top: 0;
-    left: 0;
-    height: 25px;
-    width: 25px;
-    background-color: #eee;
-    border-radius: 50%;
+    font-size: 2em;
 }
 
-.radio:hover input~.checkmark {
-    background-color: #ccc;
+
+.popoverWrapper[value="true"]{
+    opacity: 1;
+    visibility: visible;
 }
 
-.radio input:checked~.checkmark {
-    background-color: white;
+.icon {
+    font-size: 24px;
 }
 
-.checkmark:after {
-    content: "";
-    position: absolute;
-    display: none;
+.popoverWrapper span[value="info"]{
+    color: #036bfc;
+}
+.popoverWrapper span[value="warning"]{
+    color: orange;
+}
+.popoverWrapper span[value="error"]{
+    color: red;
+}
+.popoverWrapper span[value="sucess"]{
+    color: green;
 }
 
-.radio input:checked~.checkmark:after {
-    display: block;
-}
-
-.radio .checkmark:after {
-    width: 55%;
-    height: 55%;
-    border-radius: 50%;
-    background: var(--light-blue);
-}

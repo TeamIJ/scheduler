@@ -38,8 +38,8 @@ export default function Home() {
           { 
             optionLoginChecked !== 'A' ? 
             <form className={styles.formProfessor}>
-              <Input placeholder="Nome de Usuário" type="text" />
-              <Input placeholder="Senha" type={showPassword? 'text' : 'password'} />
+              <Input required placeholder="Nome de Usuário" type="text" />
+              <Input required placeholder="Senha" type={showPassword? 'text' : 'password'} />
               <div className={[styles.passwordContainer]}>
                 <CheckBox onChange={() => {
                   setShowPassword(!showPassword)
@@ -58,7 +58,7 @@ export default function Home() {
             </form>
             :
             <form className={styles.formStudent}>
-              <Input placeholder="Matrícula" type="text" />
+              <Input required placeholder="Matrícula" type="text" />
               <Button color="light-blue" content={<span>Acessar</span>} />
             </form>
           }

@@ -12,6 +12,7 @@ export default function ResetPassword(){
     const router = useRouter()
 
     const [showPassword, setShowPassword] = useState(false)
+    const [isHovering, setIsHovering] = useState(false)
     return (
         <>
             <Head>
@@ -21,11 +22,11 @@ export default function ResetPassword(){
                 <div className={styles.reset}>
                     <h1 className={styles.font}>Mudar Senha</h1>
                     <form>
-                        <Input placeholder="Nome de Usuário" type="text" />
-                        <Input placeholder="Senha Anterior"  type={showPassword? 'text' : 'password'} />
-                        <Input placeholder="Nova Senha" type={showPassword? 'text' : 'password'} />
+                        <Input required placeholder="Nome de Usuário" type="text" />
+                        <Input required placeholder="Senha Anterior"  type={showPassword? 'text' : 'password'} />
+                        <Input required placeholder="Nova Senha" type={showPassword? 'text' : 'password'} />
                         <div className={[styles.passwordContainer]}>
-                            <CheckBox onChange={() => {
+                        <CheckBox onChange={() => {
                             setShowPassword(!showPassword)
                             }} options={[
                                 {
@@ -34,8 +35,9 @@ export default function ResetPassword(){
                                 },
                             ]}
                         ></CheckBox>
-                        <PopOver type='help-circle-outline'>
-                        </PopOver>
+                        <a className={styles.info} onMouseEnter={() => setIsHovering(true)} onMouseLeave={() => setIsHovering(false)}><ion-icon name="information-circle-outline"></ion-icon>
+                            <PopOver isHovering={isHovering} type='error' message="Caso não lembre sua senha antiga contate o administrador do sistema."/>
+                        </a>
                         </div>
                         <div className={styles.buttonContainer}>
                             <Button  color="light-blue" content={<span>Confirmar</span>} />
