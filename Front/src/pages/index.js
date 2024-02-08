@@ -26,14 +26,14 @@ const loginOptions = [
 export default function Home() {
   const { signIn } = useContext(AuthContext)
 
-  const [email, setEmail] = useState('')
+  const [user, setUser] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
 
 
   async function hadleLogin ( event ){
     event.preventDefault()
-    await signIn( email, password )
+    await signIn( user, password )
   }
 
   const router = useRouter()
@@ -51,7 +51,7 @@ export default function Home() {
           { 
             optionLoginChecked !== 'A' ? 
             <form className={styles.formProfessor} onSubmit={ (e) => hadleLogin(e)}>
-              <Input required placeholder="Nome de Usuário" type="text" value={email} onChange={(e) => setEmail(e.target.value)}/>
+              <Input required placeholder="Nome de Usuário" type="text" value={user} onChange={(e) => setUser(e.target.value)}/>
               <Input required placeholder="Senha" type={showPassword? 'text' : 'password'} value={password} onChange={(e) => setPassword(e.target.value)}/>
               <div className={[styles.passwordContainer]}>
                 <CheckBox onChange={() => {

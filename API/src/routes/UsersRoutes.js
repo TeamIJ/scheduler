@@ -22,6 +22,6 @@ module.exports = app => {
     router.delete("/users/:usuario", user.delete)
 
     router.post("/users/auth", user.auth)
-   
+    
     app.use('/api/scheduler', router)
   };

@@ -75,11 +75,10 @@ module.exports = {
 
     async auth(req, res, next) {
         const user = req.body
-
         if (await authenticate(user)) {
             res.status(200).send({ "ok": true })
         } else {
-            res.status(404).send({ "ok": false })
+            res.status(401).send({ "ok": false })
         }
 
     }

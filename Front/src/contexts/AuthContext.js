@@ -1,6 +1,7 @@
 import { createContext, ReactNode, useState } from "react";
 import { destroyCookie } from 'nookies'
 import { Router } from 'next/router'
+import { api } from '../services/apiClient'
 
 export const AuthContext = createContext({})
 
@@ -18,10 +19,16 @@ export function AuthProvider ( { children } ) {
     const [password, setPassword] = useState()
     const  isAuthenticated = !!user;
 
-    async function signIn(email, password) {
-        alert("teste")
-        console.log(email)
-        console.log(password)
+    async function signIn(user, password) {
+       try {
+            const response = await api.post('/users/auth', {
+                nome:user, senha:password
+            })
+
+            console.log(response.data)
+       } catch (err) {
+            console.log("Erro ao acessar ", err)
+       }
     }
 
     return (
