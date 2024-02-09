@@ -14,6 +14,8 @@ module.exports = app => {
   
     // Delete a students with registry
     router.delete("/students/:registry", student.delete)
+
+    router.post("/students/auth/:registry", student.auth)
    
     app.use('/api/scheduler', router)
   };

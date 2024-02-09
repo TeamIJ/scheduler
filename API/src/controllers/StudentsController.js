@@ -2,6 +2,18 @@ const students = require('../models/Students.js')
 const { existsStudentSchedule } = require('../models/Schedules.js')
 
 module.exports = {
+
+    async auth(req, res, next){
+        let { registry } = req.params
+        const student = await students.getStudentInfo(registry)
+
+        if (student) {
+            res.status(200).send({ "ok": true})
+        } else {
+            res.status(401).send({ "ok": false })
+        }
+    },
+
     async create(req, res, next){
         const student = req.body
         const registry = student.matricula

@@ -1,4 +1,4 @@
-const connetion = require('../config/db.js')
+const connection = require('../config/db.js')
 
 function hasData(data){
     return data.lenght !== 0 
@@ -7,7 +7,7 @@ function hasData(data){
 module.exports = {
     create(_, res, student){
         const query = `INSERT INTO ALUNOS (ID_CURSO, MATRICULA, NOME, STATUS_ALUNO) VALUES ('${student.idCurso}', '${student.matricula}', '${student.nome}', '${student.statusAluno}')`
-        connetion.query(query, (err, _) => {
+        connection.query(query, (err, _) => {
             if(err) console.error(err)
             res.status(200).send({message:'Aluno incluído com sucesso!'})
         })
@@ -27,7 +27,7 @@ module.exports = {
             query = query + ` AND NOME LIKE '${nome}%'`
         }
 
-        connetion.query(query, filter, (err, data) => {
+        connection.query(query, filter, (err, data) => {
             if(err) console.error(err)
             if(!hasData(data)){
                 res.send({message:'Aluno não encontrado!'})
@@ -39,7 +39,7 @@ module.exports = {
 
     update(_, res, student, registry){
         const query = `UPDATE ALUNOS SET ID_CURSO = '${student.idCurso}', NOME = '${student.nome}', STATUS_ALUNO = '${student.statusAluno}' WHERE MATRICULA = '${registry}'`
-        connetion.query(query, (err, _) => {
+        connection.query(query, (err, _) => {
             if(err) console.error(err)
             res.status(200).send({message:'Aluno alterado com sucesso!'})
         })
@@ -47,7 +47,7 @@ module.exports = {
 
     delete(_, res, registry){
         const query = `DELETE FROM ALUNOS WHERE MATRICULA = '${registry}'`
-        connetion.query(query, (err, _) => {
+        connection.query(query, (err, _) => {
             if(err) console.error(err)
             res.status(200).send({message:'Aluno excluído com sucesso!'})
         })
@@ -56,7 +56,7 @@ module.exports = {
     existStudent(registry){
         return new Promise ((resolve) => {
             let query = `SELECT COUNT(*) count FROM ALUNOS WHERE MATRICULA = '${registry}'`
-            connetion.query(query, async(err, data) => {
+            connection.query(query, async(err, data) => {
                 if(err) console.error(err)
                 if(data[0].count === 0){
                     resolve(false)
@@ -65,6 +65,16 @@ module.exports = {
                 }
             })
         })
-    }
+    },
+
+    getStudentInfo(registry){
+        const query = `SELECT * FROM ALUNOS WHERE MATRICULA = '${registry}'`
+        return new Promise((resolve) => {
+            connection.query(query, (err, data) => {
+                if(err) console.error(err)
+                if(hasData) resolve(data[0])
+            })
+        })
+    },
 
 }

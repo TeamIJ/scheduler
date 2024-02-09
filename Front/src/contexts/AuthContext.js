@@ -1,7 +1,8 @@
 import { createContext, ReactNode, useState } from "react";
 import { destroyCookie } from 'nookies'
-import { Router } from 'next/router'
+import Router from 'next/router'
 import { api } from '../services/apiClient'
+import { toast } from 'react-toastify'
 
 export const AuthContext = createContext({})
 
@@ -16,17 +17,37 @@ export function signOut(){
 
 export function AuthProvider ( { children } ) {
     const [user, setUser] = useState()
-    const [password, setPassword] = useState()
-    const  isAuthenticated = !!user;
+    const isAuthenticated = !!user;
 
-    async function signIn(user, password) {
+    async function signIn(user, password, role) {
        try {
-            const response = await api.post('/users/auth', {
-                nome:user, senha:password
-            })
 
-            console.log(response.data)
-       } catch (err) {
+            if(role === 'P'){
+                const response = await api.post('/api/scheduler/users/auth', {
+                    nome:user, senha:password
+                })
+                
+                setUser(response.data.user)
+            }else{
+                const response = await api.post(`/api/scheduler/students/auth/${user}`, {
+                    nome:user, senha:password
+                })
+                
+                console.log(response)
+
+                setUser(user)
+            }
+
+            toast.success('Logado com sucesso!')
+
+            Router.push('/home')
+
+        } catch (err) {
+            if(role === 'P'){
+                toast.error('Usuário ou senha inválido!')
+            }else{
+                toast.error('Matrícula inválida!')
+            }
             console.log("Erro ao acessar ", err)
        }
     }

@@ -3,13 +3,20 @@ const { hash, compare } = require('bcryptjs')
 
 async function authenticate(user) {
 
-    if (users.existsUsers(user)) {
-        const usuario = await users.getUserInfo(user.nome)
+    const usuario = await users.getUserInfo(user.nome)
 
-        const passwordMatch = await compare(user.senha, usuario.senha)
-
-        return passwordMatch
+    if (!usuario){
+        return { passwordMatch: false }
     }
+
+    const passwordMatch = await compare(user.senha, usuario.senha)
+
+    let userReturn = {
+        username: usuario.usuario,
+        role: usuario.tipo
+    }
+
+    return { passwordMatch, userReturn }
 
 }
 
@@ -75,8 +82,9 @@ module.exports = {
 
     async auth(req, res, next) {
         const user = req.body
-        if (await authenticate(user)) {
-            res.status(200).send({ "ok": true })
+        let response = await authenticate(user)
+        if (response.passwordMatch) {
+            res.status(200).send({ "ok": true, user: response.userReturn })
         } else {
             res.status(401).send({ "ok": false })
         }
