@@ -37,7 +37,10 @@ export default function Home() {
 
   async function hadleLogin(event) {
     event.preventDefault()
-    await signIn(user, password, optionLoginChecked)
+    let option = loginOptions.filter(e=> {
+      return e.checked === true
+    })[0].id
+    await signIn(user, password, option)
   }
 
   return (

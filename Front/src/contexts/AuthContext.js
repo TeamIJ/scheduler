@@ -8,10 +8,9 @@ export const AuthContext = createContext({})
 
 export function signOut(){
     try{
-        destroyCookie(undefined, '@nextauth.token')
         Router.push('/')
     }catch{
-        console.log('falou!')
+        console.log('erro ao deslogar')
     }
 }
 
@@ -33,8 +32,6 @@ export function AuthProvider ( { children } ) {
                     nome:user, senha:password
                 })
                 
-                console.log(response)
-
                 setUser(user)
             }
 
