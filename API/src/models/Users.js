@@ -67,7 +67,7 @@ module.exports = {
     },
 
     getUserInfo(username){
-        const query = `SELECT usuario, senha, tipo FROM USUARIOS WHERE USUARIO = '${username}'`
+        const query = `SELECT usuario, nome, senha, tipo FROM USUARIOS WHERE USUARIO = '${username}'`
         return new Promise((resolve) => {
             connection.query(query, (err, data) => {
                 if(err) console.error(err)

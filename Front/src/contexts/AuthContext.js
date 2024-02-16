@@ -8,6 +8,7 @@ export const AuthContext = createContext({})
 
 export function signOut(){
     try{
+        sessionStorage.clear()
         Router.push('/')
     }catch{
         console.log('erro ao deslogar')
@@ -27,13 +28,16 @@ export function AuthProvider ( { children } ) {
                 })
                 
                 setUser(response.data.user)
+                localStorage.setItem('user', JSON.stringify(response.data.user))
             }else{
                 const response = await api.post(`/api/scheduler/students/auth/${user}`, {
                     nome:user, senha:password
                 })
                 
-                setUser(user)
+                setUser(response.data.user)
+                localStorage.setItem('user', JSON.stringify(response.data.user))
             }
+
 
             toast.success('Logado com sucesso!')
 

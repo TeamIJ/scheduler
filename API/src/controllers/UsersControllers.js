@@ -12,8 +12,9 @@ async function authenticate(user) {
     const passwordMatch = await compare(user.senha, usuario.senha)
 
     let userReturn = {
-        username: usuario.usuario,
-        role: usuario.tipo
+        user: usuario.usuario,
+        role: usuario.tipo,
+        name: usuario.nome
     }
 
     return { passwordMatch, userReturn }

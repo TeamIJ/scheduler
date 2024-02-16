@@ -5,6 +5,7 @@
     background: var(--light-blue);
     height: 38px;
     width: 100vw;
+    z-index: 1000;
     color: white;
 }
 

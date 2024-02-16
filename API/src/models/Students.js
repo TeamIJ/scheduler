@@ -68,7 +68,7 @@ module.exports = {
     },
 
     getStudentInfo(registry){
-        const query = `SELECT * FROM ALUNOS WHERE MATRICULA = '${registry}'`
+        const query = `SELECT matricula, nome FROM ALUNOS WHERE MATRICULA = '${registry}'`
         return new Promise((resolve) => {
             connection.query(query, (err, data) => {
                 if(err) console.error(err)

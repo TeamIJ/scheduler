@@ -27,13 +27,16 @@
     height: 150px;
     color: white;
     display: flex;
+    border-radius: 3px;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    box-shadow: 4px 2px 23px -18px rgba(0,0,0,0.75);
 }
 
 .buttonMenu span{
-    font-size: 350%;
+    margin-top: 10px;
+    font-size: 110%;
 }
 
 .buttonMenu a{

@@ -7,8 +7,14 @@ module.exports = {
         let { registry } = req.params
         const student = await students.getStudentInfo(registry)
 
+        let studentReturn = {
+            registry: student.matricula,
+            name: student.nome.split(' ')[0],
+            role: 'S'
+        }
+
         if (student) {
-            res.status(200).send({ "ok": true})
+            res.status(200).send({ "ok": true, "user": studentReturn})
         } else {
             res.status(401).send({ "ok": false })
         }
