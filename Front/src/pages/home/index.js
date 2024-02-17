@@ -1,12 +1,10 @@
 import Head from 'next/head'
-import { useContext, useEffect } from "react";
-import Router from 'next/router'
+import { useEffect, useState } from "react";
 import styles from './styles.module.css'
 import { Navbar } from '../../components/ui/Navbar';
 import { ButtonMenu } from '@/components/ui/Button';
 import { CalendarMonth, Person, SchoolOutlined, AutoStoriesOutlined, WatchLaterOutlined, GroupOutlined, AccountCircle, Schema } from '@mui/icons-material';
-
-import { AuthContext } from "../../contexts/AuthContext";
+import { validateSession } from '@/contexts/AuthContext';
 
 const buttons = [
   {
@@ -53,39 +51,51 @@ const buttons = [
   },
 ]
 
+
 export default function Home() {
 
-  const authContext = useContext(AuthContext)
-  let user = authContext.user
+  const [user, setUser] = useState('')
+
   useEffect(() => {
-    console.log(authContext)
+    if(validateSession()){
+      let auth = localStorage.getItem('auth')
+      let authBuffer = Buffer.from(auth, 'base64').toString('ascii')
+      setUser(JSON.parse(authBuffer))
+    }
   }, [])
+
   return (
     <>
-      <Head>
-        <title>Scheduler - Home</title>
-      </Head>
-      <Navbar user={user ? user.name : ''} />
+      {user ?
+        <>
+          <Head>
+            <title>Scheduler - Home</title>
+          </Head>
+          <Navbar user={user.name} />
 
-      <div className={styles.containter}>
-        <div className={styles.menu}>
-          <div className={styles.history}>
-            <h2>Histórico de Agendamentos</h2>
+          <div className={styles.containter}>
+            <div className={styles.menu}>
+              <div className={styles.history}>
+                <h2>Histórico de Agendamentos</h2>
+              </div>
+              <div className={styles.buttonsContainer}>
+                {buttons.map((button) => {
+                  if (button.roles.includes(user.role)) {
+                    return <ButtonMenu key={button.id} color={'blue-main'} content={
+                      <>
+                        {button.icon}
+                        <span key={button.id}>{button.title}</span>
+                      </>
+                    } />
+                  }
+                })}
+              </div>
+            </div>
           </div>
-          <div className={styles.buttonsContainer}>
-            {buttons.map((button) => {
-              if(button.roles.includes(user.role)){
-                return <ButtonMenu color={'blue-main'} content={
-                  <>
-                    {button.icon}
-                    <span key={button.id}>{button.title}</span>
-                  </>
-                } />
-              }
-            })}
-          </div>
-        </div>
-      </div>
+        </>
+
+        : <></>
+      }
     </>
   )
 }

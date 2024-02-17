@@ -10,7 +10,7 @@ export function Navbar({ user, logo, ...rest }){
     return (
         <div className={styles.navbar}>
             <h1>{user}</h1>
-            <Image className={styles.img} src={LogoImg}/>
+            <Image alt='scheduler' className={styles.img} src={LogoImg}/>
             <div className={styles.button}>
                 <ButtonGrid type='button' onClick={() => {signOut()}} content={<LogoutIcon htmlColor='white' fontSize='small' />}/>
             </div>
