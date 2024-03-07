@@ -14,19 +14,20 @@
     display: flex;
     flex-direction: row;
     gap: 10px;
+    align-items: center;
 }
 
 .history{
     display: flex;
     padding: 14px;
     width: 320px;
-    height: 500px;
     background-color: var(--blue);
     opacity: 85%;
     border-radius: 7px;
     box-shadow: 4px 2px 23px -18px rgba(0,0,0,0.75);
     color: white;
     justify-content: center;
+    height: 500px;
 }
 
 .history h2{
@@ -36,6 +37,7 @@
 
 .buttonsContainer{
     display: grid;
+    height: max-content;
     margin-top: 10px;
     gap: 10px;
     grid-template-columns: repeat(3, minmax(200px, 1fr));

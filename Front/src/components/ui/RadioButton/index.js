@@ -1,5 +1,5 @@
 import styles from './styles.module.css'
-import { useState, useE, useEffect } from "react";
+import { useState, useEffect } from "react";
 
 export function RadioButton({ options, func, ...rest }) {
 

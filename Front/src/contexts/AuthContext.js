@@ -16,7 +16,6 @@ export function signOut() {
 
 export function validateSession(){
     let auth = localStorage.getItem('auth')
-    console.log('teste')
     if (auth === null){
         Router.push('/')
         return false

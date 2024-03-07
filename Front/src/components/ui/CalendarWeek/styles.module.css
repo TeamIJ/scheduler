@@ -1,0 +1,108 @@
+.container {
+    color: #eee;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.dayContainer {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  font-size: 1.2rem;
+  letter-spacing: 0.1rem;
+  justify-content: center;
+  align-items: center;
+  border-radius: 4px;
+  margin-top: 25px;
+}
+
+.calendar {
+  display: flex;
+  flex-direction: column;
+  width: 35rem;
+  height: 30.3rem;
+  background-color: var(--gray);
+  box-shadow: 0 0.5rem 3rem rgba(0, 0, 0, 0.1);
+  align-items: center;
+}
+
+.month {
+  display: flex;
+  width: 100%;
+  height: 4rem;
+  background-color:var(--light-blue);
+  justify-content: center;
+  align-items: center;
+  border-radius: 5px;
+}
+
+.weekdays {
+  display: flex;
+  flex-direction: row;
+  width: 95%;
+  height: 4.5rem;
+  align-items: center;
+  color: var(--blue);
+  gap: 8px;
+  border: 5px;
+  margin-top: 160px;
+}
+
+.day {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  display: flex;
+  font-size: 1.2rem;
+  letter-spacing: 0.1rem;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.055);
+  border-radius: 4px;
+  margin-bottom: 5px;
+}
+
+.day span {
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.nameWeek {
+  margin-bottom: 10px;
+  font-size: 15px;
+  font-weight: bold;
+}
+
+.hourContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.hour {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 0.2rem;
+  background-color: rgba(255, 255, 255, 0.52);
+  border-radius: 4px;
+  transition: 0.2s;
+  cursor: pointer;
+}
+
+.hour:hover {
+  background-color: var(--light-blue);
+  color: white;
+  border-radius: 4px;
+}
+
+.hourSelected {
+  display: flex;
+  background-color: var(--light-blue);
+  color: white;
+  border-radius: 4px;
+  flex-wrap: wrap;
+  padding: 0.2rem;
+  transition: 0.2s;
+  cursor: pointer;
+}
