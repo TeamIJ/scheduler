@@ -1,11 +1,15 @@
 .select {
-    width: 100%;
+    width: 25%;
     border-radius: 5px;
     margin-bottom: 1rem; 
     color: black;
     background-color: white;
     border: 1px solid var(--inputs-border-color);
     padding: 1rem;
+    background: url('https://i0.wp.com/meritocracy.is/blog/wp-content/uploads/2019/01/grey-down-arrow-icon-png-1.png?fit=385%2C233&ssl=1') no-repeat right #FFF;
+    -webkit-appearance: none;
+    background-position-x: 95%;
+    background-size: 5%;
     cursor: pointer;
 }
 
@@ -23,4 +27,5 @@
 
 .select option{
     color: black;
+    border: none;
 }

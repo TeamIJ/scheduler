@@ -1,6 +1,6 @@
 .input{
     margin-bottom: 1rem; 
-    height: 20px;
+    height: 54px;
     border: 0;
     border-radius: 5px;
     background-color: white;
@@ -22,5 +22,10 @@
     color: black;
     padding: 1rem;
     border: 1px solid var(--inputs-border-color);
+}
+
+.label {
+    display: block;
+    margin-bottom: 2px;
 }
 

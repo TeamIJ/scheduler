@@ -11,10 +11,9 @@
   width: 100%;
   font-size: 1.2rem;
   letter-spacing: 0.1rem;
-  justify-content: center;
   align-items: center;
   border-radius: 4px;
-  margin-top: 25px;
+  margin-top: 10px;
 }
 
 .calendar {
@@ -41,12 +40,11 @@
   display: flex;
   flex-direction: row;
   width: 95%;
-  height: 4.5rem;
-  align-items: center;
+  height: 100%;
+  justify-content: start;
   color: var(--blue);
   gap: 8px;
   border: 5px;
-  margin-top: 160px;
 }
 
 .day {
@@ -106,3 +104,94 @@
   transition: 0.2s;
   cursor: pointer;
 }
+
+.hourDisabled{
+  display: flex;
+  background-color: var(--gray);
+  color: var(--dark-gray);
+  border-radius: 4px;
+  flex-wrap: wrap;
+  padding: 0.2rem;
+  transition: 0.2s;
+  cursor: not-allowed;
+}
+
+
+@media (max-width: 1024px) {
+  .calendar{
+    width: 50vw;
+    height: 100%;
+  }
+
+  .weekdays {
+    width: 95%;
+    height: 100%;
+    gap: 5px;
+  }
+
+
+  .day p {
+    font-size: 75%;
+  }
+
+  .day span {
+    font-size: 70%;
+  }
+
+  .hour {
+    font-size: 75%;
+  }
+
+  .hourSelected {
+    font-size: 75%;
+  }
+
+  .hourDisabled {
+    font-size: 75%;
+  }
+
+}
+
+@media (max-width: 720px) {
+  .calendar{
+    width: 50vw;
+    height: 100%;
+  }
+
+  .dayContainer{
+    font-size: 90%;
+  }
+
+  .nameWeek {
+    font-size: 60%;
+  }
+
+  .weekdays {
+    width: 95%;
+    height: 100%;
+  }
+
+  .day p {
+    font-size: 65%;
+  }
+
+  .day span {
+    font-size: 65%;
+  }
+  
+  .hour {
+    font-size: 65%;
+  }
+
+  .hourSelected {
+    font-size: 65%;
+  }
+
+  .hourDisabled {
+    font-size: 65%;
+  }
+
+}
+
+
+

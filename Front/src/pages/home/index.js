@@ -1,5 +1,6 @@
 import Head from 'next/head'
 import { useEffect, useState } from "react";
+import Router from 'next/router'
 import styles from './styles.module.css'
 import { Navbar } from '../../components/ui/Navbar';
 import { ButtonMenu } from '@/components/ui/Button';
@@ -12,7 +13,7 @@ const buttons = [
     title: 'Agendamentos',
     id: 'agendamentos',
     icon: <CalendarMonth fontSize='large' />,
-    roles: ['A', 'P', 'S']
+    roles: ['A', 'P', 'S'],
   },
   {
     title: 'Horários',
@@ -64,6 +65,10 @@ export default function Home() {
     }
   }, [])
 
+  function handleClick(rota){
+    Router.push(`/${rota}`)
+  }
+
   return (
     <>
       {user ?
@@ -75,14 +80,11 @@ export default function Home() {
 
           <div className={styles.containter}>
             <div className={styles.menu}>
-              <div className={styles.history}>
-                <h2>Histórico de Agendamentos</h2>
-              </div>
               { user.role !== 'S' ?
                 <div className={styles.buttonsContainer}>
                   {buttons.map((button) => {
                     if (button.roles.includes(user.role)) {
-                      return <ButtonMenu key={button.id} color={'blue-main'} content={
+                      return <ButtonMenu key={button.id} color={'blue-main'} onClick={() => handleClick(button.id)} content={
                         <>
                           {button.icon}
                           <span key={button.id}>{button.title}</span>
@@ -93,6 +95,9 @@ export default function Home() {
                 </div>
                 : 
                 <>
+                  <div className={styles.history}>
+                    <h2>Histórico de Agendamentos</h2>
+                  </div>
                   <CalendarWeek/>
                 </>
               }

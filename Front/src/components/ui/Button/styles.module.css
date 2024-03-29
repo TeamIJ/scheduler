@@ -1,10 +1,18 @@
 .button {
+    display: flex;
     padding: 14px;
-    height: 45px;
+    height: 10%;
+    width: 55%;
     border: 0;
+    border-radius: 5px;
     color: white;
     box-shadow: 4px 2px 23px -18px rgba(0,0,0,0.75);
+    margin-top: 10px;
+    font-size: 80%;
+    align-items: center;
+    justify-content: center;
 }
+
 
 .button:hover{
     background-color: white;
