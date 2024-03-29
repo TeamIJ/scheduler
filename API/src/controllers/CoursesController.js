@@ -14,7 +14,7 @@ module.exports = {
     },
     
     findAll(req, res, next){
-        courses.listAllModules(req, res)
+        courses.listAllCourses(req, res)
     },
     
     update(req, res, next){

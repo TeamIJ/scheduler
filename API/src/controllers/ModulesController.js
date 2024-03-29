@@ -20,6 +20,13 @@ module.exports = {
 
         modules.findById(req, res, id)
     },
+
+        
+    findByCourseId(req, res, next){
+        const { id } = req.params
+
+        modules.findByCourseId(req, res, id)
+    },
     
     findAll(req, res, next){
         modules.listAllModules(req, res)

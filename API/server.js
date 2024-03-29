@@ -25,6 +25,7 @@ require("./src/routes/SchedulesRoutes.js")(app)
 require("./src/routes/StudentsRoutes.js")(app)
 require("./src/routes/UsersRoutes.js")(app)
 require("./src/routes/TimetablesRoutes.js")(app)
+require("./src/routes/DaysRoutes.js")(app)
 
 // set port, listen for requests
 const PORT = 8080

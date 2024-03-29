@@ -11,6 +11,9 @@ module.exports = app => {
   
     // Retrieve a single modules with id
     router.get("/modules/:id", module.findById)
+
+    // Retrieve a single modules with id
+    router.get("/modules/course/:id", module.findByCourseId)
   
     // Update a modules with id
     router.put("/modules/:id", module.update)

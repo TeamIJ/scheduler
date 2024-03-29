@@ -44,6 +44,19 @@ module.exports = {
         })
     },
 
+    findByCourseId(_, res, id){
+        const query = 'SELECT * FROM MODULOS WHERE ID_CURSO = ?'
+        connection.query(query, id, (err, data) => {
+            if (err) console.error(err)
+
+            if (!hasData(data)){
+                res.send([])
+            } else {
+                res.json(data)
+            }
+        })
+    },
+
     update(_, res, id, module){
         const query = 'UPDATE MODULOS SET ID_CURSO = ?, NOME_MODULO = ?, QTD_AULAS = ? WHERE ID_MODULO = ?'
         connection.query(query, [module.id_curso, module.nome_modulo, module.qtd_aulas, id], (err, _) => {

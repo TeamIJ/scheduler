@@ -27,6 +27,11 @@ module.exports = {
         professor.findByIdOrName(req, res, id, nome)
     },
 
+    findProfessorByCourseId(req, res, next) {
+        let id = req.params.id
+        professor.findProfessorByCourseId(req, res, id)
+    },
+
     async update(req, res, next) {
         const prof = req.body
         let pk = req.query.cpf

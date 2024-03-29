@@ -47,6 +47,20 @@ module.exports = {
         })
     },
 
+    findProfessorByCourseId(_, res, id){
+        const query = 'SELECT * FROM PROFESSORES WHERE ID_CURSO = ?'
+
+        connection.query(query, id, (err, data) => {
+            if (err) console.error(err)
+
+            if (!hasData(data)) {
+                res.send([]) 
+            } else {
+                res.json(data)
+            }
+        })
+    },
+
     update(_, res, pk, professor){
         let query = `UPDATE PROFESSORES SET ID_CURSO = '${professor.id_curso}', NOME = '${professor.nome}', STATUS_PROF = '${professor.status}' WHERE `
 
