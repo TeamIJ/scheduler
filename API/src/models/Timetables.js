@@ -29,9 +29,9 @@ module.exports = {
         })
     },
 
-    totalScheduled(time){
+    totalScheduled(weekDay, time){
         return new Promise((resolve) => {
-            const query = `SELECT QTD_AGENDAMENTOS qtd FROM HORARIOS WHERE HORARIO = '${time}'`
+            const query = `SELECT QTD_AGENDAMENTOS_${weekDay} qtd FROM HORARIOS WHERE HORARIO = '${time}'`
             connection.query(query, async (err, data) => {
                 if (err) console.error(err)
                 resolve(data[0].qtd)
@@ -39,9 +39,10 @@ module.exports = {
         })
     },
 
-    updateTotalScheduled(time, method){
-        const operation = method === 'I' ? 'QTD_AGENDAMENTOS + 1' : 'QTD_AGENDAMENTOS - 1'
-        const query = `UPDATE HORARIOS SET QTD_AGENDAMENTOS = ${operation} WHERE HORARIO = '${time}'`
+    updateTotalScheduled(weekDay, time, method){
+        let column = `QTD_AGENDAMENTOS_${weekDay}`
+        const operation = method === 'I' ? `${column} + 1` : `${column} - 1`
+        const query = `UPDATE HORARIOS SET ${column} = ${operation} WHERE HORARIO = '${time}'`
         connection.query(query, (err, _) => {
             if (err) console.error(err)
         })

@@ -21,11 +21,11 @@ module.exports = {
             res.status(400).send({ message: 'Professor(a) indisponível para agendamentos!' })
             return
         }
-        if (await totalScheduled(agendamento.horario) === 10) {
+        if (await totalScheduled(agendamento.diaSemana, agendamento.horario) === 10) {
             res.status(400).send({ message: 'Limite de agendamentos para o horário atigindo!' })
             return
         }
-        updateTotalScheduled(agendamento.horario, 'I')
+        updateTotalScheduled(agendamento.diaSemana, agendamento.horario, 'I')
         schedule.create(req, res, agendamento)
     },
 
@@ -38,10 +38,10 @@ module.exports = {
         const { id } = req.params
         const consultaAgenda = await schedule.getScheduleInfo(id)
         if(agendamento.statusAgenda === 'C'){
-            updateTotalScheduled(agendamento.horario, 'A')
+            updateTotalScheduled(agendamento.diaSemana, agendamento.horario, 'A')
         }else if (agendamento.statusAgenda === 'A' && agendamento.horario !== consultaAgenda.horario){
-            updateTotalScheduled(consultaAgenda.horario, 'A')
-            updateTotalScheduled(agendamento.horario, 'I')
+            updateTotalScheduled(agendamento.diaSemana, consultaAgenda.horario, 'A')
+            updateTotalScheduled(agendamento.diaSemana, agendamento.horario, 'I')
         }
         schedule.update(req, res, agendamento, id)
     },

@@ -174,7 +174,7 @@ module.exports = {
     existDuplicateSchedule (agendamento){
         return new Promise((resolve) => {
             const query = `SELECT COUNT(*) count FROM AGENDAMENTOS WHERE MATRICULA = '${agendamento.matricula}' `+
-                        `AND STATUS_AGENDA = 'A' AND ID_CURSO = ${agendamento.idCurso} AND TIPO_AGENDAMENTO = '${agendamento.tipoAgendamento}' AND ID_MODULO = ${agendamento.idModulo} AND (AULA = ${agendamento.aula} OR HORARIO = '${agendamento.horario}')`
+                        `AND STATUS_AGENDA = 'A' AND ID_CURSO = ${agendamento.idCurso} AND TIPO_AGENDAMENTO = '${agendamento.tipoAgendamento}' AND ID_MODULO = '${agendamento.idModulo}' AND (AULA = ${agendamento.aula} OR HORARIO = '${agendamento.horario}')`
             connection.query(query, async (err, data) => {
                 if (err) console.error(err)
                 if (data[0].count === 0) {
