@@ -84,11 +84,12 @@ async function getHours() {
 getDayOfWeek()
 getHours()
 
-export function CalendarWeek({ setDateHourSelected, ...rest }) {
+export function CalendarWeek({ setDateHourSelected, setDiaSemanaSelecionado, ...rest }) {
 
   const [hourSelected, setHourSelected] = useState()
   const [domLoaded, setDomLoaded] = useState(false)
   function handleTimeSelect(e) {
+    setDiaSemanaSelecionado(days[e.target.id.split('-')[0]].toUpperCase())
     setDateHourSelected(e.target.id)
     setHourSelected(e.target.id)
   }
@@ -115,7 +116,7 @@ export function CalendarWeek({ setDateHourSelected, ...rest }) {
                   <div className={styles.hourContainer}>
                     {(day.week !== 0 && day.week !== 6) &&
                       day.hours.map((hour) => {
-                        let dayHourId = `${replicateZeros(day.day, 2)}-${replicateZeros(day.month + 1, 2)}-${day.year}-H${hour.substring(0, 2)}`
+                        let dayHourId = `${day.week}-${replicateZeros(day.day, 2)}-${replicateZeros(day.month + 1, 2)}-${day.year}-H${hour.substring(0, 2)}`
                         return (
                             <div key={dayHourId}  id={dayHourId} onClick={(e) => handleTimeSelect(e)} className={!day.available ? styles.hourDisabled : 
                               hourSelected === dayHourId ? styles.hourSelected : styles.hour}
