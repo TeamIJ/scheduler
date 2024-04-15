@@ -1,6 +1,5 @@
 import Head from "next/head"
-import Router from 'next/router'
-import React from "react"
+import React, { useReducer } from "react"
 import { useState, useContext, useEffect } from "react"
 import { validateSession } from '@/contexts/AuthContext'
 import { Navbar } from '@/components/ui/Navbar'
@@ -16,7 +15,6 @@ import {
 import EditIcon from '@mui/icons-material/Edit'
 import SearchIcon from '@mui/icons-material/Search'
 import AddIcon from '@mui/icons-material/Add'
-import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import { replicateZeros } from "@/services/utils"
 
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
@@ -24,6 +22,33 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 
 const letrasDiasSemana = ['D', 'S', 'T', 'Q', 'Q', 'S', 'S']
+
+let agendamentos = []
+async function getListaAgendamentos(requestURL) {
+    const resAgendamento = await api.get(requestURL ? requestURL : '/api/scheduler/schedules')
+    console.log(resAgendamento)
+    if (resAgendamento.data.length !== 0) {
+        resAgendamento.data.forEach(async (agendamento) => {
+            const resProf = await api.get(`/api/scheduler/professor?id_prof=${agendamento.ID_PROF}`)
+            const resAluno = await api.get(`/api/scheduler/students?registry=${agendamento.MATRICULA}`)
+            const resCurso = await api.get(`/api/scheduler/courses/${agendamento.ID_CURSO}`)
+            const resModulo = await api.get(`/api/scheduler/module/course?id_modulo=${agendamento.ID_MODULO}&id_curso=${agendamento.ID_CURSO}`)
+            agendamentos.push({
+                idAgenda: agendamento.ID_AGENDA,
+                aluno: resAluno.data[0].NOME,
+                professor: resProf.data[0].NOME,
+                curso: resCurso.data[0].NOME_CURSO,
+                modulo: resModulo.data[0].NOME_MODULO,
+                aula: agendamento.AULA,
+                data: formataData(agendamento.DATA_AULA),
+                horario: agendamento.HORARIO,
+                tipo: agendamento.TIPO_AGENDAMENTO === 'R' ? "Reposição" : "Treinamento",
+                alterar: <ButtonGrid content={<EditIcon sx={{ width: '20px', height: '20px' }}></EditIcon>} />
+            })
+        })
+    }
+
+}
 
 function formataData(dataAtinga) {
     let data = new Date(dataAtinga)
@@ -63,16 +88,17 @@ let nomeAluno
 let profSelected
 let data
 
-export default function Home({ agendamentos }) {
+export default function Home() {
+
+    const [reducerValue, forceUpdate] = useReducer(x => x + 1, 0)
 
     const [domLoaded, setDomLoaded] = useState(false)
     const [user, setUser] = useState('')
     const [showModal, setShowModal] = useState(false)
-    const [modoModal, setModoModal] = useState('I')
     const [listaAgendamentos, setListaAgendamentos] = useState([])
     const [profOptions, setProfOptions] = useState([])
     const [page, setPage] = useState(0)
-    const [rowsPerPage, setRowsPerPage] = useState(8)
+    const [rowsPerPage, setRowsPerPage] = useState(10)
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage)
@@ -90,22 +116,6 @@ export default function Home({ agendamentos }) {
         { id: 'alterar', width: 20 }
     ]
 
-    function formataListaAgendamentos(agendamentos) {
-        agendamentos.forEach(agendamento => {
-            let data = agendamento.data
-            let horario = agendamento.horario
-            let tipo = agendamento.tipo
-            agendamento.data = formataData(data)
-            agendamento.horario = horario.substring(0, 5)
-            agendamento.tipo = tipo === 'R' ? 'Reposição' : "Treinamento"
-            agendamento.alterar = <ButtonGrid onClick={() => {
-                setShowModal(true)
-                setModoModal('A')
-            }} content={<EditIcon sx={{ width: '20px', height: '20px' }}></EditIcon>} />
-        })
-        return agendamentos
-    }
-
     useEffect(() => {
         if (validateSession()) {
             let auth = localStorage.getItem('auth')
@@ -113,8 +123,9 @@ export default function Home({ agendamentos }) {
             setUser(JSON.parse(authBuffer))
         }
         preencheProfessores()
-        setListaAgendamentos(formataListaAgendamentos(agendamentos))
-    }, [])
+        getListaAgendamentos()
+        setListaAgendamentos(agendamentos)
+    }, [reducerValue])
 
     async function preencheProfessores() {
         let professores = await getProfessores()
@@ -176,8 +187,8 @@ export default function Home({ agendamentos }) {
             temFiltro = true
         }
         let requestURL = `/api/scheduler/schedules/search${temFiltro ? '?' + filtro : ''}`
-        const resAgendamento = await api.get(requestURL)
-        setListaAgendamentos(formataListaAgendamentos(resAgendamento.data))
+        getListaAgendamentos(requestURL)
+        forceUpdate()
     }
 
     return (
@@ -187,9 +198,6 @@ export default function Home({ agendamentos }) {
             <div className={styles.container}>
                 <div className={styles.pesquisaContainer}>
                     <form className={styles.filtrosContainer} onSubmit={(e) => pesquisaAgendamentos(e)} >
-                        <div className={styles.voltar}>
-                            <ButtonGrid onClick={() => Router.back()} content={<ArrowBackIosIcon />} />
-                        </div>
                         <TextField className={styles.matricula} sx={{ width: '100%' }}
                             id="matriculaInput"
                             onChange={handleMatriculaChange}
@@ -236,10 +244,7 @@ export default function Home({ agendamentos }) {
 
                         <div className={styles.botoes}>
                             <ButtonGrid content={<SearchIcon></SearchIcon>} />
-                            <ButtonGrid type='button' onClick={() => {
-                                setShowModal(true)
-                                setModoModal('I')
-                            }} content={<AddIcon></AddIcon>} />
+                            <ButtonGrid type='button' onClick={() => setShowModal(!showModal)} content={<AddIcon></AddIcon>} />
                         </div>
                     </form>
                     <TableContainer sx={{
@@ -261,7 +266,7 @@ export default function Home({ agendamentos }) {
                             </TableHead>
                             <TableBody>
                                 {domLoaded &&
-                                    listaAgendamentos.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
+                                    agendamentos.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
                                         return (
                                             <TableRow hover tabIndex={-1} key={row.idAgenda}>
                                                 {
@@ -293,25 +298,8 @@ export default function Home({ agendamentos }) {
             </div>
 
             {showModal &&
-                <ModalAgendamento modoModal={modoModal} pesquisaAgendamentos={pesquisaAgendamentos} setShowModal={setShowModal} />
+                <ModalAgendamento setShowModal={setShowModal} />
             }
         </>
     )
-}
-
-export const getListaAgendamentos = async () => {
-    const resAgendamento = await api.get('/api/scheduler/schedules/search')
-
-    return resAgendamento.data
-}
-
-export const getServerSideProps = async () => {
-
-    const listaAgendamentos = await getListaAgendamentos()
-
-    return {
-        props: {
-            agendamentos: listaAgendamentos
-        }
-    }
 }

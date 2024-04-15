@@ -1,4 +1,5 @@
 import styles from './styles.module.css'
+import Router from 'next/router'
 import { ButtonGrid  } from '../Button'
 import LogoutIcon from '@mui/icons-material/Logout';
 import Image from 'next/image';
@@ -10,9 +11,9 @@ export function Navbar({ user, logo, ...rest }){
     return (
         <div className={styles.navbar}>
             <h1>{user}</h1>
-            <Image alt='scheduler' className={styles.img} src={LogoImg}/>
+            <Image alt='scheduler' onClick={() => Router.push('/home')} className={styles.img} src={LogoImg}/>
             <div className={styles.button}>
-                <ButtonGrid type='button' onClick={() => {signOut()}} content={<LogoutIcon htmlColor='white' fontSize='small' />}/>
+                <ButtonGrid type='button' onClick={() => {signOut()}} content={<LogoutIcon htmlColor='white' />}/>
             </div>
         </div>
     )

@@ -3,15 +3,16 @@
     grid-template-columns: 1fr 4fr 1fr;
     align-items: center;
     background: var(--light-blue);
-    height: 38px;
+    height: 55px;
     width: 100vw;
+    max-width:100%;
     z-index: 1000;
     color: white;
 }
 
 .navbar h1 {
     margin: 10px;
-    font-size: 15px;
+    font-size: 20px;
 }
 
 .logo {
@@ -23,12 +24,14 @@
     display: flex;
     align-items: center;
     justify-content: end;
+    margin-right: 10px;
 }
 
 .img {
     display: flex;
-    max-width:90px;
-    max-height:90px;
+    max-width:110px;
+    max-height:110px;
+    cursor: pointer;
     width: auto;
     height: auto;
     justify-self: center;

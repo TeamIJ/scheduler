@@ -109,7 +109,7 @@ function formataHora(data) {
     return ''
 }
 
-export default function ModalAgendamento({ setShowModal }) {
+export default function ModalAgendamento({ modoModal, pesquisaAgendamentos, setShowModal }) {
 
     const [user, setUser] = useState('')
     const [profSelected, setProfSelected] = useState('')
@@ -134,10 +134,6 @@ export default function ModalAgendamento({ setShowModal }) {
 
     function handleMatriculaChange(e) {
         setMatricula(e.target.value)
-    }
-
-    function handleNomeAlunoChange(e) {
-        setNomeAluno(e.target.value)
     }
 
     async function handleCursoChange(e) {
@@ -204,6 +200,7 @@ export default function ModalAgendamento({ setShowModal }) {
                 toast.error(err.response.data.message)
             }
         }
+        pesquisaAgendamentos(e)
     }
 
     return (
@@ -229,7 +226,6 @@ export default function ModalAgendamento({ setShowModal }) {
 
                     <TextField className={styles.nomeAluno} sx={{ width: '100%' }}
                         id="nomeAlunoInput"
-                        onChange={handleNomeAlunoChange}
                         label="Nome do aluno"
                         value={nomeAluno}
                         disabled
@@ -342,7 +338,7 @@ export default function ModalAgendamento({ setShowModal }) {
 
                     <div className={styles.botoes}>
                         <Button type='submit' color='green' content={
-                            <span>Agendar</span>
+                            <span>{modoModal === 'I' ? 'Agendar' : 'Alterar'}</span>
                         } />
                         <Button color='red' content={
                             <span>Cancelar</span>

@@ -1,6 +1,7 @@
 import styles from "./styles.module.css";
 import { api } from "@/services/apiClient";
 import { useState, useEffect } from "react";
+import { replicateZeros } from "@/services/utils";
 
 const days = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb']
 const months = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']
@@ -8,11 +9,6 @@ const months = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Jul
 let date = new Date()
 const calendar = []
 
-function replicateZeros(num, size) {
-  num = num.toString()
-  while (num.length < size) num = "0" + num
-  return num
-}
 
 async function getDayOfWeek() {
   let dayOfWeek = date.getDay()
