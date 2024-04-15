@@ -7,13 +7,13 @@ module.exports = {
     async create(req, res, next) {
         const agendamento = req.body
 
-        if (await teacherAvailableToScheduling(agendamento)){
-            res.status(400).send({message:'Professor(a) já possui agendamento!'})
+        if (await teacherAvailableToScheduling(agendamento)) {
+            res.status(400).send({ message: 'Professor(a) já possui agendamento!' })
             return
         }
 
         if (await existDuplicateSchedule(agendamento)) {
-            res.status(400).send({message:'Aluno(a) já cadastrado(a) para aula!'})
+            res.status(400).send({ message: 'Aluno(a) já cadastrado(a) para aula!' })
             return
         }
 
@@ -37,9 +37,9 @@ module.exports = {
         const agendamento = req.body
         const { id } = req.params
         const consultaAgenda = await schedule.getScheduleInfo(id)
-        if(agendamento.statusAgenda === 'C'){
+        if (agendamento.statusAgenda === 'C') {
             updateTotalScheduled(agendamento.diaSemana, agendamento.horario, 'A')
-        }else if (agendamento.statusAgenda === 'A' && agendamento.horario !== consultaAgenda.horario){
+        } else if (agendamento.statusAgenda === 'A' && agendamento.horario !== consultaAgenda.horario) {
             updateTotalScheduled(agendamento.diaSemana, consultaAgenda.horario, 'A')
             updateTotalScheduled(agendamento.diaSemana, agendamento.horario, 'I')
         }
@@ -75,6 +75,14 @@ module.exports = {
         } else {
             schedule.findAll(req, res)
         }
+    },
+
+    findBySearchFilters(req, res, next) {
+            let registry = req.query.matricula
+            let student = req.query.aluno
+            let professor = req.query.id_prof
+            let date = req.query.data
+            schedule.findBySearchFilters(req, res, registry, student, professor, date)
     }
 
 }

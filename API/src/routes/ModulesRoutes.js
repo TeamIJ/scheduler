@@ -1,25 +1,25 @@
 module.exports = app => {
-    const module = require("../controllers/ModulesController.js")
+    const modules = require("../controllers/ModulesController.js")
   
     var router = require("express").Router()
   
     // Create a new courses
-    router.post("/modules", module.create)
+    router.post("/modules", modules.create)
   
     // Retrieve all modules
-    router.get("/modules", module.findAll)
+    router.get("/modules", modules.findAll)
   
     // Retrieve a single modules with id
-    router.get("/modules/:id", module.findById)
+    router.get("/modules/:id", modules.findById)
 
-    // Retrieve a single modules with id
-    router.get("/modules/course/:id", module.findByCourseId)
+    // Retrieve list of modules by course id
+    router.get("/modules/course/:id", modules.findByModuleCourseId)
   
     // Update a modules with id
-    router.put("/modules/:id", module.update)
+    router.put("/modules/:id", modules.update)
   
     // Delete a modules with id
-    router.delete("/modules/:id", module.delete)
+    router.delete("/modules/:id", modules.delete)
    
     app.use('/api/scheduler/', router)
   };

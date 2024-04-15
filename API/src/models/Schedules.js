@@ -79,6 +79,43 @@ module.exports = {
         })
     },
 
+    findBySearchFilters(req, res, registry, student, professor, date) {
+        let query = 
+        `SELECT A.ID_AGENDA AS 4id, AL.NOME AS aluno, P.NOME AS professor, C.NOME_CURSO AS curso, M.NOME_MODULO AS modulo,
+         A.AULA AS aula, A.DATA_AULA AS data, A.HORARIO AS horario, A.TIPO_AGENDAMENTO AS tipo
+         FROM AGENDAMENTOS A 
+         INNER JOIN ALUNOS AL ON A.MATRICULA = AL.MATRICULA 
+         INNER JOIN CURSOS C ON C.ID_CURSO = A.ID_CURSO
+         INNER JOIN MODULOS M ON M.ID_CURSO = C.ID_CURSO AND M.ID_MODULO = A.ID_MODULO
+         INNER JOIN PROFESSORES P ON A.ID_PROF = P.ID_PROF AND P.ID_CURSO = C.ID_CURSO
+         WHERE 1=1 AND A.STATUS_AGENDA = 'A' `
+
+        if(registry){
+            query += ` AND A.MATRICULA LIKE '${registry}%' `
+        }
+        if(student){
+            query += ` AND AL.NOME LIKE '${student}%' `
+        }
+        if(professor){
+            query += ` AND P.ID_PROF = ${professor} `
+        }
+        if(date){
+            query += ` AND A.DATA_AULA = '${date}' `
+        }
+
+        query += ' ORDER BY DATA_AULA, HORARIO '
+
+        connection.query(query, (err, data) => {
+            if (err) console.error(err)
+
+            if (!hasData(data)) {
+                res.send({ message: 'Não existe agendamento' })
+            } else {
+                res.json(data)
+            }
+        })
+    },
+
     findByDate(req, res, data, hora) {
         let query = `SELECT * FROM AGENDAMENTOS WHERE 1=1 `
         let filter = []

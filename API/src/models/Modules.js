@@ -44,9 +44,9 @@ module.exports = {
         })
     },
 
-    findByCourseId(_, res, id){
+    findByModuleCourseId(_, res, idCurso){
         const query = 'SELECT * FROM MODULOS WHERE ID_CURSO = ?'
-        connection.query(query, id, (err, data) => {
+        connection.query(query, [idCurso], (err, data) => {
             if (err) console.error(err)
 
             if (!hasData(data)){

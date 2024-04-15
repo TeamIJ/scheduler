@@ -22,10 +22,9 @@ module.exports = {
     },
 
         
-    findByCourseId(req, res, next){
-        const { id } = req.params
-
-        modules.findByCourseId(req, res, id)
+    findByModuleCourseId(req, res, next){
+        const { id } = req.params 
+        modules.findByModuleCourseId(req, res, id)
     },
     
     findAll(req, res, next){
