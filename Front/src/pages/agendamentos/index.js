@@ -1,15 +1,14 @@
-import Head from "next/head"
 import Router from 'next/router'
 import React from "react"
-import { useState, useContext, useEffect } from "react"
+import { useState, useEffect } from "react"
 import { validateSession } from '@/contexts/AuthContext'
 import { Navbar } from '@/components/ui/Navbar'
 import styles from './styles.module.css'
-import { Button, ButtonGrid } from "@/components/ui/Button"
+import { ButtonGrid } from "@/components/ui/Button"
 import { api } from "@/services/apiClient"
 import ModalAgendamento from "./modal"
 import {
-    Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow,
+    Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
     FormControl, InputLabel, MenuItem, Select,
     TextField
 } from '@mui/material'
@@ -22,6 +21,7 @@ import { replicateZeros } from "@/services/utils"
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
+import { Pagination } from 'antd'
 
 const letrasDiasSemana = ['D', 'S', 'T', 'Q', 'Q', 'S', 'S']
 
@@ -36,6 +36,25 @@ function formataData(dataAtinga) {
 function formataDataSQL(dia, mes, ano) {
     return ano + '-' + replicateZeros(mes + 1, 2) + '-' + replicateZeros(dia, 2)
 }
+
+let statusOptions = [
+    {
+    "char": "T",
+    "label": "Todos"
+    },
+    {
+    "char": "A",
+    "label": "Agendado(s)"
+    },
+    {
+    "char": "F",
+    "label": "Finalizado(s)"
+    },
+    {
+    "char": "C",
+    "label": "Cancelado(s)"
+    },
+]
 
 async function getProfessores() {
     const response = await api.get(`/api/scheduler/professor/`)
@@ -72,11 +91,9 @@ export default function Home({ agendamentos }) {
     const [listaAgendamentos, setListaAgendamentos] = useState([])
     const [profOptions, setProfOptions] = useState([])
     const [page, setPage] = useState(0)
-    const [rowsPerPage, setRowsPerPage] = useState(8)
-
-    const handleChangePage = (event, newPage) => {
-        setPage(newPage)
-    }
+    const [rowsPerPage, setRowsPerPage] = useState(11)
+    const [preencheAgendamento, setPreencheAgendamento] = useState({})
+    const [statusSelected, setStatusSelected] = useState("T")
 
     const columns = [
         { id: 'professor', label: 'Professor', minWidth: 170 },
@@ -86,22 +103,26 @@ export default function Home({ agendamentos }) {
         { id: 'aula', label: 'Aula', minWidth: 50 },
         { id: 'data', label: 'Data', minWidth: 100 },
         { id: 'horario', label: 'Horário', minWidth: 100 },
-        { id: 'tipo', label: 'Tipo', minWidth: 100 },
+        { id: 'descricaoTipo', label: 'Tipo', minWidth: 100 },
+        { id: 'statusDescricao', label: 'Status', minWidth: 100},
         { id: 'alterar', width: 20 }
     ]
 
     function formataListaAgendamentos(agendamentos) {
-        agendamentos.forEach(agendamento => {
-            let data = agendamento.data
-            let horario = agendamento.horario
-            let tipo = agendamento.tipo
-            agendamento.data = formataData(data)
-            agendamento.horario = horario.substring(0, 5)
-            agendamento.tipo = tipo === 'R' ? 'Reposição' : "Treinamento"
-            agendamento.alterar = <ButtonGrid onClick={() => {
+        agendamentos.forEach(formataAgendamento => {
+            let data = formataAgendamento.data
+            let horario = formataAgendamento.horario
+            let descricaoTipo = formataAgendamento.tipo === 'R' ? 'Reposição' : "Treinamento"
+            let descricaoStatus = formataAgendamento.status === 'A' ? 'Agendado' : formataAgendamento.status === 'C' ? 'Cancelado' : 'Finalizado'
+            formataAgendamento.data = formataData(data)
+            formataAgendamento.horario = horario.substring(0, 5)
+            formataAgendamento.descricaoTipo = descricaoTipo
+            formataAgendamento.statusDescricao = descricaoStatus
+            formataAgendamento.alterar = formataAgendamento.status === 'A' ? <ButtonGrid onClick={() => {
                 setShowModal(true)
                 setModoModal('A')
-            }} content={<EditIcon sx={{ width: '20px', height: '20px' }}></EditIcon>} />
+                setPreencheAgendamento(formataAgendamento)
+            }} content={<EditIcon sx={{ width: '20px', height: '20px' }}></EditIcon>} /> : <></>
         })
         return agendamentos
     }
@@ -135,6 +156,10 @@ export default function Home({ agendamentos }) {
 
     function handleProfChange(e) {
         profSelected = e.target.value
+    }
+
+    function handleStatusChange(e) {
+        setStatusSelected(e.target.value)
     }
 
     function handleDataChange(e) {
@@ -175,9 +200,17 @@ export default function Home({ agendamentos }) {
             filtro += `data=${data}`
             temFiltro = true
         }
+        
+        if (temFiltro) {
+            filtro += '&'
+        }
+        filtro += `status=${statusSelected}`
+        temFiltro = true
+        
         let requestURL = `/api/scheduler/schedules/search${temFiltro ? '?' + filtro : ''}`
         const resAgendamento = await api.get(requestURL)
         setListaAgendamentos(formataListaAgendamentos(resAgendamento.data))
+        setPage(0)
     }
 
     return (
@@ -186,7 +219,11 @@ export default function Home({ agendamentos }) {
 
             <div className={styles.container}>
                 <div className={styles.pesquisaContainer}>
-                    <form className={styles.filtrosContainer} onSubmit={(e) => pesquisaAgendamentos(e)} >
+                    <form className={styles.filtrosContainer} onSubmit={(e) => pesquisaAgendamentos(e)} onKeyDown={(e) =>{
+                        if(e.key === "Enter"){
+                            pesquisaAgendamentos(e)
+                        }
+                    }}>
                         <div className={styles.voltar}>
                             <ButtonGrid onClick={() => Router.back()} content={<ArrowBackIosIcon />} />
                         </div>
@@ -234,6 +271,20 @@ export default function Home({ agendamentos }) {
                             />
                         </LocalizationProvider>
 
+                        <FormControl className={styles.status} sx={{ width: '100%' }}>
+                            <InputLabel shrink htmlFor="statusOptionsSelect">
+                                Status
+                            </InputLabel>
+                            <Select displayEmpty sx={{ width: '100%' }} label="Status" id="statusOptionsSelect"
+                                value={statusSelected} onChange={handleStatusChange}>
+                                {statusOptions.map((status) => {
+                                    return (
+                                        <MenuItem key={status.char} value={status.char}>{status.label}</MenuItem>
+                                    )
+                                })}
+                            </Select>
+                        </FormControl>
+
                         <div className={styles.botoes}>
                             <ButtonGrid content={<SearchIcon></SearchIcon>} />
                             <ButtonGrid type='button' onClick={() => {
@@ -244,7 +295,7 @@ export default function Home({ agendamentos }) {
                     </form>
                     <TableContainer sx={{
                         height: '100%', maxHeight: '100%', width: '95%', backgroundColor: 'white',
-                        boxShadow: '4px 2px 23px -18px rgba(0,0,0,0.75)', borderRadius: '5px'
+                        boxShadow: '4px 2px 23px -18px rgba(0,0,0,0.75)', borderRadius: '5px', marginBottom: '8px'
                     }}>
                         <Table>
                             <TableHead sx={{ '& .MuiTableRow-head': { backgroundColor: '#ebebeb' } }}>
@@ -282,18 +333,21 @@ export default function Home({ agendamentos }) {
                         </Table>
                     </TableContainer>
                     {domLoaded &&
-                        <TablePagination
-                            count={agendamentos.length}
-                            rowsPerPage={rowsPerPage}
-                            page={page}
-                            onPageChange={handleChangePage}
-                        />
+                        <Pagination
+                        total={listaAgendamentos.length}
+                        showSizeChanger={false}
+                        current={page+1}
+                        pageSize={rowsPerPage}
+                        onChange={(e) => {
+                            setPage(e-1)
+                        }}
+                      />
                     }
                 </div>
             </div>
 
             {showModal &&
-                <ModalAgendamento modoModal={modoModal} pesquisaAgendamentos={pesquisaAgendamentos} setShowModal={setShowModal} />
+                <ModalAgendamento modoModal={modoModal} preencheAgendamento={preencheAgendamento} pesquisaAgendamentos={pesquisaAgendamentos} setShowModal={setShowModal} />
             }
         </>
     )

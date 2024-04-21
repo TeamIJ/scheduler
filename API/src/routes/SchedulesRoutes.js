@@ -15,6 +15,9 @@ module.exports = app => {
   // Update a schedules with id
   router.put("/schedules/:id", schedule.update)
 
+  // Update status a schedules with id
+  router.put("/schedules/status/:id", schedule.updateStatus)
+
   // Delete a schedules with id
   router.delete("/schedules/:id", schedule.delete)
 

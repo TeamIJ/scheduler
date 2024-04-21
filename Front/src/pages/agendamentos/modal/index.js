@@ -8,8 +8,9 @@ import {
     TextField, Paper, RadioGroup, FormControlLabel, FormLabel, Radio
 } from '@mui/material';
 import { CalendarWeek } from '@/components/ui/CalendarWeek';
-import { Button } from '@/components/ui/Button';
+import { Button, ButtonGrid } from '@/components/ui/Button';
 import { toast } from 'react-toastify'
+import CloseIcon from '@mui/icons-material/Close';
 
 const cursosOptions = []
 
@@ -84,18 +85,18 @@ function formataData(data) {
         let day = data.split('-')[1]
         let month = data.split('-')[2]
         let year = data.split('-')[3]
-
+        
         return day + '/' + month + '/' + year
     }
     return ''
 }
 
-function formataDataSql(data) {
+function formataDataSql(data, alteracao) {
+    const caractere = alteracao ? '/' : '-'
     if (data) {
-        let day = data.split('-')[1]
-        let month = data.split('-')[2]
-        let year = data.split('-')[3]
-
+        let day = data.split(caractere)[alteracao ? 0 : 1]
+        let month = data.split(caractere)[alteracao ? 1 : 2]
+        let year = data.split(caractere)[alteracao ? 2 : 3]
         return year + '-' + month + '-' + day
     }
     return ''
@@ -109,7 +110,7 @@ function formataHora(data) {
     return ''
 }
 
-export default function ModalAgendamento({ modoModal, pesquisaAgendamentos, setShowModal }) {
+export default function ModalAgendamento({ modoModal, pesquisaAgendamentos, setShowModal, preencheAgendamento }) {
 
     const [user, setUser] = useState('')
     const [profSelected, setProfSelected] = useState('')
@@ -120,9 +121,11 @@ export default function ModalAgendamento({ modoModal, pesquisaAgendamentos, setS
     const [matricula, setMatricula] = useState('')
     const [nomeAluno, setNomeAluno] = useState('')
     const [tipoAgendamento, setTipoAgendamento] = useState('R')
-    const [aula, setAula] = useState(0)
     const [dateHourSelected, setDateHourSelected] = useState('')
     const [diaSemanaSelecionado, setDiaSemanaSelecionado] = useState('')
+    const [statusAgendamento, setStatusAgendamento] = useState('')
+    const [aulaOptions, setAulaOptions] = useState([])
+    const [aulaSelected, setAulaSelected] = useState('')
 
     useEffect(() => {
         if (validateSession()) {
@@ -132,12 +135,53 @@ export default function ModalAgendamento({ modoModal, pesquisaAgendamentos, setS
         }
     }, [])
 
+    async function preencheListaAlteracao (idCurso, idModulo) {
+        const modulos = await getModulos(idCurso)
+        const professores = await getProfessores(idCurso)
+        setProfOptions(professores)
+        setModulosOptions(modulos)
+        
+        let qtdAulas = modulos.filter((m) => {
+            return m.id === idModulo
+        })[0].qtdAulas
+
+        let aulas = []
+        for (let i = 0; i < qtdAulas; i++) {
+           aulas.push({
+                id: i+1,
+                label: i+1
+           }) 
+        }
+        setAulaOptions(aulas)
+    }
+    
+    useEffect(() => {
+        const days = ['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SAB']
+        const diaSemana = new Date(formataDataSql(preencheAgendamento.data, true)).getDay()+1
+        if(modoModal === 'A') {
+            preencheListaAlteracao(preencheAgendamento.ID_CURSO, preencheAgendamento.ID_MODULO)
+            setProfSelected(preencheAgendamento.ID_PROF)
+            setCursoSelected(preencheAgendamento.ID_CURSO)
+            setModuloSelected(preencheAgendamento.ID_MODULO)
+            setMatricula(preencheAgendamento.MATRICULA)
+            setNomeAluno(preencheAgendamento.aluno)
+            setTipoAgendamento(preencheAgendamento.tipo)
+            setAulaSelected(preencheAgendamento.aula)
+            setDateHourSelected(preencheAgendamento.data)
+            setDiaSemanaSelecionado(days[diaSemana])
+            setStatusAgendamento(preencheAgendamento.STATUS_AGENDA)
+        }
+    }, [])
+
     function handleMatriculaChange(e) {
         setMatricula(e.target.value)
     }
 
     async function handleCursoChange(e) {
         let course = e.target.value
+        setModuloSelected('')
+        setProfSelected('')
+
         setCursoSelected(course)
 
         let modules = await getModulos(course)
@@ -149,6 +193,18 @@ export default function ModalAgendamento({ modoModal, pesquisaAgendamentos, setS
 
     function handleModuloChange(e) {
         setModuloSelected(e.target.value)
+        let qtdAulas = modulosOptions.filter((m) => {
+            return m.id === e.target.value
+        })[0].qtdAulas
+
+        let aulas = []
+        for (let i = 0; i < qtdAulas; i++) {
+           aulas.push({
+                id: i+1,
+                label: i+1
+           }) 
+        }
+        setAulaOptions(aulas)
     }
 
     function handleProfChange(e) {
@@ -164,8 +220,9 @@ export default function ModalAgendamento({ modoModal, pesquisaAgendamentos, setS
         }
     }
 
-    function handleAulaChange(e) {
-        setAula(e.target.value)
+    async function handleAulaChange(e) {
+        let aulaDigitada = e.target.value
+        setAulaSelected(aulaDigitada)
     }
 
     function handleTipoAgendamentoChange(e) {
@@ -182,23 +239,48 @@ export default function ModalAgendamento({ modoModal, pesquisaAgendamentos, setS
                 "idProf": profSelected,
                 "matricula": matricula,
                 "idModulo": moduloSelected,
-                "horario": formataHora(dateHourSelected),
-                "aula": aula,
-                "dataAula": formataDataSql(dateHourSelected),
+                "horario": modoModal !== 'A' ? formataHora(dateHourSelected) : preencheAgendamento.horario,
+                "aula": aulaSelected,
+                "dataAula": modoModal !== 'A' ? formataDataSql(dateHourSelected, false) : formataDataSql(preencheAgendamento.data, true),
                 "diaSemana": diaSemanaSelecionado,
                 "login": user.user,
                 "statusAgenda": "A",
                 "tipoAgendamento": tipoAgendamento
             }
-
             try{
-                const response = await api.post('/api/scheduler/schedules', agendamento)
 
+                let response
+                if(modoModal !== 'A'){
+                    response = await api.post('/api/scheduler/schedules', agendamento)
+                } else {
+                    response = await api.put(`/api/scheduler/schedules/${preencheAgendamento.id}`, agendamento)
+                }
                 setShowModal(false)
                 toast.success(response.data.message)
             }catch(err){
                 toast.error(err.response.data.message)
             }
+        }
+        pesquisaAgendamentos(e)
+    }
+
+    async function updateStatus(e, id, status) {
+        try {
+            let agendamento = {
+                "status": status,
+                "login": user.user,
+                "diaSemana": diaSemanaSelecionado,
+                "horario": modoModal !== 'A' ? formataHora(dateHourSelected) : preencheAgendamento.horario
+            }
+            const response = await api.put(`/api/scheduler/schedules/status/${id}`, agendamento)
+
+            if(status === "C") {
+                toast.success("Agendamento cancelado com sucesso!")
+            } else {
+                toast.success("Agendamento finalizado com sucesso!")
+            }
+        } catch (err) {
+            toast.error(err.response.data.message)
         }
         pesquisaAgendamentos(e)
     }
@@ -210,11 +292,23 @@ export default function ModalAgendamento({ modoModal, pesquisaAgendamentos, setS
             </Head>
             <div className={styles.container}>
                 <form className={styles.main} onSubmit={(e) => gravaAgendamento(e)} >
+                    <div className={styles.header}>
+                        <ButtonGrid content={
+                            <CloseIcon/>
+                                } onClick={(e) => {
+                                    setShowModal(false)
+                                }
+                        }>
+                        </ButtonGrid>
+                    </div>
+                    
+
                     <TextField className={styles.matriculaAluno} sx={{ width: '100%' }}
                         id="matriculaInput"
                         onChange={handleMatriculaChange}
                         onBlur={handleMatriculaBlur}
                         label="Matrícula"
+                        value={matricula}
                         required
                         inputProps={{
                             maxLength: 11
@@ -222,6 +316,7 @@ export default function ModalAgendamento({ modoModal, pesquisaAgendamentos, setS
                         InputLabelProps={{
                             shrink: true,
                         }}
+                        disabled={modoModal==='A'}
                     />
 
                     <TextField className={styles.nomeAluno} sx={{ width: '100%' }}
@@ -268,18 +363,22 @@ export default function ModalAgendamento({ modoModal, pesquisaAgendamentos, setS
                         </Select>
                     </FormControl>
 
-                    <TextField className={styles.aula} sx={{ width: '100%' }}
-                        id="numeroAula"
-                        onChange={handleAulaChange}
-                        label="Aula"
-                        required
-                        inputProps={{
-                            maxLength: 2
-                        }}
-                        InputLabelProps={{
-                            shrink: true,
-                        }}
-                    />
+                    <FormControl className={styles.aula} sx={{ width: '100%' }}>
+                        <InputLabel required shrink htmlFor="aulaOptionsSelect">
+                            Aula
+                        </InputLabel>
+                        <Select required placeholder='Selecione a aula' displayEmpty sx={{ width: '100%' }} label="Aula" id="aulaOptionsSelect"
+                            value={aulaSelected} onChange={handleAulaChange}>
+                            <MenuItem disabled value="">
+                                <em>Selecione a aula</em>
+                            </MenuItem>
+                            {aulaOptions.map((aula) => {
+                                return (
+                                    <MenuItem key={aula.id} value={aula.id}>{aula.label}</MenuItem>
+                                )
+                            })}
+                        </Select>
+                    </FormControl>
 
                     <FormControl className={styles.professor} sx={{ width: '100%' }}>
                         <InputLabel required shrink htmlFor="profOptionsSelect">
@@ -324,26 +423,45 @@ export default function ModalAgendamento({ modoModal, pesquisaAgendamentos, setS
                             alignItems: 'flex-start', height: '100%', width: '100%', padding: '5px', paddingLeft: '14px',
                             border: dateHourSelected ? '2px solid var(--light-blue)' : ''
                         }}>
-                        {dateHourSelected &&
+                        {(modoModal === 'A' || dateHourSelected)&&
                             <>
-                                <p>Data: {formataData(dateHourSelected)}</p>
-                                <p>Horário: {formataHora(dateHourSelected)}</p>
+                                <p>Data: {modoModal !== 'A' ? formataData(dateHourSelected) : preencheAgendamento.data}</p>
+                                <p>Horário: {modoModal !== 'A' ? formataHora(dateHourSelected) : preencheAgendamento.horario}</p>
                             </>
                         }
                     </Paper>
 
-                    <div className={styles.calendario}>
-                        <CalendarWeek setDateHourSelected={setDateHourSelected} setDiaSemanaSelecionado={setDiaSemanaSelecionado} />
-                    </div>
+                    {
+                        modoModal !== 'A' && 
+                        <div className={styles.calendario}>
+                            <CalendarWeek setDateHourSelected={setDateHourSelected} setDiaSemanaSelecionado={setDiaSemanaSelecionado} />
+                        </div>
+                    }
+
 
                     <div className={styles.botoes}>
-                        <Button type='submit' color='green' content={
+                        <Button type='submit' color='light-blue' content={
                             <span>{modoModal === 'I' ? 'Agendar' : 'Alterar'}</span>
                         } />
-                        <Button color='red' content={
-                            <span>Cancelar</span>
-                        } onClick={() => setShowModal(false)} />
+                        {
+                            modoModal === 'A' && 
+                            <>
+                                <Button color='dark-gray' content={
+                                    <span>Finalizar</span>
+                                } onClick={(e) => {
+                                    setShowModal(false)
+                                    updateStatus(e, preencheAgendamento.id, "F")
+                                }} />
+                                <Button color='red' content={
+                                    <span>Cancelar</span>
+                                } onClick={(e) => {
+                                    setShowModal(false)
+                                    updateStatus(e, preencheAgendamento.id, "C")
+                                }} />
+                            </>
+                        }
                     </div>
+
 
                 </form>
             </div >

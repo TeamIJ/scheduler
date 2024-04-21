@@ -24,7 +24,7 @@ module.exports = {
     },
 
     findByIdOrName(_, res, id, nome){
-        let query = `SELECT * FROM PROFESSORES WHERE 1=1`
+        let query = `SELECT DISTINCT ID_PROF, NOME, STATUS_PROF FROM PROFESSORES WHERE 1=1`
         let filter = []
         if (nome) {
             filter.push(nome)

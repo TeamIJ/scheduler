@@ -46,6 +46,15 @@ module.exports = {
         schedule.update(req, res, agendamento, id)
     },
 
+    async updateStatus(req, res, next) {
+        const agendamento = req.body
+        const { id } = req.params
+        if (agendamento.status === 'C' || agendamento.status === 'F') {
+            updateTotalScheduled(agendamento.diaSemana, agendamento.horario, 'A')
+        }
+        schedule.updateStatus(req, res, agendamento, id)
+    },
+
     async delete(req, res, next) {
         const { id } = req.params
         const consultaAgenda = await schedule.getScheduleInfo(id)
@@ -82,7 +91,8 @@ module.exports = {
             let student = req.query.aluno
             let professor = req.query.id_prof
             let date = req.query.data
-            schedule.findBySearchFilters(req, res, registry, student, professor, date)
+            let status = req.query.status
+            schedule.findBySearchFilters(req, res, registry, student, professor, date, status)
     }
 
 }

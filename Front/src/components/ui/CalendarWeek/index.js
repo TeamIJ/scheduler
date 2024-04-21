@@ -72,7 +72,10 @@ async function getHours() {
 
   calendar.forEach(day => {
     timetables.forEach(hour => {
-      day.hours.push(hour.HORARIO.substring(0, 5))
+      day.hours.push({
+        "hour":hour.HORARIO.substring(0, 5),
+        "available":hour.STATUS_HORARIO === "D"
+      })
     })
   })
 }
@@ -112,12 +115,20 @@ export function CalendarWeek({ setDateHourSelected, setDiaSemanaSelecionado, ...
                   <div className={styles.hourContainer}>
                     {(day.week !== 0 && day.week !== 6) &&
                       day.hours.map((hour) => {
-                        let dayHourId = `${day.week}-${replicateZeros(day.day, 2)}-${replicateZeros(day.month + 1, 2)}-${day.year}-H${hour.substring(0, 2)}`
+                        let dayHourId = `${day.week}-${replicateZeros(day.day, 2)}-${replicateZeros(day.month + 1, 2)}-${day.year}-H${hour.hour.substring(0, 2)}`
+                        let defineStyle = styles.hour
+                        
+                        if(!day.available){
+                          defineStyle = styles.hourDisabled
+                        } else if (!hour.available) {
+                          defineStyle = styles.hourDisabled
+                        } else if (hourSelected === dayHourId) {
+                          defineStyle = styles.hourSelected
+                        }
                         return (
-                            <div key={dayHourId}  id={dayHourId} onClick={(e) => handleTimeSelect(e)} className={!day.available ? styles.hourDisabled : 
-                              hourSelected === dayHourId ? styles.hourSelected : styles.hour}
+                            <div key={dayHourId}  id={dayHourId} onClick={(e) => handleTimeSelect(e)} className={defineStyle}
                             >
-                              {hour}
+                              {hour.hour}
                             </div>)
                       })
                     } 

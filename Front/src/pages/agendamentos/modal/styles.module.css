@@ -8,7 +8,7 @@
     justify-content: center;
     align-items: center;
     z-index: 500;
-    backdrop-filter: brightness(80%)
+    backdrop-filter: brightness(80%);
 }
 
 .main {
@@ -24,12 +24,19 @@
     padding: 24px;
     align-items: center;
     grid-template-areas:
+        "header header header header header"
         "matriculaAluno nomeAluno nomeAluno nomeAluno nomeAluno"
         "curso curso modulo modulo aula"
         "professor professor tipoAgendamento tipoAgendamento confirmacaoDiaHorario"
         "calendario calendario calendario calendario calendario"
         "botoes botoes botoes botoes botoes";
 
+}
+
+.header {
+    justify-self: end;
+    margin-bottom: 2px;
+    grid-area: header;
 }
 
 .matriculaAluno { grid-area: matriculaAluno }
@@ -96,4 +103,3 @@
     }
 
 }
-

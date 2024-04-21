@@ -79,16 +79,17 @@ module.exports = {
         })
     },
 
-    findBySearchFilters(req, res, registry, student, professor, date) {
+    findBySearchFilters(req, res, registry, student, professor, date, status) {
         let query = 
-        `SELECT A.ID_AGENDA AS 4id, AL.NOME AS aluno, P.NOME AS professor, C.NOME_CURSO AS curso, M.NOME_MODULO AS modulo,
-         A.AULA AS aula, A.DATA_AULA AS data, A.HORARIO AS horario, A.TIPO_AGENDAMENTO AS tipo
+        `SELECT A.ID_AGENDA AS id, AL.NOME AS aluno, P.NOME AS professor, C.NOME_CURSO AS curso, M.NOME_MODULO AS modulo,
+         A.AULA AS aula, A.DATA_AULA AS data, A.HORARIO AS horario, A.TIPO_AGENDAMENTO AS tipo, A.ID_CURSO, A.ID_PROF, A.MATRICULA,
+         A.ID_MODULO, A.STATUS_AGENDA AS status
          FROM AGENDAMENTOS A 
          INNER JOIN ALUNOS AL ON A.MATRICULA = AL.MATRICULA 
          INNER JOIN CURSOS C ON C.ID_CURSO = A.ID_CURSO
          INNER JOIN MODULOS M ON M.ID_CURSO = C.ID_CURSO AND M.ID_MODULO = A.ID_MODULO
          INNER JOIN PROFESSORES P ON A.ID_PROF = P.ID_PROF AND P.ID_CURSO = C.ID_CURSO
-         WHERE 1=1 AND A.STATUS_AGENDA = 'A' `
+         WHERE 1=1`
 
         if(registry){
             query += ` AND A.MATRICULA LIKE '${registry}%' `
@@ -102,8 +103,11 @@ module.exports = {
         if(date){
             query += ` AND A.DATA_AULA = '${date}' `
         }
+        if(status && status !== "T"){
+            query += ` AND A.STATUS_AGENDA = '${status}' `
+        }
 
-        query += ' ORDER BY DATA_AULA, HORARIO '
+        query += ' ORDER BY A.STATUS_AGENDA, A.DATA_AULA, A.HORARIO '
 
         connection.query(query, (err, data) => {
             if (err) console.error(err)
@@ -139,11 +143,19 @@ module.exports = {
     },
 
     update(_, res, agenda, id) {
-        const query = `UPDATE AGENDAMENTOS SET STATUS_AGENDA = '${agenda.statusAgenda}', DATA_AULA = '${agenda.dataAula}', ID_PROF = '${agenda.idProf}', ` +
-            ` HORARIO = '${agenda.horario}', LOGIN_USUARIO = '${agenda.login}', DATA_ATUALIZACAO = CURDATE() WHERE ID_AGENDA = '${id}'`
+        const query = `UPDATE AGENDAMENTOS SET ID_PROF = '${agenda.idProf}', ID_MODULO = '${agenda.idModulo}', ID_CURSO = '${agenda.idCurso}',` +
+            ` AULA = '${agenda.aula}', LOGIN_USUARIO = '${agenda.login}', DATA_ATUALIZACAO = CURDATE(), TIPO_AGENDAMENTO = '${agenda.tipoAgendamento}' WHERE ID_AGENDA = '${id}'`
         connection.query(query, (err, _) => {
             if (err) console.error(err)
             res.status(200).send({ message: 'Agendamento alterado com sucesso!' })
+        })
+    },
+
+    updateStatus(_, res, agenda, id) {
+        const query = `UPDATE AGENDAMENTOS SET LOGIN_USUARIO = '${agenda.login}', DATA_ATUALIZACAO = CURDATE(), STATUS_AGENDA = '${agenda.status}' WHERE ID_AGENDA = '${id}'`
+        connection.query(query, (err, _) => {
+            if (err) console.error(err)
+            res.status(200).send({ message: 'Status alterado com sucesso!' })
         })
     },
 

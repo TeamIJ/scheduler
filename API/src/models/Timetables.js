@@ -1,3 +1,4 @@
+const { query } = require('express')
 const connection = require('../config/db.js')
 
 module.exports = {
@@ -47,5 +48,4 @@ module.exports = {
             if (err) console.error(err)
         })
     }
-
 }

@@ -23,7 +23,7 @@
 
 .filtrosContainer {
     display: grid;
-    grid-template-columns: repeat(8, 1fr);
+    grid-template-columns: repeat(9, 1fr);
     gap: 5px;
     align-items: center;
     width: 95%;
@@ -31,7 +31,7 @@
     border-radius: 5px;
     border-color: var(--inputs-border-color);
     margin-bottom: 15px;
-    grid-template-areas: "voltar matricula nomeAluno nomeAluno professor professor data botoes";
+    grid-template-areas: "voltar matricula nomeAluno nomeAluno professor professor data status botoes";
 }
 
 .voltar { 
@@ -46,6 +46,8 @@
 .professor { grid-area: professor; }
 
 .data { grid-area: data; }
+
+.status { grid-area: status; }
 
 .botoes { 
     display: flex;
