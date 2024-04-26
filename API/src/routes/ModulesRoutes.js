@@ -9,6 +9,9 @@ module.exports = app => {
     // Retrieve all modules
     router.get("/modules", modules.findAll)
   
+    // Retrieve all modules by search filters
+    router.get("/modules/search", modules.findBySearchFilters)
+
     // Retrieve a single modules with id
     router.get("/modules/:id", modules.findById)
 
