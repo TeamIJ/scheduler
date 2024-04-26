@@ -1,8 +1,9 @@
 import styles from './styles.module.css'
 
 export function Button({ color, content, ...rest }) {
+    let btnColor = color.includes("#") ? color : `var(--${color})`
     return (
-        <button style={{ backgroundColor: `var(--${color})` }} className={styles.button} {...rest}>
+        <button style={{ backgroundColor: btnColor }} className={styles.button} {...rest}>
             {content}
         </button>
     )

@@ -1,4 +1,3 @@
-import Head from 'next/head'
 import { useEffect, useState } from "react";
 import { api } from '@/services/apiClient';
 import { validateSession } from '@/contexts/AuthContext';
@@ -287,9 +286,6 @@ export default function ModalAgendamento({ modoModal, pesquisaAgendamentos, setS
 
     return (
         <>
-            <Head>
-                <title>Scheduler - Agendamentos</title>
-            </Head>
             <div className={styles.container}>
                 <form className={styles.main} onSubmit={(e) => gravaAgendamento(e)} >
                     <div className={styles.header}>

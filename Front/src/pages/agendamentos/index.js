@@ -1,3 +1,4 @@
+import Head from 'next/head'
 import Router from 'next/router'
 import React from "react"
 import { useState, useEffect } from "react"
@@ -39,20 +40,20 @@ function formataDataSQL(dia, mes, ano) {
 
 let statusOptions = [
     {
-    "char": "T",
-    "label": "Todos"
+        "char": "T",
+        "label": "Todos"
     },
     {
-    "char": "A",
-    "label": "Agendado(s)"
+        "char": "A",
+        "label": "Agendado(s)"
     },
     {
-    "char": "F",
-    "label": "Finalizado(s)"
+        "char": "F",
+        "label": "Finalizado(s)"
     },
     {
-    "char": "C",
-    "label": "Cancelado(s)"
+        "char": "C",
+        "label": "Cancelado(s)"
     },
 ]
 
@@ -104,11 +105,12 @@ export default function Home({ agendamentos }) {
         { id: 'data', label: 'Data', minWidth: 100 },
         { id: 'horario', label: 'Horário', minWidth: 100 },
         { id: 'descricaoTipo', label: 'Tipo', minWidth: 100 },
-        { id: 'statusDescricao', label: 'Status', minWidth: 100},
+        { id: 'statusDescricao', label: 'Status', minWidth: 100 },
         { id: 'alterar', width: 20 }
     ]
 
     function formataListaAgendamentos(agendamentos) {
+        console.log(agendamentos)
         agendamentos.forEach(formataAgendamento => {
             let data = formataAgendamento.data
             let horario = formataAgendamento.horario
@@ -200,13 +202,13 @@ export default function Home({ agendamentos }) {
             filtro += `data=${data}`
             temFiltro = true
         }
-        
+
         if (temFiltro) {
             filtro += '&'
         }
         filtro += `status=${statusSelected}`
         temFiltro = true
-        
+
         let requestURL = `/api/scheduler/schedules/search${temFiltro ? '?' + filtro : ''}`
         const resAgendamento = await api.get(requestURL)
         setListaAgendamentos(formataListaAgendamentos(resAgendamento.data))
@@ -215,12 +217,15 @@ export default function Home({ agendamentos }) {
 
     return (
         <>
+            <Head>
+                <title>Scheduler - Agendamentos</title>
+            </Head>
             <Navbar user={user.name} />
 
             <div className={styles.container}>
                 <div className={styles.pesquisaContainer}>
-                    <form className={styles.filtrosContainer} onSubmit={(e) => pesquisaAgendamentos(e)} onKeyDown={(e) =>{
-                        if(e.key === "Enter"){
+                    <form className={styles.filtrosContainer} onSubmit={(e) => pesquisaAgendamentos(e)} onKeyDown={(e) => {
+                        if (e.key === "Enter") {
                             pesquisaAgendamentos(e)
                         }
                     }}>
@@ -334,14 +339,14 @@ export default function Home({ agendamentos }) {
                     </TableContainer>
                     {domLoaded &&
                         <Pagination
-                        total={listaAgendamentos.length}
-                        showSizeChanger={false}
-                        current={page+1}
-                        pageSize={rowsPerPage}
-                        onChange={(e) => {
-                            setPage(e-1)
-                        }}
-                      />
+                            total={listaAgendamentos.length}
+                            showSizeChanger={false}
+                            current={page + 1}
+                            pageSize={rowsPerPage}
+                            onChange={(e) => {
+                                setPage(e - 1)
+                            }}
+                        />
                     }
                 </div>
             </div>
