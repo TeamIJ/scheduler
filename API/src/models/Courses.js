@@ -7,8 +7,10 @@ function hasData(data) {
 module.exports = {
 
     create(_, res, course){
-        const query = 'INSERT INTO CURSOS (NOME_CURSO) VALUES (?)'
-        connection.query(query, course.nome_curso, (err, _) => {
+        const id = course.nome_curso.normalize('NFD').replace(/[\u0300-\u036f]/g, "").replaceAll(" ", "")
+        const query = 'INSERT INTO CURSOS (ID_CURSO, NOME_CURSO) VALUES (?,?)'
+
+        connection.query(query, [id, course.nome_curso], (err, _) => {
             if (err) console.error(err)
 
             res.status(200).send({message: 'Curso incluído com sucesso!'})
@@ -16,7 +18,7 @@ module.exports = {
     },
 
     listAllCourses(_, res){
-        const query = 'SELECT * FROM CURSOS'
+        const query = 'SELECT ID_CURSO as id, NOME_CURSO as curso FROM CURSOS'
         connection.query(query, (err, data) => {
             if (err) console.error(err)
             
@@ -28,9 +30,9 @@ module.exports = {
         })
     },
 
-    findById(_, res, id){
-        const query = 'SELECT * FROM CURSOS WHERE ID_CURSO = ?'
-        connection.query(query, id, (err, data) => {
+    findByName(_, res, name){
+        const query = `SELECT ID_CURSO as id, NOME_CURSO as curso FROM CURSOS WHERE NOME_CURSO LIKE '${name}%'`
+        connection.query(query, (err, data) => {
             if (err) console.error(err)
 
             if (!hasData(data)){
@@ -42,8 +44,9 @@ module.exports = {
     },
 
     update(_, res, id, course){
-        const query = 'UPDATE CURSOS SET NOME_CURSO = ? WHERE ID_CURSO = ?'
-        connection.query(query, [course.nome_curso, id], (err, _) => {
+    const newId = course.nome_curso.normalize('NFD').replace(/[\u0300-\u036f]/g, "").replaceAll(" ", "")
+    const query = `UPDATE CURSOS SET ID_CURSO = '${newId}', NOME_CURSO = '${course.nome_curso}' WHERE ID_CURSO = '${id}'`
+        connection.query(query, (err, _) => {
             if (err) console.error(err)
             res.status(200).send({message: 'Curso alterado com sucesso!'})
         })

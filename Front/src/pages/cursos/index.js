@@ -9,9 +9,7 @@ import { ButtonGrid } from "@/components/ui/Button"
 import { api } from "@/services/apiClient"
 import ModalModulo from "./modal"
 import {
-    Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
-    FormControl, InputLabel, MenuItem, Select,
-    TextField
+    Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField
 } from '@mui/material'
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -21,43 +19,40 @@ import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 
 import { Pagination } from 'antd'
 
-const cursosOptions = []
-
-async function getCursos() {
-    const response = await api.get('/api/scheduler/courses')
-
-    let courses = response.data
-
-    courses.forEach(course => {
-        cursosOptions.push({
-            id: course.id,
-            nome: course.curso
-        })
-    })
-}
-
-getCursos()
-
-export default function Home({ modulos }) {
+export default function Home({ cursos }) {
 
     const [domLoaded, setDomLoaded] = useState(false)
     const [user, setUser] = useState('')
     const [showModal, setShowModal] = useState(false)
     const [modoModal, setModoModal] = useState('I')
-    const [listaModulos, setListaModulos] = useState([])
+    const [listaCursos, setListaCursos] = useState([])
     const [page, setPage] = useState(0)
     const [rowsPerPage, setRowsPerPage] = useState(11)
-    const [cursoSelected, setCursoSelected] = useState('')
-    const [nomeModulo, setNomeModulo] = useState('')
-    const [preencheModulo, setPreencheModulo] = useState({})
+    const [nomeCurso, setNomeCurso] = useState('')
+    const [preencheCurso, setPreencheCurso] = useState({})
 
     const columns = [
         { id: 'curso', label: 'Curso', minWidth: '100%' },
-        { id: 'modulo', label: 'Módulo', minWidth: '100%' },
-        { id: 'qtdAulas', label: 'Nro. Aulas', minWidth: '100%' },
-        { id: 'botoes', maxWidth: '40px' },
+        { id: 'botoes', maxWidth: '40px' }
     ]
 
+    function formataListaCursos(cursos) {
+        cursos.forEach(curso => {
+            curso.botoes = <div className={styles.botoesGrid}>
+                <ButtonGrid key={'alterar'} content={<EditIcon />} onClick={() => {
+                    setModoModal("A")
+                    setShowModal(true)
+                    setPreencheCurso(curso)
+                }}/>
+                <ButtonGrid key={'excluir'} content={<DeleteIcon />} onClick={() => {
+                    setModoModal("E")
+                    setShowModal(true)
+                    setPreencheCurso(curso)
+                }}/>
+            </div>
+        })
+        return cursos
+    }
 
     useEffect(() => {
         if (validateSession()) {
@@ -67,104 +62,49 @@ export default function Home({ modulos }) {
         }
     }, [])
 
-    function formataListaModulos(modulos) {
-        modulos.forEach(modulo => {
-            modulo.botoes = <div className={styles.botoesGrid}>
-                <ButtonGrid key={'alterar'} content={<EditIcon />} onClick={() => {
-                    setModoModal("A")
-                    setShowModal(true)
-                    setPreencheModulo(modulo)
-                }}/>
-                <ButtonGrid key={'excluir'} content={<DeleteIcon />} onClick={() => {
-                    setModoModal("E")
-                    setShowModal(true)
-                    setPreencheModulo(modulo)
-                }}/>
-            </div>
-        })
-        return modulos
-    }
-
     useEffect(() => {
-        setListaModulos(formataListaModulos(modulos))
+        setListaCursos(formataListaCursos(cursos))
     }, [])
-
 
     setTimeout(() => {
         setDomLoaded(true)
     }, 150)
 
 
-    function handleNomeModuloChange(e) {
-        setNomeModulo(e.target.value)
+    function handleNomeCursoChange(e) {
+        setNomeCurso(e.target.value)
     }
 
-    function handleCursoChange(e){
-        setCursoSelected(e.target.value)
-    }
-
-    async function pesquiasrModulos(e) {
+    async function pesquisarCursos(e) {
         e.preventDefault()
-
-        let temFiltro = false
-        let filtro = ''
-        if (nomeModulo) {
-            filtro += `modulo=${nomeModulo}`
-            temFiltro = true
-        }
-        if (cursoSelected !== '') {
-            if (temFiltro) {
-                filtro += '&'
-            }
-            filtro += `curso=${cursoSelected}`
-            temFiltro = true
-        }
-
-        let requestURL = `/api/scheduler/modules/search${temFiltro ? '?' + filtro : ''}`
-        const resModulo = await api.get(requestURL)
-        setListaModulos(formataListaModulos(resModulo.data))
+        let requestURL = `/api/scheduler/courses/${nomeCurso}`
+        const resCurso = await api.get(requestURL)
+        setListaCursos(formataListaCursos(resCurso.data))
         setPage(0)
     }
 
     return (
         <>
             <Head>
-                <title>Scheduler - Módulos</title>
+                <title>Scheduler - Cursos</title>
             </Head>
             <Navbar user={user.name} />
             <div className={styles.container}>
                 <div className={styles.pesquisaContainer}>
-                    <form className={styles.filtrosContainer} onSubmit={(e) => pesquiasrModulos(e)} onKeyDown={(e) => {
+                    <form className={styles.filtrosContainer} onSubmit={(e) => pesquisarCursos(e)} onKeyDown={(e) => {
                         if (e.key === "Enter") {
-                            pesquiasrModulos(e)
+                            pesquisarCursos(e)
                         }
                     }}>
                         <div className={styles.voltar}>
                             <ButtonGrid onClick={() => Router.back()} content={<ArrowBackIosIcon />} />
                         </div>
 
-                        <FormControl className={styles.curso} sx={{ width: '100%' }}>
-                            <InputLabel shrink htmlFor="cursosOptionsSelect">
-                                Curso
-                            </InputLabel>
-                            <Select placeholder='Selecione um Curso' displayEmpty sx={{ width: '100%' }} label="Curso" id="cursosOptionsSelect"
-                                value={cursoSelected} onChange={handleCursoChange}>
-                                <MenuItem value="">
-                                    <em>Selecione um Curso</em>
-                                </MenuItem>
-                                {cursosOptions.map((curso) => {
-                                    return (
-                                        <MenuItem key={curso.id} value={curso.id}>{curso.nome}</MenuItem>
-                                    )
-                                })}
-                            </Select>
-                        </FormControl>
-
-                        <TextField className={styles.modulo} sx={{ width: '100%' }}
-                            id="nomeModuloInput"
-                            onChange={handleNomeModuloChange}
-                            label="Módulo"
-                            value={nomeModulo}
+                        <TextField className={styles.curso} sx={{ width: '100%' }}
+                            id="nomeCursoInput"
+                            onChange={handleNomeCursoChange}
+                            label="Curso"
+                            value={nomeCurso}
                             inputProps={{
                                 maxLength: 80
                             }}
@@ -200,7 +140,7 @@ export default function Home({ modulos }) {
                             </TableHead>
                             <TableBody>
                                 {domLoaded &&
-                                    listaModulos.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
+                                    listaCursos.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
                                         return (
                                             <TableRow hover tabIndex={-1} key={row.idAgenda}>
                                                 {
@@ -224,7 +164,7 @@ export default function Home({ modulos }) {
                     </TableContainer>
                     {domLoaded &&
                         <Pagination
-                            total={listaModulos.length}
+                            total={listaCursos.length}
                             showSizeChanger={false}
                             current={page + 1}
                             pageSize={rowsPerPage}
@@ -237,25 +177,22 @@ export default function Home({ modulos }) {
             </div>
 
             {showModal &&
-                <ModalModulo modoModal={modoModal} preencheModulo={preencheModulo} pesquiasrModulos={pesquiasrModulos} setShowModal={setShowModal} />
+                <ModalModulo modoModal={modoModal} preencheCurso={preencheCurso} pesquisarCursos={pesquisarCursos} setShowModal={setShowModal} />
             }
         </>
     )
 }
 
-export const getListaModulos = async () => {
-    const resModulo = await api.get('/api/scheduler/modules/search')
-
-    return resModulo.data
+export const getListaCursos = async () => {
+    const resCurso = await api.get('/api/scheduler/courses')
+    return resCurso.data
 }
 
 export const getServerSideProps = async () => {
-
-    const listaModulos = await getListaModulos()
-
+    const listaCursos = await getListaCursos()
     return {
         props: {
-            modulos: listaModulos
+            cursos: listaCursos
         }
     }
 }

@@ -110,7 +110,6 @@ export default function Home({ agendamentos }) {
     ]
 
     function formataListaAgendamentos(agendamentos) {
-        console.log(agendamentos)
         agendamentos.forEach(formataAgendamento => {
             let data = formataAgendamento.data
             let horario = formataAgendamento.horario

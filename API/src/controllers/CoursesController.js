@@ -8,9 +8,9 @@ module.exports = {
         courses.create(req, res, course)
     },
     
-    findById(req, res, next){
-        const { id } = req.params
-        courses.findById(req, res, id)
+    findByName(req, res, next){
+        const { name } = req.params
+        courses.findByName(req, res, name)
     },
     
     findAll(req, res, next){

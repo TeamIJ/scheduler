@@ -9,7 +9,7 @@ module.exports = {
     create(_, res, module){
         const query = `INSERT INTO MODULOS (ID_MODULO, ID_CURSO, NOME_MODULO, QTD_AULAS) VALUES (LCASE(REPLACE(?, ' ', '')), ?, ?, ?)`
 
-        const id = module.nome_modulo.normalize('NFD').replace(/[\u0300-\u036f]/g, "")
+        const id = module.nome_modulo.normalize('NFD').replace(/[\u0300-\u036f]/g, "").replaceAll(" ", "")
 
         connection.query(query, [id, module.id_curso, module.nome_modulo, module.qtd_aulas], (err, _) => {
             if (err) console.error(err)
@@ -84,7 +84,7 @@ module.exports = {
     },
 
     update(_, res, id, module){
-        const newId = module.nome_modulo.normalize('NFD').replace(/[\u0300-\u036f]/g, "")
+        const newId = module.nome_modulo.normalize('NFD').replace(/[\u0300-\u036f]/g, "").replaceAll(" ", "")
         const query = 'UPDATE MODULOS SET ID_MODULO = ?, ID_CURSO = ?, NOME_MODULO = ?, QTD_AULAS = ? WHERE ID_MODULO = ?'
         connection.query(query, [newId, module.id_curso, module.nome_modulo, module.qtd_aulas, id], (err, _) => {
             if (err) console.error(err)

@@ -9,8 +9,8 @@ module.exports = app => {
     // Retrieve all courses
     router.get("/courses", course.findAll)
   
-    // Retrieve a single courses with id
-    router.get("/courses/:id", course.findById)
+    // Retrieve a single courses with name
+    router.get("/courses/:name", course.findByName)
   
     // Update a courses with id
     router.put("/courses/:id", course.update)

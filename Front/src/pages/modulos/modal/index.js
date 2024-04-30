@@ -17,8 +17,8 @@ async function getCursos() {
     let coursesAux = []
     courses.forEach(course => {
         coursesAux.push({
-            id: course.ID_CURSO,
-            nome: course.NOME_CURSO
+            id: course.id,
+            nome: course.curso
         })
     })
     return coursesAux
@@ -50,8 +50,7 @@ export default function ModalModulo({ modoModal, pesquiasrModulos, setShowModal,
         if (modoModal !== 'I') {
             preencheListaCursos()
             setNomeModulo(preencheModulo.modulo)
-            console.log(preencheModulo.ID_CURSO)
-            setCursoSelected(preencheModulo.ID_CURSO)
+            setCursoSelected(preencheModulo.id)
             setQtdAula(preencheModulo.qtdAulas)
         }
     }, [])
