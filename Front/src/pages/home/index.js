@@ -6,14 +6,13 @@ import { Navbar } from '../../components/ui/Navbar';
 import { ButtonMenu } from '@/components/ui/Button';
 import { CalendarMonth, SchoolOutlined, AutoStoriesOutlined, WatchLaterOutlined, GroupOutlined, AccountCircle, Schema } from '@mui/icons-material';
 import { validateSession } from '@/contexts/AuthContext';
-import { CalendarWeek } from "@/components/ui/CalendarWeek";
 
 const buttons = [
   {
     title: 'Agendamentos',
     id: 'agendamentos',
     icon: <CalendarMonth fontSize='large' />,
-    roles: ['A', 'P', 'S'],
+    roles: ['A', 'P', 'U'],
   },
   {
     title: 'Horários',
@@ -49,7 +48,7 @@ const buttons = [
     title: 'Usuários',
     id: 'usuarios',
     icon: <AccountCircle fontSize='large' />,
-    roles: ['A']
+    roles: ['A', 'P']
   },
 ]
 
@@ -98,7 +97,6 @@ export default function Home() {
                   <div className={styles.history}>
                     <h2>Histórico de Agendamentos</h2>
                   </div>
-                  <CalendarWeek/>
                 </>
               }
             </div>

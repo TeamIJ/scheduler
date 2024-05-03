@@ -31,20 +31,19 @@
     border-radius: 5px;
     border-color: var(--inputs-border-color);
     margin-bottom: 15px;
-    grid-template-areas: "voltar curso curso modulo modulo modulo modulo modulo botoes";
+    grid-template-areas: "voltar nomeUsuario nomeUsuario nomeUsuario nomeUsuario tipo tipo tipo botoes";
 }
 
 .voltar { 
-  
     grid-area: voltar;
 }
 
-.curso {
-    grid-area: curso;
+.nomeUsuario {
+    grid-area: nomeUsuario;
 }
 
-.modulo {
-    grid-area: modulo;
+.tipo {
+    grid-area: tipo;
 }
 
 .botoes { 

@@ -76,7 +76,7 @@ export default function ModalModulo({ modoModal, pesquisarCursos, setShowModal, 
                         onChange={handleNomeCursoChange}
                         label="Curso"
                         value={nomeCurso}
-                        required
+                        required={modoModal !== 'E'}
                         inputProps={{
                             maxLength: 80
                         }}

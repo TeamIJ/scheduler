@@ -57,7 +57,7 @@ export default function Home() {
                 <Input required placeholder="Nome de Usuário" type="text" value={user} onChange={(e) => setUser(e.target.value)} />
                 <Input required placeholder="Senha" type={showPassword ? 'text' : 'password'} value={password} onChange={(e) => setPassword(e.target.value)} />
                 <div className={[styles.passwordContainer]}>
-                  <CheckBox onChange={() => {
+                  <CheckBox isLoginPage={true} onChange={() => {
                     setShowPassword(!showPassword)
                   }} options={[
                     {

@@ -24,7 +24,7 @@ async function getCursos() {
     return coursesAux
 }
 
-export default function ModalModulo({ modoModal, pesquiasrModulos, setShowModal, preencheModulo }) {
+export default function ModalModulo({ modoModal, pesquisarModulos, setShowModal, preencheModulo }) {
 
     const [user, setUser] = useState('')
     const [cursosOptions, setCursosOptions] = useState([])
@@ -50,7 +50,8 @@ export default function ModalModulo({ modoModal, pesquiasrModulos, setShowModal,
         if (modoModal !== 'I') {
             preencheListaCursos()
             setNomeModulo(preencheModulo.modulo)
-            setCursoSelected(preencheModulo.id)
+            console.log(preencheModulo)
+            setCursoSelected(preencheModulo.ID_CURSO)
             setQtdAula(preencheModulo.qtdAulas)
         }
     }, [])
@@ -90,7 +91,7 @@ export default function ModalModulo({ modoModal, pesquiasrModulos, setShowModal,
         } catch (err) {
             toast.error(err.response.data.message)
         }
-        pesquiasrModulos(e)
+        pesquisarModulos(e)
     }
 
     return (
@@ -113,7 +114,7 @@ export default function ModalModulo({ modoModal, pesquiasrModulos, setShowModal,
                         onChange={handleNomeModuloChange}
                         label="Módulo"
                         value={nomeModulo}
-                        required
+                        required={modoModal !== 'E'}
                         inputProps={{
                             maxLength: 80
                         }}
@@ -128,7 +129,7 @@ export default function ModalModulo({ modoModal, pesquiasrModulos, setShowModal,
                         onChange={handleQtdAulaChange}
                         label="Nro. Aulas"
                         value={qtdAula}
-                        required
+                        required={modoModal !== 'E'}
                         InputLabelProps={{
                             shrink: true,
                         }}
@@ -136,10 +137,10 @@ export default function ModalModulo({ modoModal, pesquiasrModulos, setShowModal,
                     />
 
                     <FormControl className={styles.curso} sx={{ width: '40%' }}>
-                        <InputLabel required shrink htmlFor="cursosOptionsSelect">
+                        <InputLabel required={modoModal !== 'E'} shrink htmlFor="cursosOptionsSelect">
                             Curso
                         </InputLabel>
-                        <Select required placeholder='Selecione um Curso' disabled={modoModal === 'E'} displayEmpty sx={{ width: '100%' }} label="Curso" id="cursosOptionsSelect"
+                        <Select required={modoModal !== 'E'} placeholder='Selecione um Curso' disabled={modoModal === 'E'} displayEmpty sx={{ width: '100%' }} label="Curso" id="cursosOptionsSelect"
                             value={cursoSelected} onChange={handleCursoChange}>
                             <MenuItem disabled value="">
                                 <em>Selecione um Curso</em>

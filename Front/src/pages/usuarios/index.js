@@ -7,7 +7,7 @@ import { Navbar } from '@/components/ui/Navbar'
 import styles from './styles.module.css'
 import { ButtonGrid } from "@/components/ui/Button"
 import { api } from "@/services/apiClient"
-import ModalModulo from "./modal"
+import ModalUsuario from "./modal"
 import {
     Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
     FormControl, InputLabel, MenuItem, Select,
@@ -21,40 +21,41 @@ import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 
 import { Pagination } from 'antd'
 
-const cursosOptions = []
+let tipoOptions = [
+    {
+        "char": "T",
+        "label": "Todos"
+    },
+    {
+        "char": "A",
+        "label": "Administrador"
+    },
+    {
+        "char": "P",
+        "label": "Professor"
+    },
+    {
+        "char": "U",
+        "label": "Usuário"
+    },
+]
 
-async function getCursos() {
-    const response = await api.get('/api/scheduler/courses')
-
-    let courses = response.data
-
-    courses.forEach(course => {
-        cursosOptions.push({
-            id: course.id,
-            nome: course.curso
-        })
-    })
-}
-
-getCursos()
-
-export default function Home({ modulos }) {
+export default function Home({ usuarios }) {
 
     const [domLoaded, setDomLoaded] = useState(false)
     const [user, setUser] = useState('')
-    const [showModal, setShowModal] = useState(false)
+    const [showModalUser, setShowModalUser] = useState(false)
     const [modoModal, setModoModal] = useState('I')
-    const [listaModulos, setListaModulos] = useState([])
     const [page, setPage] = useState(0)
     const [rowsPerPage, setRowsPerPage] = useState(11)
-    const [cursoSelected, setCursoSelected] = useState('')
-    const [nomeModulo, setNomeModulo] = useState('')
-    const [preencheModulo, setPreencheModulo] = useState({})
+    const [nomeUsuario, setNomeUsuario] = useState('')
+    const [tipoSelected, setTipoSelected] = useState('T')
+    const [listaUsuarios, setListaUsuarios] = useState([])
+    const [preencheUsuario, setPreencheUsuario] = useState({})
 
     const columns = [
-        { id: 'curso', label: 'Curso', minWidth: '100%' },
-        { id: 'modulo', label: 'Módulo', minWidth: '100%' },
-        { id: 'qtdAulas', label: 'Nro. Aulas', minWidth: '100%' },
+        { id: 'nome', label: 'Nome', minWidth: '100%' },
+        { id: 'descricaoTipo', label: 'Tipo', minWidth: '100%' },
         { id: 'botoes', maxWidth: '40px' },
     ]
 
@@ -64,30 +65,38 @@ export default function Home({ modulos }) {
             let auth = localStorage.getItem('auth')
             let authBuffer = Buffer.from(auth, 'base64').toString('ascii')
             setUser(JSON.parse(authBuffer))
+            console.log(JSON.parse(authBuffer))
         }
     }, [])
 
-    function formataListaModulos(modulos) {
-        modulos.forEach(modulo => {
-            modulo.botoes = <div className={styles.botoesGrid}>
-                <ButtonGrid key={'alterar'} content={<EditIcon />} onClick={() => {
-                    setModoModal("A")
-                    setShowModal(true)
-                    setPreencheModulo(modulo)
-                }}/>
-                <ButtonGrid key={'excluir'} content={<DeleteIcon />} onClick={() => {
-                    setModoModal("E")
-                    setShowModal(true)
-                    setPreencheModulo(modulo)
-                }}/>
+    function formataListaUsuarios(usuarios) {
+        usuarios.forEach(usuario => {
+            let descricaoTipo = usuario.tipo === 'A' ? "Administrador" : usuario.tipo === 'P' ? "Professor" : "Usuário"
+            usuario.descricaoTipo = descricaoTipo
+            usuario.botoes = <div className={styles.botoesGrid}>
+                {(user.role === "A" || (user.role === "P" && user.user === usuario.usuario)) &&
+                    <ButtonGrid key={'alterar'} content={<EditIcon />} onClick={() => {
+                        setModoModal("A")
+                        setShowModalUser(true)
+                        setPreencheUsuario(usuario)
+                    }} />
+                }
+                {(user.role === "A" && user.user !== usuario.usuario) &&
+                    <ButtonGrid key={'excluir'} content={<DeleteIcon />} onClick={() => {
+                        setModoModal("E")
+                        setShowModalUser(true)
+                        setPreencheUsuario(usuario)
+                    }} />
+                }
+
             </div>
         })
-        return modulos
+        return usuarios
     }
 
     useEffect(() => {
-        setListaModulos(formataListaModulos(modulos))
-    }, [])
+        setListaUsuarios(formataListaUsuarios(usuarios))
+    }, [user])
 
 
     setTimeout(() => {
@@ -95,76 +104,58 @@ export default function Home({ modulos }) {
     }, 150)
 
 
-    function handleNomeModuloChange(e) {
-        setNomeModulo(e.target.value)
+    function handleNomeUsuarioChange(e) {
+        setNomeUsuario(e.target.value)
     }
 
-    function handleCursoChange(e){
-        setCursoSelected(e.target.value)
+    function handleTipoChange(e) {
+        setTipoSelected(e.target.value)
     }
 
-    async function pesquisarModulos(e) {
+    async function pesquisarUsuarios(e) {
         e.preventDefault()
 
         let temFiltro = false
         let filtro = ''
-        if (nomeModulo) {
-            filtro += `modulo=${nomeModulo}`
-            temFiltro = true
-        }
-        if (cursoSelected !== '') {
-            if (temFiltro) {
-                filtro += '&'
-            }
-            filtro += `curso=${cursoSelected}`
+        if (nomeUsuario) {
+            filtro += `nome=${nomeUsuario}`
             temFiltro = true
         }
 
-        let requestURL = `/api/scheduler/modules/search${temFiltro ? '?' + filtro : ''}`
-        const resModulo = await api.get(requestURL)
-        setListaModulos(formataListaModulos(resModulo.data))
+        if (temFiltro) {
+            filtro += '&'
+        }
+        filtro += `tipo=${tipoSelected}`
+        temFiltro = true
+
+        let requestURL = `/api/scheduler/users/search${temFiltro ? '?' + filtro : ''}`
+        const resUsuarios = await api.get(requestURL)
+        setListaUsuarios(formataListaUsuarios(resUsuarios.data))
         setPage(0)
     }
 
     return (
         <>
             <Head>
-                <title>Scheduler - Módulos</title>
+                <title>Scheduler - Usuários</title>
             </Head>
             <Navbar user={user.name} />
             <div className={styles.container}>
                 <div className={styles.pesquisaContainer}>
-                    <form className={styles.filtrosContainer} onSubmit={(e) => pesquisarModulos(e)} onKeyDown={(e) => {
+                    <form className={styles.filtrosContainer} onSubmit={(e) => pesquisarUsuarios(e)} onKeyDown={(e) => {
                         if (e.key === "Enter") {
-                            pesquisarModulos(e)
+                            pesquisarUsuarios(e)
                         }
                     }}>
                         <div className={styles.voltar}>
                             <ButtonGrid onClick={() => Router.back()} content={<ArrowBackIosIcon />} />
                         </div>
 
-                        <FormControl className={styles.curso} sx={{ width: '100%' }}>
-                            <InputLabel shrink htmlFor="cursosOptionsSelect">
-                                Curso
-                            </InputLabel>
-                            <Select placeholder='Selecione um Curso' displayEmpty sx={{ width: '100%' }} label="Curso" id="cursosOptionsSelect"
-                                value={cursoSelected} onChange={handleCursoChange}>
-                                <MenuItem value="">
-                                    <em>Selecione um Curso</em>
-                                </MenuItem>
-                                {cursosOptions.map((curso) => {
-                                    return (
-                                        <MenuItem key={curso.id} value={curso.id}>{curso.nome}</MenuItem>
-                                    )
-                                })}
-                            </Select>
-                        </FormControl>
-
-                        <TextField className={styles.modulo} sx={{ width: '100%' }}
-                            id="nomeModuloInput"
-                            onChange={handleNomeModuloChange}
-                            label="Módulo"
-                            value={nomeModulo}
+                        <TextField className={styles.nomeUsuario} sx={{ width: '100%' }}
+                            id="nomeUsuario"
+                            onChange={handleNomeUsuarioChange}
+                            label="Nome"
+                            value={nomeUsuario}
                             inputProps={{
                                 maxLength: 80
                             }}
@@ -172,11 +163,25 @@ export default function Home({ modulos }) {
                                 shrink: true,
                             }}
                         />
+                        
+                        <FormControl className={styles.tipo} sx={{ width: '50%' }}>
+                            <InputLabel shrink htmlFor="typeOptionsSelect">
+                                Tipo
+                            </InputLabel>
+                            <Select displayEmpty sx={{ width: '100%' }} label="Status" id="typeOptionsSelect"
+                                value={tipoSelected} onChange={handleTipoChange}>
+                                {tipoOptions.map((tipo) => {
+                                    return (
+                                        <MenuItem key={tipo.char} value={tipo.char}>{tipo.label}</MenuItem>
+                                    )
+                                })}
+                            </Select>
+                        </FormControl>
 
                         <div className={styles.botoes}>
                             <ButtonGrid content={<SearchIcon></SearchIcon>} />
                             <ButtonGrid type='button' onClick={() => {
-                                setShowModal(true)
+                                setShowModalUser(true)
                                 setModoModal('I')
                             }} content={<AddIcon></AddIcon>} />
                         </div>
@@ -200,7 +205,7 @@ export default function Home({ modulos }) {
                             </TableHead>
                             <TableBody>
                                 {domLoaded &&
-                                    listaModulos.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
+                                    listaUsuarios.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
                                         return (
                                             <TableRow hover tabIndex={-1} key={row.idAgenda}>
                                                 {
@@ -224,7 +229,7 @@ export default function Home({ modulos }) {
                     </TableContainer>
                     {domLoaded &&
                         <Pagination
-                            total={listaModulos.length}
+                            total={listaUsuarios.length}
                             showSizeChanger={false}
                             current={page + 1}
                             pageSize={rowsPerPage}
@@ -236,26 +241,25 @@ export default function Home({ modulos }) {
                 </div>
             </div>
 
-            {showModal &&
-                <ModalModulo modoModal={modoModal} preencheModulo={preencheModulo} pesquisarModulos={pesquisarModulos} setShowModal={setShowModal} />
+            {showModalUser &&
+                <ModalUsuario modoModal={modoModal} preencheUsuario={preencheUsuario} pesquisarUsuarios={pesquisarUsuarios} setShowModalUser={setShowModalUser} />
             }
         </>
     )
 }
 
-export const getListaModulos = async () => {
-    const resModulo = await api.get('/api/scheduler/modules/search')
-
-    return resModulo.data
+export const getListaUsuarios = async () => {
+    const resUsuarios = await api.get('/api/scheduler/users/search')
+    return resUsuarios.data
 }
 
 export const getServerSideProps = async () => {
 
-    const listaModulos = await getListaModulos()
+    const listaUsuarios = await getListaUsuarios()
 
     return {
         props: {
-            modulos: listaModulos
+            usuarios: listaUsuarios
         }
     }
 }

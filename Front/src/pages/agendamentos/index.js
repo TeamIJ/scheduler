@@ -106,7 +106,7 @@ export default function Home({ agendamentos }) {
         { id: 'horario', label: 'Horário', minWidth: 100 },
         { id: 'descricaoTipo', label: 'Tipo', minWidth: 100 },
         { id: 'statusDescricao', label: 'Status', minWidth: 100 },
-        { id: 'alterar', width: 20 }
+        { id: 'botoes', width: 20 }
     ]
 
     function formataListaAgendamentos(agendamentos) {
@@ -119,11 +119,14 @@ export default function Home({ agendamentos }) {
             formataAgendamento.horario = horario.substring(0, 5)
             formataAgendamento.descricaoTipo = descricaoTipo
             formataAgendamento.statusDescricao = descricaoStatus
-            formataAgendamento.alterar = formataAgendamento.status === 'A' ? <ButtonGrid onClick={() => {
-                setShowModal(true)
-                setModoModal('A')
-                setPreencheAgendamento(formataAgendamento)
-            }} content={<EditIcon sx={{ width: '20px', height: '20px' }}></EditIcon>} /> : <></>
+            formataAgendamento.botoes = formataAgendamento.status === 'A' ? <div className={styles.botoesGrid}>
+                <ButtonGrid onClick={() => {
+                    setShowModal(true)
+                    setModoModal('A')
+                    setPreencheAgendamento(formataAgendamento)
+                }} content={<EditIcon sx={{ width: '20px', height: '20px' }}></EditIcon>} />
+            </div>
+                : <></>
         })
         return agendamentos
     }

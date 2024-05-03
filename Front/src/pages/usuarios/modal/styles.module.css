@@ -1,0 +1,90 @@
+.container {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 500;
+    backdrop-filter: brightness(80%);
+}
+
+.main {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 15px 15px;
+    grid-auto-flow: row;
+    width: 55%;
+    height: auto;
+    background-color: white;
+    box-shadow: 0 0.5rem 3rem rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    padding: 24px;
+    align-items: center;
+    grid-template-areas:
+        "header header header header header"
+        "usuario usuario nome nome nome"
+        "senha senha tipo tipo tipo"
+        "mostraSenha mostraSenha mostraSenha mostraSenha mostraSenha"
+        "botoes botoes botoes botoes botoes";
+
+}
+
+.header {
+    justify-self: end;
+    margin-bottom: 2px;
+    grid-area: header;
+}
+
+.usuario {
+    grid-area: usuario;
+}
+
+.nome {
+    grid-area: nome;
+}
+
+.senha {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    grid-area: senha;
+}
+
+.tipo {
+    grid-area: tipo;
+}
+
+.botoes {
+    justify-self: end;
+    display: flex;
+    gap: 10px;
+    grid-area: botoes;
+}
+
+@media (max-width: 1024px) {
+    .main {
+        width: 95%;
+    }
+}
+
+@media (max-width: 900px) {
+
+    .main {
+        margin-top: 5%;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px 15px;
+        grid-auto-flow: row;
+        grid-template-areas:
+            "header header header"
+            "usuario usuario usuario"
+            "nome nome nome"
+            "senha senha senha"
+            "mostraSenha mostraSenha mostraSenha"
+            "tipo tipo tipo"
+            "botoes botoes botoes";
+    }
+
+}
