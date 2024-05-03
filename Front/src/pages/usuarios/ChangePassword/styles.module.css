@@ -63,17 +63,16 @@
 
     .main {
         margin-top: 5%;
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(2, 1fr);
+        width: 75%;
         gap: 12px 15px;
         grid-auto-flow: row;
         grid-template-areas:
-            "header header header"
-            "usuario usuario usuario"
-            "nome nome nome"
-            "senha senha senha"
-            "mostraSenha mostraSenha mostraSenha"
-            "tipo tipo tipo"
-            "botoes botoes botoes";
+            "header header"
+            "senhaAtual senhaAtual"
+            "novaSenha novaSenha"
+            "mostraSenha mostraSenha"
+            "botoes botoes";
     }
 
 }
