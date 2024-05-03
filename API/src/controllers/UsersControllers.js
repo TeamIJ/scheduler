@@ -1,15 +1,20 @@
 const users = require('../models/Users.js')
-const { hash, compare } = require('bcryptjs')
+const fs = require('fs')
+
+const config = JSON.parse(fs.readFileSync('C:\\temp\\config.json'))
+const Cryptr = require('cryptr')
+const cryptr = new Cryptr(`'${config.encryptKey}'`)
 
 async function authenticate(user) {
 
     const usuario = await users.getUserInfo(user.nome)
 
-    if (!usuario){
+    if (!usuario) {
         return { passwordMatch: false }
     }
 
-    const passwordMatch = await compare(user.senha, usuario.senha)
+    const senhaDescriptografada = cryptr.decrypt(usuario.senha)
+    const passwordMatch = user.senha === senhaDescriptografada
 
     let userReturn = {
         user: usuario.usuario,
@@ -42,8 +47,8 @@ module.exports = {
             res.status(404).send({ message: 'Usuário já cadastrado!' })
             return
         }
-        const passwordHash = await hash(user.senha, 8)
-        user.senha = passwordHash
+        const passwordEncrypted = cryptr.encrypt(user.senha)
+        user.senha = passwordEncrypted
         users.create(req, res, user)
     },
 
@@ -56,6 +61,18 @@ module.exports = {
         users.findAll(req, res)
     },
 
+    findBySearchFilters(req, res, next) {
+        let nome = req.query.nome
+        let tipo = req.query.tipo
+        users.findBySearchFilters(req, res, nome, tipo)
+    },
+
+    getUserPassword(req, res, next) {
+        const { usuario } = req.params
+        users.getUserPassword(req, res, usuario)
+    },
+
+
     update(req, res, next) {
         const user = req.body
         const { usuario } = req.params
@@ -66,14 +83,16 @@ module.exports = {
         let user = req.body
 
         if (!user.reset) {
-            if (!await authenticate(user)) {
-                res.status(404).send({ "ok": false })
+            let response = await authenticate(user)
+            if (!response.passwordMatch) {
+                res.status(404).send({ message: 'Senha atual inválida!' })
+            } else {
+                users.updatePassword(req, res, user)
             }
         } else {
             user.novaSenha = randomPassword()
+            users.updatePassword(req, res, user)
         }
-
-        users.updatePassword(req, res, user)
     },
 
     delete(req, res, next) {

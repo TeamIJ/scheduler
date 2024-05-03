@@ -1,5 +1,9 @@
 const connection = require('../config/db.js')
-const { hash } = require('bcryptjs')
+const fs = require('fs')
+
+const config = JSON.parse(fs.readFileSync('C:\\temp\\config.json'))
+const Cryptr = require('cryptr')
+const cryptr = new Cryptr(`'${config.encryptKey}'`)
 
 function hasData(data) {
     return data.length !== 0
@@ -8,7 +12,7 @@ function hasData(data) {
 module.exports = {
     
     create (_, res, user) {
-        const query = `INSERT INTO USUARIOS (USUARIO, SENHA, TIPO) VALUES ('${user.usuario}', '${user.senha}', '${user.tipo}')`
+        const query = `INSERT INTO USUARIOS (USUARIO, NOME, SENHA, TIPO) VALUES ('${user.usuario}', '${user.nome}', '${user.senha}', '${user.tipo}')`
         connection.query(query, (err, _) => {
             if(err) console.error(err)
             res.status(200).send({message: 'Usuário incluído com sucesso!'})
@@ -40,8 +44,47 @@ module.exports = {
         })
     },
 
+    findBySearchFilters(req, res, nome, tipo){
+        let query = 
+            `SELECT USUARIO AS usuario, TIPO AS tipo, NOME AS nome FROM USUARIOS WHERE 1=1`
+        if(nome){
+            query += ` AND NOME LIKE '${nome}%'`
+        }
+        if(tipo && tipo !== 'T'){
+            query += ` AND TIPO = '${tipo}'`
+        }
+
+        query += ' ORDER BY NOME '
+
+        connection.query(query, async (err, data) => {
+            if (err) console.error(err)
+
+            if (!hasData(data)) {
+                res.json([])
+            } else {
+                res.json(data)
+            }
+        })
+    },
+
+    getUserPassword(req, res, usuario){
+        const query = `SELECT SENHA FROM USUARIOS WHERE USUARIO = '${usuario}'` 
+        connection.query(query, (err, data) => {
+            if(err) console.error(err)
+            if(!hasData(data)) {
+                res.send([])
+            } else {
+                let pass = cryptr.decrypt(data[0].SENHA)
+                let info = {
+                    i: Buffer.from(pass).toString('base64')
+                }
+                res.json(info)
+            }
+        })
+    },
+
     update (_, res, usuario, user) {
-        const query = `UPDATE USUARIOS SET SENHA = '${user.senha}', TIPO = '${user.tipo}' WHERE USUARIO = '${usuario}'`
+        const query = `UPDATE USUARIOS SET NOME = '${user.nome}', TIPO = '${user.tipo}' WHERE USUARIO = '${usuario}'`
   
         connection.query(query, (err, _) => {
             if(err) console.error(err)
@@ -50,9 +93,9 @@ module.exports = {
     },
 
     async updatePassword(_, res, user){
-        const query = `UPDATE USUARIOS SET SENHA = '${await hash(user.novaSenha, 8)}' WHERE USUARIO = '${user.nome}'`
-  
-        connection.query(query, (err, _) => {
+        const query = 'UPDATE USUARIOS SET SENHA = ? WHERE USUARIO = ?'
+        const novaSenha = cryptr.encrypt(user.novaSenha)
+        connection.query(query, [novaSenha, user.nome, user.cpf], (err, _) => {
             if(err) console.error(err)
             res.status(200).send({message: 'Senha alterada com sucesso!', newPassword: user.novaSenha})
         })
@@ -66,8 +109,8 @@ module.exports = {
         })
     },
 
-    getUserInfo(username){
-        const query = `SELECT usuario, nome, senha, tipo FROM USUARIOS WHERE USUARIO = '${username}'`
+    getUserInfo(userName){
+        const query = `SELECT usuario, nome, senha, tipo FROM USUARIOS WHERE USUARIO COLLATE latin1_general_cs = '${userName}'`
         return new Promise((resolve) => {
             connection.query(query, (err, data) => {
                 if(err) console.error(err)
