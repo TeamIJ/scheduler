@@ -7,9 +7,11 @@ import { Navbar } from '@/components/ui/Navbar'
 import styles from './styles.module.css'
 import { ButtonGrid } from "@/components/ui/Button"
 import { api } from "@/services/apiClient"
-import ModalCurso from "./modal"
+import ModalStudents from "./modal"
 import {
-    Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField
+    Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
+    FormControl, InputLabel, MenuItem, Select,
+    TextField
 } from '@mui/material'
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -19,40 +21,42 @@ import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 
 import { Pagination } from 'antd'
 
-export default function Home({ cursos }) {
+let statusOptions = [
+    {
+        "char": "T",
+        "label": "Todos"
+    },
+    {
+        "char": "A",
+        "label": "Ativo"
+    },
+    {
+        "char": "I",
+        "label": "Inativo"
+    },
+]
+
+export default function Home({ students }) {
 
     const [domLoaded, setDomLoaded] = useState(false)
+    const [page, setPage] = useState(0)
+    const [rowsPerPage, setRowsPerPage] = useState(11)
     const [user, setUser] = useState('')
     const [showModal, setShowModal] = useState(false)
     const [modoModal, setModoModal] = useState('I')
-    const [listaCursos, setListaCursos] = useState([])
-    const [page, setPage] = useState(0)
-    const [rowsPerPage, setRowsPerPage] = useState(11)
-    const [nomeCurso, setNomeCurso] = useState('')
-    const [preencheCurso, setPreencheCurso] = useState({})
+    const [nome, setNome] = useState('')
+    const [status, setStatus] = useState('T')
+    const [registry, setRegistry] = useState('')
+    const [listaStudents, setListaStudents] = useState([])
+    const [statusSelected, setStatusSelected] = useState('T')
+    const [preencheStudent, setPreencheStudent] = useState([])
 
     const columns = [
-        { id: 'curso', label: 'Curso', minWidth: '100%' },
-        { id: 'botoes', maxWidth: '40px' }
+        { id: 'matricula', label: 'Matrícula', maxWidth: '20px' },
+        { id: 'nome', label: 'Nome', minWidth: '100%' },
+        { id: 'statusDescricao', label: 'Status', minWidth: '100%' },
+        { id: 'botoes', maxWidth: '40px' },
     ]
-
-    function formataListaCursos(cursos) {
-        cursos.forEach(curso => {
-            curso.botoes = <div className={styles.botoesGrid}>
-                <ButtonGrid key={'alterar'} content={<EditIcon />} onClick={() => {
-                    setModoModal("A")
-                    setShowModal(true)
-                    setPreencheCurso(curso)
-                }}/>
-                <ButtonGrid key={'excluir'} content={<DeleteIcon />} onClick={() => {
-                    setModoModal("E")
-                    setShowModal(true)
-                    setPreencheCurso(curso)
-                }}/>
-            </div>
-        })
-        return cursos
-    }
 
     useEffect(() => {
         if (validateSession()) {
@@ -62,56 +66,126 @@ export default function Home({ cursos }) {
         }
     }, [])
 
+    function formataListaStudents(students) {
+        students.forEach(student => {
+            student.statusDescricao = student.status === 'A' ? 'Ativo' : 'Inativo'
+            student.botoes = <div className={styles.botoesGrid}>
+                <ButtonGrid key={'alterar'} content={<EditIcon />} onClick={() => {
+                    setModoModal("A")
+                    setShowModal(true)
+                    setPreencheStudent(student)
+                }}/>
+                <ButtonGrid key={'excluir'} content={<DeleteIcon />} onClick={() => {
+                    setModoModal("E")
+                    setShowModal(true)
+                    setPreencheStudent(student)
+                }}/>
+            </div>
+        })
+        return students
+    }
+
     useEffect(() => {
-        setListaCursos(formataListaCursos(cursos))
+        setListaStudents(formataListaStudents(students))
     }, [])
+
 
     setTimeout(() => {
         setDomLoaded(true)
     }, 150)
 
-
-    function handleNomeCursoChange(e) {
-        setNomeCurso(e.target.value)
+    function handleNomeChange(e) {
+        setNome(e.target.value)
     }
 
-    async function pesquisarCursos(e) {
+    function handleStudentChange(e){
+        setRegistry(e.target.value)
+    }
+
+    function handleStatusChange(e){
+        setStatusSelected(e.target.value)
+    }
+
+    async function pesquisarStudents(e) {
         e.preventDefault()
-        let requestURL = `/api/scheduler/courses/${nomeCurso}`
-        const resCurso = await api.get(requestURL)
-        setListaCursos(formataListaCursos(resCurso.data))
+
+        let temFiltro = false
+        let filtro = ''
+        if (registry) {
+            filtro += `registry=${registry}`
+            temFiltro = true
+        }
+
+        if (nome) {
+            if (temFiltro) {
+                filtro += '&'
+            }
+            filtro +=  `nome_aluno=${nome}`
+            temFiltro = true
+        }
+
+        if (temFiltro) {
+            filtro += '&'
+        }
+        filtro += `status=${statusSelected}`
+        temFiltro = true
+
+        let requestURL = `/api/scheduler/students/${temFiltro ? '?' + filtro : ''}`
+        const resStudents = await api.get(requestURL)
+        setListaStudents(formataListaStudents(resStudents.data))
         setPage(0)
     }
 
     return (
         <>
             <Head>
-                <title>Scheduler - Cursos</title>
+                <title>Scheduler - Alunos</title>
             </Head>
             <Navbar user={user.name} />
             <div className={styles.container}>
                 <div className={styles.pesquisaContainer}>
-                    <form className={styles.filtrosContainer} onSubmit={(e) => pesquisarCursos(e)} onKeyDown={(e) => {
+                    <form className={styles.filtrosContainer} onSubmit={(e) => pesquisarStudents(e)} onKeyDown={(e) => {
                         if (e.key === "Enter") {
-                            pesquisarCursos(e)
+                            pesquisarStudents(e)
                         }
                     }}>
                         <div className={styles.voltar}>
                             <ButtonGrid onClick={() => Router.back()} content={<ArrowBackIosIcon />} />
                         </div>
 
-                        <TextField className={styles.curso} sx={{ width: '100%' }}
-                            id="nomeCursoInput"
-                            onChange={handleNomeCursoChange}
-                            label="Curso"
-                            value={nomeCurso}
+                        <TextField className={styles.student} sx={{ width: '100%' }}
+                            id="studentInput"
+                            onChange={handleStudentChange}
+                            label="Matrícula"
                             inputProps={{
-                                maxLength: 80
+                                maxLength: 11
                             }}
                             InputLabelProps={{
                                 shrink: true,
                             }}
                         />
+                        <TextField className={styles.nome} sx={{ width: '100%' }}
+                            id="nomeInput"
+                            onChange={handleNomeChange}
+                            label="Nome"
+                            InputLabelProps={{
+                                shrink: true,
+                            }}
+                        />
+
+                        <FormControl className={styles.status} sx={{ width: '100%' }}>
+                            <InputLabel shrink htmlFor="statusOptionsSelect">
+                                Status
+                            </InputLabel>
+                            <Select displayEmpty sx={{ width: '100%' }} label="Status" id="statusOptionsSelect"
+                                value={statusSelected} onChange={handleStatusChange}>
+                                {statusOptions.map((status) => {
+                                    return (
+                                        <MenuItem key={status.char} value={status.char}>{status.label}</MenuItem>
+                                    )
+                                })}
+                            </Select>
+                        </FormControl>
 
                         <div className={styles.botoes}>
                             <ButtonGrid content={<SearchIcon></SearchIcon>} />
@@ -140,7 +214,7 @@ export default function Home({ cursos }) {
                             </TableHead>
                             <TableBody>
                                 {domLoaded &&
-                                    listaCursos.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
+                                    listaStudents.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
                                         return (
                                             <TableRow hover tabIndex={-1} key={row.idAgenda}>
                                                 {
@@ -164,7 +238,7 @@ export default function Home({ cursos }) {
                     </TableContainer>
                     {domLoaded &&
                         <Pagination
-                            total={listaCursos.length}
+                            total={listaStudents.length}
                             showSizeChanger={false}
                             current={page + 1}
                             pageSize={rowsPerPage}
@@ -177,22 +251,25 @@ export default function Home({ cursos }) {
             </div>
 
             {showModal &&
-                <ModalModulo modoModal={modoModal} preencheCurso={preencheCurso} pesquisarCursos={pesquisarCursos} setShowModal={setShowModal} />
+                <ModalStudents modoModal={modoModal} preencheStudent={preencheStudent} pesquisarStudents={pesquisarStudents} setShowModal={setShowModal} />
             }
         </>
     )
 }
 
-export const getListaCursos = async () => {
-    const resCurso = await api.get('/api/scheduler/courses')
-    return resCurso.data
+export const getListaStudents = async () => {
+    const resStudents = await api.get('/api/scheduler/students')
+
+    return resStudents.data
 }
 
 export const getServerSideProps = async () => {
-    const listaCursos = await getListaCursos()
+
+    const listaStudents = await getListaStudents()
+
     return {
         props: {
-            cursos: listaCursos
+            students: listaStudents
         }
     }
 }

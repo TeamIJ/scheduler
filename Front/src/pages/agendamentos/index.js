@@ -80,7 +80,7 @@ async function getProfessores() {
 
 let matricula
 let nomeAluno
-let profSelected
+let profSelected = ''
 let data
 
 export default function Home({ agendamentos }) {
@@ -257,10 +257,10 @@ export default function Home({ agendamentos }) {
                             <InputLabel shrink htmlFor="profOptionsSelect">
                                 Professor(a)
                             </InputLabel>
-                            <Select placeholder='Selecione um professor' displayEmpty sx={{ width: '100%' }} label="Professore(a)" id="profOptionsSelect"
+                            <Select placeholder='Selecione um(a) professor(a)' displayEmpty sx={{ width: '100%' }} label="Professor(a)" id="profOptionsSelect"
                                 value={profSelected} onChange={handleProfChange}>
                                 <MenuItem value="">
-                                    <em>Selecione um professor</em>
+                                    <em>Selecione um(a) professor(a)</em>
                                 </MenuItem>
                                 {profOptions.map((prof) => {
                                     return (

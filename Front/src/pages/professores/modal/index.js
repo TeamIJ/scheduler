@@ -3,8 +3,7 @@ import { api } from '@/services/apiClient';
 import { validateSession } from '@/contexts/AuthContext';
 import styles from './styles.module.css'
 import {
-    FormControl, InputLabel, MenuItem, Select,
-    TextField
+    FormControl, InputLabel, MenuItem, Select, FormControlLabel, FormLabel, Radio, RadioGroup, TextField
 } from '@mui/material';
 import { Button, ButtonGrid } from '@/components/ui/Button';
 import { toast } from 'react-toastify'
@@ -24,13 +23,13 @@ async function getCursos() {
     return coursesAux
 }
 
-export default function ModalModulo({ modoModal, pesquisarModulos, setShowModal, preencheModulo }) {
+export default function ModalProfessor({ modoModal, pesquisarProfessores, setShowModal, preencheProfessor }) {
 
     const [user, setUser] = useState('')
     const [cursosOptions, setCursosOptions] = useState([])
     const [cursoSelected, setCursoSelected] = useState('')
-    const [nomeModulo, setNomeModulo] = useState('')
-    const [qtdAula, setQtdAula] = useState('')
+    const [nomeProfessor, setNomeProfessor] = useState('')
+    const [status, setStatus] = useState('D')
 
     async function preencheListaCursos(){
         let cursos = await getCursos()
@@ -49,48 +48,46 @@ export default function ModalModulo({ modoModal, pesquisarModulos, setShowModal,
     useEffect(() => {
         if (modoModal !== 'I') {
             preencheListaCursos()
-            setNomeModulo(preencheModulo.modulo)
-            setCursoSelected(preencheModulo.ID_CURSO)
-            setQtdAula(preencheModulo.qtdAulas)
+            setCursoSelected(preencheProfessor.ID_CURSO)
         }
     }, [])
-
-    function handleNomeModuloChange(e) {
-        setNomeModulo(e.target.value)
-    }
 
     function handleCursoChange(e) {
         setCursoSelected(e.target.value)
     }
 
-    function handleQtdAulaChange(e) {
-        setQtdAula(e.target.value)
+    function handleNomeProfessorChange(e) {
+        setNomeProfessor(e.target.value)
     }
 
-    async function submitModulo(e) {
+    function handleStatusChange(e) {
+        setStatus(e.target.value)
+    }
+
+    async function submitProfessor(e) {
         e.preventDefault()
 
-        let modulo = {
+        let professor = {
             "id_curso": cursoSelected,
-            "nome_modulo": nomeModulo,
-            "qtd_aulas": qtdAula
+            "nome_prof": nomeProfessor,
+            "status_prof": status
         }
         try {
 
             let response
             if (modoModal === 'I') {
-                response = await api.post('/api/scheduler/modules', modulo)
+                response = await api.post('/api/scheduler/professor', professor)
             } else if (modoModal === 'A') {
-                response = await api.put(`/api/scheduler/modules/${preencheModulo.id}`, modulo)
+                response = await api.put(`/api/scheduler/professor/${preencheProfessor.id}`, professor)
             } else {
-                response = await api.delete(`/api/scheduler/modules/${preencheModulo.id}`)
+                response = await api.delete(`/api/scheduler/professor/${preencheProfessor.id}`)
             }
             setShowModal(false)
             toast.success(response.data.message)
         } catch (err) {
             toast.error(err.response.data.message)
         }
-        pesquisarModulos(e)
+        pesquisarProfessores(e)
     }
 
     return (
@@ -107,12 +104,11 @@ export default function ModalModulo({ modoModal, pesquisarModulos, setShowModal,
                         </ButtonGrid>
                     </div>
 
-
-                    <TextField className={styles.modulo} sx={{ width: '100%' }}
-                        id="nomeModuloInput"
-                        onChange={handleNomeModuloChange}
-                        label="Módulo"
-                        value={nomeModulo}
+                    <TextField className={styles.nome} sx={{ width: '100%' }}
+                        id="nome"
+                        onChange={handleNomeProfessorChange}
+                        label="Nome"
+                        value={nomeProfessor}
                         required={modoModal !== 'E'}
                         inputProps={{
                             maxLength: 80
@@ -123,17 +119,6 @@ export default function ModalModulo({ modoModal, pesquisarModulos, setShowModal,
                         disabled={modoModal === 'E'}
                     />
 
-                    <TextField className={styles.aula} sx={{ width: '100%' }}
-                        id="qtdAulaInput"
-                        onChange={handleQtdAulaChange}
-                        label="Nro. Aulas"
-                        value={qtdAula}
-                        required={modoModal !== 'E'}
-                        InputLabelProps={{
-                            shrink: true,
-                        }}
-                        disabled={modoModal === 'E'}
-                    />
 
                     <FormControl className={styles.curso} sx={{ width: '40%' }}>
                         <InputLabel required={modoModal !== 'E'} shrink htmlFor="cursosOptionsSelect">
@@ -150,6 +135,28 @@ export default function ModalModulo({ modoModal, pesquisarModulos, setShowModal,
                                 )
                             })}
                         </Select>
+                    </FormControl>
+
+                    <FormControl className={styles.status}>
+                        <FormLabel required={modoModal !== 'E'} id="status" sx={{ fontSize: '75%' }}>Status</FormLabel>
+                        <RadioGroup
+                            row
+                            aria-labelledby="status"
+                            name="row-radio-buttons-group"
+                            onChange={handleStatusChange}
+                            
+                        >
+                            <FormControlLabel checked={status === 'D'} disabled={user.role !== "A" || modoModal === 'E'} value="D" control={<Radio size="small" />} label="Dísponivel" sx={{
+                                '& .MuiFormControlLabel-label': {
+                                    fontSize: '90%'
+                                }
+                            }} />
+                            <FormControlLabel checked={status === 'A'} disabled={user.role !== "A" || modoModal === 'E'}  value="A" control={<Radio size="small" />} label="Ausente" sx={{
+                                '& .MuiFormControlLabel-label': {
+                                    fontSize: '90%'
+                                }
+                            }} />
+                        </RadioGroup>
                     </FormControl>
 
                     <div className={styles.botoes}>

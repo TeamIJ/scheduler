@@ -20,8 +20,8 @@ async function getCursos() {
 
     courses.forEach(course => {
         cursosOptions.push({
-            id: course.ID_CURSO,
-            nome: course.NOME_CURSO
+            id: course.id,
+            nome: course.curso
         })
     })
 }

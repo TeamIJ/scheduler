@@ -1,0 +1,66 @@
+.container{
+    display: flex;
+    flex-direction: column;
+    width: 100vw;
+    height: 90vh;
+    align-items: center;
+    justify-content: center;
+    max-width: 100%;
+}
+
+.pesquisaContainer {
+    background-color: white;
+    height: 95%;
+    width: 95%;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 4px 2px 23px -18px rgba(0,0,0,0.75);
+
+}
+
+.filtrosContainer {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 5px;
+    align-items: center;
+    width: 95%;
+    height: auto;
+    border-radius: 5px;
+    border-color: var(--inputs-border-color);
+    margin-bottom: 15px;
+    grid-template-areas: "voltar matricula nome nome status botoes";
+}
+
+.voltar { 
+  
+    grid-area: voltar;
+}
+
+.matricula {
+    grid-area: matricula;
+}
+
+.nome {
+    grid-area: nome;
+}
+
+.status {
+    grid-area: status;
+}
+
+.botoes { 
+    display: flex;
+    justify-self: end;
+    gap: 20px;
+    margin-right: 17px;
+    grid-area: botoes; 
+}
+
+.botoesGrid { 
+    display: flex;
+    justify-content: end;
+    gap: 20px;
+}

@@ -7,7 +7,7 @@ import { Button, ButtonGrid } from '@/components/ui/Button';
 import { toast } from 'react-toastify'
 import CloseIcon from '@mui/icons-material/Close';
 
-export default function ModalModulo({ modoModal, pesquisarCursos, setShowModal, preencheCurso }) {
+export default function ModalCurso({ modoModal, pesquisarCursos, setShowModal, preencheCurso }) {
 
     const [user, setUser] = useState('')
     const [idCurso, setIdCurso] = useState('')
