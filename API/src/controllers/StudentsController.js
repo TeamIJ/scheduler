@@ -50,12 +50,14 @@ module.exports = {
     findStudent(req, res, next){
         let registry 
         let nome
-
+        let status
+        
         if (Object.keys(req.query).length > 0) {
             registry = req.query.registry
             nome = req.query.nome_aluno
+            status = req.query.status
         } 
-        students.findByFilter(req, res, registry, nome)
+        students.findByFilter(req, res, registry, nome, status)
     }
 }
 

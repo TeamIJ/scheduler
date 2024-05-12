@@ -23,24 +23,25 @@ module.exports = {
         })
     },
 
-    findByIdOrName(_, res, id, nome){
+    findByIdOrName(_, res, id, status){
         let query = `SELECT DISTINCT ID_PROF, NOME, STATUS_PROF FROM PROFESSORES WHERE 1=1`
         let filter = []
-        if (nome) {
-            filter.push(nome)
-            query = query + ` AND NOME LIKE '${nome}%'`
-        }
 
         if (id) {
             filter.push(id)
             query = query + ` AND ID_PROF = '${id}'`
         }
 
+        if(status && status !== 'T') {
+            filter.push(status)
+            query = query + ` AND STATUS_PROF = '${status}'`
+        }
+
         connection.query(query, filter, (err, data) => {
             if (err) console.error(err)
 
             if (!hasData(data)) {
-                res.send({message: 'Nenhum(a) professor(a) encontrado'}) 
+                res.json([]) 
             } else {
                 res.json(data)
             }

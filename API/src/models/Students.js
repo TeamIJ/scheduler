@@ -6,20 +6,20 @@ function hasData(data){
 
 module.exports = {
     create(_, res, student){
-        const query = `INSERT INTO ALUNOS (ID_CURSO, MATRICULA, NOME, STATUS_ALUNO) VALUES ('${student.idCurso}', '${student.matricula}', '${student.nome}', '${student.statusAluno}')`
+        const query = `INSERT INTO ALUNOS (MATRICULA, NOME, STATUS_ALUNO) VALUES ('${student.matricula}', '${student.nome}', '${student.statusAluno}')`
         connection.query(query, (err, _) => {
             if(err) console.error(err)
             res.status(200).send({message:'Aluno incluído com sucesso!'})
         })
     },
 
-    findByFilter(_, res, registry, nome){
-        let query = `SELECT * FROM ALUNOS WHERE 1=1 `
+    findByFilter(_, res, registry, nome, status){
+        let query = `SELECT MATRICULA as matricula, NOME as nome, STATUS_ALUNO as status FROM ALUNOS WHERE 1=1 `
         let filter = []
 
         if(registry){
             filter.push(registry)
-            query = query + ` AND MATRICULA = '${registry}'`
+            query = query + ` AND MATRICULA LIKE '${registry}%'`
         }
         
         if(nome){
@@ -27,10 +27,17 @@ module.exports = {
             query = query + ` AND NOME LIKE '${nome}%'`
         }
 
+        if(status && status !== 'T'){
+            filter.push(status)
+            query = query + ` AND STATUS_ALUNO = '${status}'`
+        }
+
+        query = query + ' ORDER BY MATRICULA'
+        
         connection.query(query, filter, (err, data) => {
             if(err) console.error(err)
             if(!hasData(data)){
-                res.send({message:'Aluno não encontrado!'})
+                res.json([])
             } else {
                 res.json(data)
             }
@@ -38,7 +45,7 @@ module.exports = {
     },
 
     update(_, res, student, registry){
-        const query = `UPDATE ALUNOS SET ID_CURSO = '${student.idCurso}', NOME = '${student.nome}', STATUS_ALUNO = '${student.statusAluno}' WHERE MATRICULA = '${registry}'`
+        const query = `UPDATE ALUNOS SET NOME = '${student.nome}', STATUS_ALUNO = '${student.statusAluno}' WHERE MATRICULA = '${registry}'`
         connection.query(query, (err, _) => {
             if(err) console.error(err)
             res.status(200).send({message:'Aluno alterado com sucesso!'})

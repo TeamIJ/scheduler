@@ -18,13 +18,13 @@ module.exports = {
 
     findProfessor(req, res, next) {
         let id
-        let nome
+        let status
         if (Object.keys(req.query).length > 0) {
             id = req.query.id_prof
-            nome = req.query.nome_prof
+            status = req.query.status_prof
         }
 
-        professor.findByIdOrName(req, res, id, nome)
+        professor.findByIdOrName(req, res, id, status)
     },
 
     findProfessorByCourseId(req, res, next) {
