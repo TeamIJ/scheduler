@@ -12,8 +12,8 @@ module.exports = {
         })
     },
 
-    findByTime(_, res, time){
-        const query = `SELECT * FROM HORARIOS where HORARIO = '${time}'`
+    findByDayAndTime(_, res, timetable){
+        const query = `SELECT * FROM HORARIOS WHERE DIA_SEMANA = '${timetable.dayWeek}' AND HORARIO = '${timetable.time}'`
         connection.query(query, (err, data) =>{
             if (err) console.error(err)
 
@@ -21,8 +21,17 @@ module.exports = {
         })
     },
 
-    update(_, res, time, timetable){
-        const query = `UPDATE HORARIOS SET STATUS_HORARIO = '${timetable.status}' WHERE HORARIO = '${time}'`
+    findByDay(_, res, Day){
+        const query = `SELECT DIA_SEMANA, HORARIO, STATUS_HORARIO, STATUS_DIA, QTD_AGENDAMENTOS FROM HORARIOS WHERE DIA_SEMANA = '${Day}'`
+        connection.query(query, (err, data) =>{
+            if (err) console.error(err)
+
+                res.json(data)
+        })
+    },
+
+    update(_, res, timetable){
+        const query = `UPDATE HORARIOS SET STATUS_HORARIO = '${timetable.status}' WHERE DIA_SEMANA = '${timetable.dayWeek}' AND HORARIO = '${timetable.time}'`
         connection.query(query, (err, _) => {
             if (err) console.error(err)
 
@@ -32,7 +41,7 @@ module.exports = {
 
     totalScheduled(weekDay, time){
         return new Promise((resolve) => {
-            const query = `SELECT QTD_AGENDAMENTOS_${weekDay} qtd FROM HORARIOS WHERE HORARIO = '${time}'`
+            const query = `SELECT QTD_AGENDAMENTOS qtd FROM HORARIOS WHERE DIA_SEMANA = '${weekDay}' AND HORARIO = '${time}'`
             connection.query(query, async (err, data) => {
                 if (err) console.error(err)
                 resolve(data[0].qtd)
@@ -41,9 +50,9 @@ module.exports = {
     },
 
     updateTotalScheduled(weekDay, time, method){
-        let column = `QTD_AGENDAMENTOS_${weekDay}`
+        let column = `QTD_AGENDAMENTOS`
         const operation = method === 'I' ? `${column} + 1` : `${column} - 1`
-        const query = `UPDATE HORARIOS SET ${column} = ${operation} WHERE HORARIO = '${time}'`
+        const query = `UPDATE HORARIOS SET QTD_AGENDAMENTOS = ${operation} WHERE DIA_SEMANA = '${weekDay}' AND HORARIO = '${time}'`
         connection.query(query, (err, _) => {
             if (err) console.error(err)
         })

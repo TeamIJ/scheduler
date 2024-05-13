@@ -9,6 +9,9 @@ module.exports = app => {
     // Retrieve students (filtering by registry or name is possible too)
     router.get("/students/", student.findStudent)
   
+    // Retrieve student's name
+    router.get("/students/name/:registry", student.findStudentName)
+
     // Update a students with registry
     router.put("/students/:registry", student.update)
   

@@ -58,6 +58,11 @@ module.exports = {
             status = req.query.status
         } 
         students.findByFilter(req, res, registry, nome, status)
+    },
+
+    findStudentName(req, res, next){
+        const { registry } = req.params
+        students.findStudentName(req, res, registry)
     }
 }
 

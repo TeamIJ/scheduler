@@ -6,15 +6,19 @@ module.exports = {
         timetables.findAll(req, res)
     },
 
-    findByTime(req, res, next){
-        const { time } = req.params
-        timetables.findByTime(req, res, time)
+    findByDayAndTime(req, res, next){
+        const timetable = req.body
+        timetables.findByDayAndTime(req, res, timetable)
+    },
+
+    findByDay(req, res, next){
+        const { day } = req.params
+        timetables.findByDay(req, res, day)
     },
 
     update(req, res, next){
         const timetable = req.body
-        const { time } = req.params
-        timetables.update(req, res, time, timetable)
+        timetables.update(req, res, timetable)
     }
     
 }
