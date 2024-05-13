@@ -70,10 +70,10 @@ async function getProfessores(curso) {
 }
 
 async function getNomeAluno(matricula) {
-    const response = await api.get(`/api/scheduler/students?registry=${matricula}`)
-
+    const response = await api.get(`/api/scheduler/students/name/${matricula}`)
+    console.log(response)
     if (response.data.length !== 0) {
-        return response.data[0].NOME
+        return response.data[0].nome
     } else {
         return ''
     }

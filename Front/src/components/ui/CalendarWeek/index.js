@@ -31,21 +31,34 @@ async function getDayOfWeek() {
   }
   date.setDate(dayCurrent)
 
-  const response = await api.get('/api/scheduler/days')
-
-  let days = response.data
-
-
   while (dayOfWeek < 7) {
-    let dayAvailable = days[dayOfWeek].DISPONIVEL === "S"
+
+    const response = await api.get(`/api/scheduler/timetables/${days[dayOfWeek]}`)
+
+    let timetables = response.data
+
+    let hours = []
+    timetables.forEach(time => {
+      hours.push({
+        "hour":time.HORARIO.substring(0, 5),
+        "available":time.STATUS_HORARIO === "D"
+      })
+    })
+    let dayAvailable
+    if(timetables[0]){
+      dayAvailable = timetables[0].STATUS_DIA === "D"
+    }else{
+      dayAvailable = false
+    }
     calendar.push({
       day: dayCurrent,
       week: dayOfWeek,
       month: month,
       year: year,
       available: dayAvailable,
-      hours: []
+      hours: hours
     })
+
     dayCurrent++
     dayOfWeek++
 
@@ -65,23 +78,7 @@ async function getDayOfWeek() {
 
 }
 
-async function getHours() {
-  const response = await api.get('/api/scheduler/timetables')
-
-  let timetables = response.data
-
-  calendar.forEach(day => {
-    timetables.forEach(hour => {
-      day.hours.push({
-        "hour":hour.HORARIO.substring(0, 5),
-        "available":hour.STATUS_HORARIO === "D"
-      })
-    })
-  })
-}
-
 getDayOfWeek()
-getHours()
 
 export function CalendarWeek({ setDateHourSelected, setDiaSemanaSelecionado, ...rest }) {
 

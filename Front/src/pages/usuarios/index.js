@@ -65,7 +65,6 @@ export default function Home({ usuarios }) {
             let auth = localStorage.getItem('auth')
             let authBuffer = Buffer.from(auth, 'base64').toString('ascii')
             setUser(JSON.parse(authBuffer))
-            console.log(JSON.parse(authBuffer))
         }
     }, [])
 
