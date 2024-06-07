@@ -17,14 +17,11 @@ import EditIcon from '@mui/icons-material/Edit'
 import SearchIcon from '@mui/icons-material/Search'
 import AddIcon from '@mui/icons-material/Add'
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import { CheckBox } from "@/components/ui/CheckBox"
 import { replicateZeros } from "@/services/utils"
 
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
-import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { Pagination } from 'antd'
-
-const letrasDiasSemana = ['D', 'S', 'T', 'Q', 'Q', 'S', 'S']
+import { toast } from 'react-toastify'
 
 function formataData(dataAtinga) {
     let data = new Date(dataAtinga)
@@ -83,7 +80,7 @@ let nomeAluno
 let profSelected = ''
 let data
 
-export default function Home({ agendamentos }) {
+export default function Agendamentos({ calendar, agendamentos }) {
 
     const [domLoaded, setDomLoaded] = useState(false)
     const [user, setUser] = useState('')
@@ -95,6 +92,7 @@ export default function Home({ agendamentos }) {
     const [rowsPerPage, setRowsPerPage] = useState(11)
     const [preencheAgendamento, setPreencheAgendamento] = useState({})
     const [statusSelected, setStatusSelected] = useState("T")
+    const [somenteDaSemana, setSomenteDaSemana] = useState(true)
 
     const columns = [
         { id: 'professor', label: 'Professor', minWidth: 170 },
@@ -166,14 +164,6 @@ export default function Home({ agendamentos }) {
         setStatusSelected(e.target.value)
     }
 
-    function handleDataChange(e) {
-        if (e) {
-            data = formataDataSQL(e.$D, e.$M, e.$y)
-        } else {
-            data = ''
-        }
-    }
-
     async function pesquisaAgendamentos(e) {
         e.preventDefault()
 
@@ -197,13 +187,12 @@ export default function Home({ agendamentos }) {
             filtro += `id_prof=${profSelected}`
             temFiltro = true
         }
-        if (data) {
-            if (temFiltro) {
-                filtro += '&'
-            }
-            filtro += `data=${data}`
-            temFiltro = true
+
+        if (temFiltro) {
+            filtro += '&'
         }
+        filtro += `somenteDaSemana=${somenteDaSemana}`
+        temFiltro = true
 
         if (temFiltro) {
             filtro += '&'
@@ -270,13 +259,16 @@ export default function Home({ agendamentos }) {
                             </Select>
                         </FormControl>
 
-                        <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <DatePicker format="DD/MM/YYYY" label="Data" InputLabelProps={{
-                                shrink: true,
-                            }} onChange={(e) => handleDataChange(e)}
-                                dayOfWeekFormatter={(weekday) => `${letrasDiasSemana[weekday.$W]}`}
-                            />
-                        </LocalizationProvider>
+                        <div className={styles.checkbox}>
+                            <CheckBox checked={somenteDaSemana} isLoginPage={false} onChange={() => {
+                                setSomenteDaSemana(!somenteDaSemana)
+                            }} options={[
+                                {
+                                    id: "S",
+                                    title: "Somente da semana",
+                                },
+                            ]} />
+                        </div>
 
                         <FormControl className={styles.status} sx={{ width: '100%' }}>
                             <InputLabel shrink htmlFor="statusOptionsSelect">
@@ -301,7 +293,7 @@ export default function Home({ agendamentos }) {
                         </div>
                     </form>
                     <TableContainer sx={{
-                        height: '100%', maxHeight: '100%', width: '95%', backgroundColor: 'white',
+                        height: '100%', maxHeight: '100%', width: '100%', backgroundColor: 'white',
                         boxShadow: '4px 2px 23px -18px rgba(0,0,0,0.75)', borderRadius: '5px', marginBottom: '8px'
                     }}>
                         <Table>
@@ -354,25 +346,32 @@ export default function Home({ agendamentos }) {
             </div>
 
             {showModal &&
-                <ModalAgendamento modoModal={modoModal} preencheAgendamento={preencheAgendamento} pesquisaAgendamentos={pesquisaAgendamentos} setShowModal={setShowModal} />
+                <ModalAgendamento calendar={calendar} modoModal={modoModal} preencheAgendamento={preencheAgendamento} pesquisaAgendamentos={pesquisaAgendamentos} setShowModal={setShowModal} />
             }
         </>
     )
 }
 
 export const getListaAgendamentos = async () => {
-    const resAgendamento = await api.get('/api/scheduler/schedules/search')
+    const resAgendamento = await api.get('/api/scheduler/schedules/search?somenteDaSemana=true')
 
     return resAgendamento.data
+}
+
+export const getCalendar = async () => {
+    const resCalendar = await api.get('/api/scheduler/timetables/calendar/info')
+    return resCalendar.data
 }
 
 export const getServerSideProps = async () => {
 
     const listaAgendamentos = await getListaAgendamentos()
 
+    const calendar = await getCalendar()
     return {
         props: {
-            agendamentos: listaAgendamentos
+            agendamentos: listaAgendamentos,
+            calendar: calendar
         }
     }
 }

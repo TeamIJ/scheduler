@@ -3,38 +3,24 @@ import { api } from '@/services/apiClient';
 import { validateSession } from '@/contexts/AuthContext';
 import styles from './styles.module.css'
 import {
-    FormControl, InputLabel, MenuItem, Select, FormControlLabel, FormLabel, Radio, RadioGroup, TextField
+    FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, TextField
 } from '@mui/material';
 import { Button, ButtonGrid } from '@/components/ui/Button';
 import { toast } from 'react-toastify'
 import CloseIcon from '@mui/icons-material/Close';
+import Transfer from "../../../components/ui/Transfer";
+import { mask } from "../../../services/utils";
 
-async function getCursos() {
-    const response = await api.get('/api/scheduler/courses')
-
-    let courses = response.data
-    let coursesAux = []
-    courses.forEach(course => {
-        coursesAux.push({
-            id: course.id,
-            nome: course.curso
-        })
-    })
-    return coursesAux
-}
-
-export default function ModalProfessor({ modoModal, pesquisarProfessores, setShowModal, preencheProfessor }) {
+export default function ModalProfessor({ cursos, modoModal, pesquisarProfessor, setShowModal, preencheProfessor }) {
 
     const [user, setUser] = useState('')
-    const [cursosOptions, setCursosOptions] = useState([])
-    const [cursoSelected, setCursoSelected] = useState('')
     const [nomeProfessor, setNomeProfessor] = useState('')
+    const [cpf, setCpf] = useState('')
     const [status, setStatus] = useState('D')
-
-    async function preencheListaCursos(){
-        let cursos = await getCursos()
-        setCursosOptions(cursos)
-    }
+    const [left, setLeft] = useState([])
+    const [right, setRight] = useState([])
+    const [checked, setChecked] = useState([])
+    const [cursosFiltrados, setCursosFiltrados] = useState([])
 
     useEffect(() => {
         if (validateSession()) {
@@ -42,19 +28,36 @@ export default function ModalProfessor({ modoModal, pesquisarProfessores, setSho
             let authBuffer = Buffer.from(auth, 'base64').toString('ascii')
             setUser(JSON.parse(authBuffer))
         }
-        preencheListaCursos()
     }, [])
+
+    async function getListaCursosPorProfessor(id) {
+        const response = await api.get(`/api/scheduler/professor/courses/${id}`)
+        let cursosResponse = response.data
+
+        let rightAux = []
+        cursosResponse.forEach(curso => {
+            rightAux.push(curso.ID_CURSO)
+        })
+        setRight(prevRight => rightAux)
+        setChecked(prevChecked => rightAux)
+        
+        let leftAux = []
+        cursos.forEach(curso => {
+            if(!rightAux.includes(curso.id)){
+                leftAux.push(curso.id)
+            }
+        })
+        setLeft(prevLeft => leftAux)
+    }
 
     useEffect(() => {
         if (modoModal !== 'I') {
-            preencheListaCursos()
-            setCursoSelected(preencheProfessor.ID_CURSO)
+            getListaCursosPorProfessor(preencheProfessor.ID_PROF)
+            mask(preencheProfessor.cpf, setCpf)
+            setNomeProfessor(preencheProfessor.nome)
+            setStatus(preencheProfessor.status)
         }
     }, [])
-
-    function handleCursoChange(e) {
-        setCursoSelected(e.target.value)
-    }
 
     function handleNomeProfessorChange(e) {
         setNomeProfessor(e.target.value)
@@ -64,13 +67,18 @@ export default function ModalProfessor({ modoModal, pesquisarProfessores, setSho
         setStatus(e.target.value)
     }
 
+    function handleCpfProfessor(e) {
+        setCpf(e.target.value)
+    }
+
     async function submitProfessor(e) {
         e.preventDefault()
 
         let professor = {
-            "id_curso": cursoSelected,
-            "nome_prof": nomeProfessor,
-            "status_prof": status
+            "cpf": cpf.replace(/[^0-9]/g, ''),
+            "nome": nomeProfessor,
+            "status": status,
+            "courses": right
         }
         try {
 
@@ -87,13 +95,13 @@ export default function ModalProfessor({ modoModal, pesquisarProfessores, setSho
         } catch (err) {
             toast.error(err.response.data.message)
         }
-        pesquisarProfessores(e)
+        pesquisarProfessor(e)
     }
 
     return (
         <>
             <div className={styles.container}>
-                <form className={styles.main} onSubmit={(e) => submitModulo(e)} >
+                <form className={styles.main} onSubmit={(e) => submitProfessor(e)} >
                     <div className={styles.header}>
                         <ButtonGrid content={
                             <CloseIcon />
@@ -119,22 +127,24 @@ export default function ModalProfessor({ modoModal, pesquisarProfessores, setSho
                         disabled={modoModal === 'E'}
                     />
 
+                    <TextField className={styles.cpf} sx={{ width: '100%' }}
+                        id="cpf"
+                        onChange={handleCpfProfessor}
+                        onBlur={() => mask(cpf.replace(/[^0-9]/g, ''), setCpf)}
+                        label="CPF"
+                        value={cpf}
+                        required={modoModal !== 'E'}
+                        inputProps={{
+                            maxLength: 14
+                        }}
+                        InputLabelProps={{
+                            shrink: true,
+                        }}
+                        disabled={modoModal !== 'I'}
+                    />
 
-                    <FormControl className={styles.curso} sx={{ width: '40%' }}>
-                        <InputLabel required={modoModal !== 'E'} shrink htmlFor="cursosOptionsSelect">
-                            Curso
-                        </InputLabel>
-                        <Select required={modoModal !== 'E'} placeholder='Selecione um Curso' disabled={modoModal === 'E'} displayEmpty sx={{ width: '100%' }} label="Curso" id="cursosOptionsSelect"
-                            value={cursoSelected} onChange={handleCursoChange}>
-                            <MenuItem disabled value="">
-                                <em>Selecione um Curso</em>
-                            </MenuItem>
-                            {cursosOptions.map((curso) => {
-                                return (
-                                    <MenuItem key={curso.id} value={curso.id}>{curso.nome}</MenuItem>
-                                )
-                            })}
-                        </Select>
+                    <FormControl className={styles.curso} sx={{ width: '100%' }}>
+                        <Transfer cursos={cursos} cursosFiltrados={cursosFiltrados} checked={checked} left={left} right={right} setChecked={setChecked} setRight={setRight} setLeft={setLeft} modoModal={modoModal} />
                     </FormControl>
 
                     <FormControl className={styles.status}>
@@ -144,14 +154,14 @@ export default function ModalProfessor({ modoModal, pesquisarProfessores, setSho
                             aria-labelledby="status"
                             name="row-radio-buttons-group"
                             onChange={handleStatusChange}
-                            
+
                         >
                             <FormControlLabel checked={status === 'D'} disabled={user.role !== "A" || modoModal === 'E'} value="D" control={<Radio size="small" />} label="Dísponivel" sx={{
                                 '& .MuiFormControlLabel-label': {
                                     fontSize: '90%'
                                 }
                             }} />
-                            <FormControlLabel checked={status === 'A'} disabled={user.role !== "A" || modoModal === 'E'}  value="A" control={<Radio size="small" />} label="Ausente" sx={{
+                            <FormControlLabel checked={status === 'A'} disabled={user.role !== "A" || modoModal === 'E'} value="A" control={<Radio size="small" />} label="Ausente" sx={{
                                 '& .MuiFormControlLabel-label': {
                                     fontSize: '90%'
                                 }

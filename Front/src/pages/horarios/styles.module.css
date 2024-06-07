@@ -1,0 +1,57 @@
+.container{
+    display: flex;
+    flex-direction: column;
+    width: 100vw;
+    height: 90vh;
+    align-items: center;
+    justify-content: center;
+    max-width: 100%;
+}
+
+.pesquisaContainer {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    height: 95%;
+    width: 95%;
+    padding: 24px;
+    align-items: center;
+    background-color: white;
+    box-shadow: 4px 2px 23px -18px rgba(0,0,0,0.75);
+    grid-template-areas:
+        "filtrosContainer filtrosContainer filtrosContainer filtrosContainer filtrosContainer"
+        "calendario calendario calendario calendario calendario"
+        "botoes botoes botoes botoes botoes";
+}
+
+.filtrosContainer {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 5px;
+    align-items: center;
+    width: 95%;
+    height: auto;
+    border-radius: 5px;
+    justify-self: center;
+    border-color: var(--inputs-border-color);
+    margin-bottom: 15px;
+    grid-area: filtrosContainer; 
+    grid-template-areas: "voltar voltar voltar voltar voltar botoesPesquisa";
+}
+
+.calendario{
+    grid-area: calendario; 
+}
+
+.botoes { 
+    display: flex;
+    justify-self: center;
+    gap: 20px;
+    grid-area: botoes; 
+}
+
+.botoesPesquisa { 
+    display: flex;
+    justify-self: end;
+    gap: 20px;
+    grid-area: botoesPesquisa; 
+}

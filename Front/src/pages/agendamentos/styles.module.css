@@ -11,7 +11,7 @@
 .pesquisaContainer {
     background-color: white;
     height: 95%;
-    width: 95%;
+    width: 98%;
     padding: 24px;
     display: flex;
     flex-direction: column;
@@ -26,12 +26,12 @@
     grid-template-columns: repeat(9, 1fr);
     gap: 5px;
     align-items: center;
-    width: 95%;
+    width: 100%;
     height: auto;
     border-radius: 5px;
     border-color: var(--inputs-border-color);
     margin-bottom: 15px;
-    grid-template-areas: "voltar matricula nomeAluno nomeAluno professor professor data status botoes";
+    grid-template-areas: "voltar matricula nomeAluno nomeAluno professor professor status checkbox botoes";
 }
 
 .voltar { 
@@ -45,7 +45,11 @@
 
 .professor { grid-area: professor; }
 
-.data { grid-area: data; }
+.checkbox { 
+    width: 100%;
+    margin-left: 10px;
+    grid-area: checkbox; 
+}
 
 .status { grid-area: status; }
 

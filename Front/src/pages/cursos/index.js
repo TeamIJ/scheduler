@@ -19,7 +19,7 @@ import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 
 import { Pagination } from 'antd'
 
-export default function Home({ cursos }) {
+export default function Cursos({ cursos }) {
 
     const [domLoaded, setDomLoaded] = useState(false)
     const [user, setUser] = useState('')
@@ -177,7 +177,7 @@ export default function Home({ cursos }) {
             </div>
 
             {showModal &&
-                <ModalModulo modoModal={modoModal} preencheCurso={preencheCurso} pesquisarCursos={pesquisarCursos} setShowModal={setShowModal} />
+                <ModalCurso modoModal={modoModal} preencheCurso={preencheCurso} pesquisarCursos={pesquisarCursos} setShowModal={setShowModal} />
             }
         </>
     )

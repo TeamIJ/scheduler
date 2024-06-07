@@ -10,7 +10,7 @@ import { api } from "@/services/apiClient"
 import ModalProfessor from "./modal"
 import {
     Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
-    FormControl, InputLabel, MenuItem, Select
+    FormControl, InputLabel, MenuItem, Select, TextField
 } from '@mui/material'
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -56,7 +56,7 @@ let statusOptions = [
     },
 ]
 
-export default function Home({ professores }) {
+export default function Home({ professores, cursos }) {
 
     const [domLoaded, setDomLoaded] = useState(false)
     const [user, setUser] = useState('')
@@ -65,8 +65,7 @@ export default function Home({ professores }) {
     const [listaProfessores, setListaProfessores] = useState([])
     const [page, setPage] = useState(0)
     const [rowsPerPage, setRowsPerPage] = useState(11)
-    const [professorSelected, setProfessorSelected] = useState('')
-    const [professorOptions, setProfessorOptions] = useState([])
+    const [nomeProfessor, setNomeProfessor] = useState([])
     const [preencheProfessor, setPreencheProfessor] = useState({})
     const [statusSelected, setStatusSelected] = useState('T')
 
@@ -82,7 +81,6 @@ export default function Home({ professores }) {
             let authBuffer = Buffer.from(auth, 'base64').toString('ascii')
             setUser(JSON.parse(authBuffer))
         }
-        preencheProfessores()
     }, [])
 
 
@@ -91,7 +89,10 @@ export default function Home({ professores }) {
         professores.forEach(professor => {
             let descricaoStatus = professor.STATUS_PROF === 'D' ? 'Dísponivel' : 'Ausente'
             professor.statusDescricao = descricaoStatus
+            professor.status = professor.STATUS_PROF
+            professor.cpf = professor.CPF_PROF
             professor.nome = professor.NOME
+            professor.id = professor.ID_PROF
             professor.botoes = <div className={styles.botoesGrid}>
                 <ButtonGrid key={'alterar'} content={<EditIcon />} onClick={() => {
                     setModoModal("A")
@@ -118,13 +119,8 @@ export default function Home({ professores }) {
         setDomLoaded(true)
     }, 150)
 
-    async function preencheProfessores() {
-        let professores = await getProfessores()
-        setProfessorOptions(professores)
-    }
-
-    function handleProfessorChange(e){
-        setProfessorSelected(e.target.value)
+    function handleNomeChange(e){
+        setNomeProfessor(e.target.value)
     }
 
     function handleStatusChange(e){
@@ -136,11 +132,11 @@ export default function Home({ professores }) {
 
         let temFiltro = false
         let filtro = ''
-        if (professorSelected !== '') {
+        if (nomeProfessor !== '') {
             if (temFiltro) {
                 filtro += '&'
             }
-            filtro += `id_prof=${professorSelected}`
+            filtro += `nome=${nomeProfessor}`
             temFiltro = true
         }
 
@@ -173,22 +169,15 @@ export default function Home({ professores }) {
                             <ButtonGrid onClick={() => Router.back()} content={<ArrowBackIosIcon />} />
                         </div>
 
-                        <FormControl className={styles.professor} sx={{ width: '100%' }}>
-                            <InputLabel shrink htmlFor="professorOptionsSelect">
-                                Professor(a)
-                            </InputLabel>
-                            <Select placeholder='Selecione um(a) professor(a)' displayEmpty sx={{ width: '100%' }} label="Professor(a)" id="professorOptionsSelect"
-                                value={professorSelected} onChange={handleProfessorChange}>
-                                <MenuItem value="">
-                                    <em>Selecione um(a) professor(a)</em>
-                                </MenuItem>
-                                {professorOptions.map((prof) => {
-                                    return (
-                                        <MenuItem key={prof.id} value={prof.id}>{prof.nome}</MenuItem>
-                                    )
-                                })}
-                            </Select>
-                        </FormControl>
+                        <TextField className={styles.professor} sx={{ width: '100%' }}
+                            id="nomeInput"
+                            onChange={handleNomeChange}
+                            label="Nome"
+                            value={nomeProfessor}
+                            InputLabelProps={{
+                                shrink: true,
+                            }}
+                        />
 
                         <FormControl className={styles.status} sx={{ width: '100%' }}>
                             <InputLabel shrink htmlFor="statusOptionsSelect">
@@ -268,7 +257,7 @@ export default function Home({ professores }) {
             </div>
 
             {showModal &&
-                <ModalProfessor modoModal={modoModal} preencheProfessor={preencheProfessor} pesquisarProfessor={pesquisarProfessor} setShowModal={setShowModal} />
+                <ModalProfessor cursos={cursos} modoModal={modoModal} preencheProfessor={preencheProfessor} pesquisarProfessor={pesquisarProfessor} setShowModal={setShowModal} />
             }
         </>
     )
@@ -279,12 +268,27 @@ export const getListaProfessores = async () => {
     return resProf.data
 }
 
+export const getListaCursos = async () => {
+    const resCursos = await api.get('/api/scheduler/courses')
+    let courses = resCursos.data
+    let coursesAux = []
+    courses.forEach(course => {
+        coursesAux.push({
+            id: course.id,
+            nome: course.curso
+        })
+    })
+    return coursesAux
+}
+
 export const getServerSideProps = async () => {
 
     const listaProfessores = await getListaProfessores()
+    const listaCursos = await getListaCursos()
     return {
         props: {
-            professores: listaProfessores
+            professores: listaProfessores,
+            cursos: listaCursos
         }
     }
 }

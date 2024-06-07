@@ -71,7 +71,6 @@ async function getProfessores(curso) {
 
 async function getNomeAluno(matricula) {
     const response = await api.get(`/api/scheduler/students/name/${matricula}`)
-    console.log(response)
     if (response.data.length !== 0) {
         return response.data[0].nome
     } else {
@@ -109,7 +108,7 @@ function formataHora(data) {
     return ''
 }
 
-export default function ModalAgendamento({ modoModal, pesquisaAgendamentos, setShowModal, preencheAgendamento }) {
+export default function ModalAgendamento({ calendar, modoModal, pesquisaAgendamentos, setShowModal, preencheAgendamento }) {
 
     const [user, setUser] = useState('')
     const [profSelected, setProfSelected] = useState('')
@@ -430,7 +429,7 @@ export default function ModalAgendamento({ modoModal, pesquisaAgendamentos, setS
                     {
                         modoModal !== 'A' && 
                         <div className={styles.calendario}>
-                            <CalendarWeek setDateHourSelected={setDateHourSelected} setDiaSemanaSelecionado={setDiaSemanaSelecionado} />
+                            <CalendarWeek calendar={calendar} setDateHourSelected={setDateHourSelected} setDiaSemanaSelecionado={setDiaSemanaSelecionado} />
                         </div>
                     }
 

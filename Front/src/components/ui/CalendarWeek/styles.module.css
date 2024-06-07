@@ -1,8 +1,8 @@
 .container {
-    color: #eee;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  color: #eee;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .dayContainer {
@@ -30,7 +30,7 @@
   display: flex;
   width: 100%;
   height: 4rem;
-  background-color:var(--light-blue);
+  background-color: var(--light-blue);
   justify-content: center;
   align-items: center;
   border-radius: 5px;
@@ -45,13 +45,22 @@
   color: var(--blue);
   gap: 8px;
   border: 5px;
+  overflow-y: scroll;
+  -ms-overflow-style: none;
+  /* Internet Explorer 10+ */
+  scrollbar-width: none;
+  /* Firefox */
+}
+
+.weekdays::-webkit-scrollbar {
+  display: none;
+  /* Safari and Chrome */
 }
 
 .day {
   display: flex;
   flex-direction: column;
   width: 100%;
-  display: flex;
   font-size: 1.2rem;
   letter-spacing: 0.1rem;
   justify-content: center;
@@ -66,10 +75,83 @@
   font-weight: bold;
 }
 
+
+.dayDisabled {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 45px;
+  justify-content: center;
+  align-items: center;
+  border-radius: 4px;
+  margin-bottom: 5px;
+  background-color: var(--gray);
+  color: var(--dark-gray);
+  cursor: not-allowed;
+}
+
 .nameWeek {
   margin-bottom: 10px;
   font-size: 15px;
   font-weight: bold;
+}
+
+.dayDisabled .nameWeek {
+  margin-bottom: 0;
+  font-size: 15px;
+  font-weight: bold;
+}
+
+.dayClickableDisabled {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 45px;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  color: var(--light-blue);
+  background-color: rgba(255, 255, 255, 0.52);
+  border-radius: 4px;
+  margin-bottom: 5px;
+  transition: 0.2s;
+}
+
+.dayClickableDisabled .nameWeek {
+  margin-bottom: 0;
+  font-size: 15px;
+  font-weight: bold;
+}
+
+.dayClickableDisabled:hover {
+  background-color: var(--light-blue);
+  color: white
+}
+
+.dayClickableEnabled {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 45px;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  background-color: var(--light-blue);
+  color: white;
+  border-radius: 4px;
+  margin-bottom: 5px;
+  transition: 0.2s;
+}
+
+.dayClickableEnabled .nameWeek {
+  margin-bottom: 0;
+  font-size: 15px;
+  font-weight: bold;
+}
+
+.dayClickableEnabled:hover {
+  background-color: rgba(255, 255, 255, 0.52);
+  color: var(--light-blue);
 }
 
 .hourContainer {
@@ -105,7 +187,21 @@
   cursor: pointer;
 }
 
-.hourDisabled{
+.hourEnabled {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 0.2rem;
+  color: var(--light-blue);
+  background-color: rgba(255, 255, 255, 0.52);
+  border-radius: 4px;
+  transition: 0.2s;
+  cursor: pointer;
+}
+.hourEnabled:hover {
+  color: var(--dark-gray);
+}
+
+.hourDisabled {
   display: flex;
   background-color: var(--gray);
   color: var(--dark-gray);
@@ -117,8 +213,23 @@
 }
 
 
+.hourDisabledClickavel {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 0.2rem;
+  color: var(--dark-gray);
+  background-color: rgba(255, 255, 255, 0.52);
+  border-radius: 4px;
+  transition: 0.2s;
+  cursor: pointer;
+}
+
+.hourDisabledClickavel:hover {
+  color: var(--light-blue);
+}
+
 @media (max-width: 1024px) {
-  .calendar{
+  .calendar {
     width: 50vw;
     height: 100%;
   }
@@ -153,12 +264,12 @@
 }
 
 @media (max-width: 720px) {
-  .calendar{
+  .calendar {
     width: 50vw;
     height: 100%;
   }
 
-  .dayContainer{
+  .dayContainer {
     font-size: 90%;
   }
 
@@ -178,7 +289,7 @@
   .day span {
     font-size: 65%;
   }
-  
+
   .hour {
     font-size: 65%;
   }
@@ -192,6 +303,3 @@
   }
 
 }
-
-
-

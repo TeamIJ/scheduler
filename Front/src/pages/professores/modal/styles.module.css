@@ -16,7 +16,7 @@
     grid-template-columns: repeat(5, 1fr);
     gap: 15px 15px;
     grid-auto-flow: row;
-    width: 55%;
+    width: 70%;
     height: auto;
     background-color: white;
     box-shadow: 0 0.5rem 3rem rgba(0, 0, 0, 0.2);
@@ -25,8 +25,8 @@
     align-items: center;
     grid-template-areas:
         "header header header header header"
-        "nome nome nome nome nome"
-        "curso curso curso curso status"
+        "cpf nome nome nome status"
+        "curso curso curso curso curso"
         "botoes botoes botoes botoes botoes";
 
 }
@@ -45,7 +45,13 @@
     grid-area: nome;
 }
 
+.cpf {
+    grid-area: cpf;
+}
+
 .status {
+    display: flex;
+    justify-self: end;
     grid-area: status;
 }
 
@@ -85,9 +91,16 @@
         grid-auto-flow: row;
         grid-template-areas:
             "header header header"
-            "nome nome nome"
-            "curso curso status"
+            "cpf nome nome"
+            "status status status"
+            "curso curso curso"
             "botoes botoes botoes";
+    }
+
+    .status {
+        display: flex;
+        justify-self: start;
+        grid-area: status;
     }
 
 }
