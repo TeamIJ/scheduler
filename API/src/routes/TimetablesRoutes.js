@@ -12,9 +12,14 @@ module.exports = app => {
   // Retrieve a list of time by day of week
   router.get("/timetables/:day", timetables.findByDay)
 
-  // Update a time with id
-  router.put("/timetables/:time", timetables.update)
+  // Retrieve calendar
+  router.get("/timetables/calendar/info", timetables.getCalendarInfo)
 
+  // Update all times
+  router.put("/timetables/hours", timetables.updateHour)
+
+  // Update all times
+  router.put("/timetables/days", timetables.updateDays)
 
   app.use('/api/scheduler', router)
 };

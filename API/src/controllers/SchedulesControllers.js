@@ -90,9 +90,9 @@ module.exports = {
             let registry = req.query.matricula
             let student = req.query.aluno
             let professor = req.query.id_prof
-            let date = req.query.data
+            let somenteDaSemana = req.query.somenteDaSemana
             let status = req.query.status
-            schedule.findBySearchFilters(req, res, registry, student, professor, date, status)
+            schedule.findBySearchFilters(req, res, registry, student, professor, somenteDaSemana, status)
     }
 
 }

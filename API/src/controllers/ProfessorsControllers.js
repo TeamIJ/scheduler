@@ -7,24 +7,32 @@ module.exports = {
         const prof = req.body
         const cpf = prof.cpf
 
-        if (await professor.existsProfessor(cpf)) {
-            res.status(404).send({ message: 'Professor já cadastrado!' })
-            return
+        if (!validateCpf.cpf.isValid(cpf)) {
+            res.status(404).send({ message: 'CPF inválido' })
+        } else {
+            if (await professor.existsProfessor(cpf)) {
+                res.status(404).send({ message: 'Professor já cadastrado!' })
+                return
+            }
+
+            let id = await professor.create(prof)
+            professor.includeProfessorCourse(id, prof)
+
+            res.status(200).send({ message: 'Professor(a) incluído(a) com sucesso!' })
         }
 
-        professor.create(req, res, prof)
 
     },
 
     findProfessor(req, res, next) {
-        let id
+        let nome
         let status
         if (Object.keys(req.query).length > 0) {
-            id = req.query.id_prof
+            nome = req.query.nome
             status = req.query.status_prof
         }
 
-        professor.findByIdOrName(req, res, id, status)
+        professor.findByNameOrStatus(req, res, nome, status)
     },
 
     findProfessorByCourseId(req, res, next) {
@@ -32,45 +40,27 @@ module.exports = {
         professor.findProfessorByCourseId(req, res, id)
     },
 
+    findCoursesOfProfessor(req, res, next) {
+        let id = req.params.id
+        professor.findCoursesOfProfessor(req, res, id)
+    },
+
     async update(req, res, next) {
         const prof = req.body
-        let pk = req.query.cpf
-        let filter
+        const { id } = req.params
 
-        if (validateCpf.cpf.isValid(pk)) {
-            filter = `CPF: ${validateCpf.cpf.format(pk)}`
-        } else {
-            pk = req.query.id
-            filter = `ID`
-        }
-
-        if (await professor.existsProfessor(pk)) {
-            professor.update(req, res, pk, prof)
-        } else {
-            res.status(404).send({ message: `${filter} não existe!` })
-        }
+        professor.deleteAllProfessorsCourses(id)
+        professor.includeProfessorCourse(id, prof)
+        professor.update(req, res, id, prof)
 
     },
 
     async delete(req, res, next) {
-        let pk = req.query.cpf
-        let filter
+        const { id } = req.params
 
-        if (validateCpf.cpf.isValid(pk)) {
-            filter = `CPF: ${validateCpf.cpf.format(pk)}`
-        } else {
-            pk = req.query.id
-            filter = `ID`
-        }
-        if (await professor.existsProfessor(pk)) {
-            if (await existsProfessorSchedule(pk)) {
-                res.status(400).send({ message: 'Existe agendamento ativo para o(a) professor(a)!' })
-                return
-            }
-            professor.delete(req, res, pk)
-        } else {
-            res.status(404).send({ message: `${filter} não existe!` })
-        }
+        professor.deleteAllProfessorsCourses(id)
+        professor.delete(req, res, id)
+
     }
 
 }

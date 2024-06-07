@@ -1,6 +1,7 @@
 const e = require('express')
 const connection = require('../config/db.js')
 const validateCpf = require('cpf-cnpj-validator')
+const { includeProfessorCourse } = require('../controllers/ProfessorsControllers.js')
 
 function hasData(data) {
     return data.length !== 0
@@ -8,28 +9,28 @@ function hasData(data) {
 
 module.exports = {
 
-    create(_, res, professor){
-        const query = 'INSERT INTO PROFESSORES (CPF_PROF, ID_CURSO, NOME, STATUS_PROF) VALUES (?, ?, ?, ?)'
+    create(professor){
+        return new Promise((resolve) => { 
 
-        if (!validateCpf.cpf.isValid(professor.cpf)){
-            res.send({message: 'CPF inválido'})
-        }
+            let query = `INSERT INTO PROFESSORES (CPF_PROF, NOME, STATUS_PROF) VALUES (?, ?, ?)`
 
-        const args = [professor.cpf, professor.id_curso, professor.nome, professor.status]
-        connection.query(query, args, (err, _) => {
-            if(err) console.error(err)
-
-            res.status(200).send({message: 'Professor(a) incluído(a) com sucesso!'})
+            let id = 0;
+            const args = [professor.cpf, professor.nome, professor.status]
+            id = connection.query(query, args, (err, data) => {
+                if(err) console.error(err)
+    
+                resolve(data.insertId)
+            })
         })
     },
 
-    findByIdOrName(_, res, id, status){
-        let query = `SELECT DISTINCT ID_PROF, NOME, STATUS_PROF FROM PROFESSORES WHERE 1=1`
+    findByNameOrStatus(_, res, nome, status){
+        let query = `SELECT ID_PROF, CPF_PROF, NOME, STATUS_PROF FROM PROFESSORES WHERE 1=1`
         let filter = []
 
-        if (id) {
-            filter.push(id)
-            query = query + ` AND ID_PROF = '${id}'`
+        if (nome) {
+            filter.push(nome)
+            query = query + ` AND NOME LIKE '${nome}%'`
         }
 
         if(status && status !== 'T') {
@@ -49,7 +50,11 @@ module.exports = {
     },
 
     findProfessorByCourseId(_, res, id){
-        const query = 'SELECT * FROM PROFESSORES WHERE ID_CURSO = ?'
+        const query = 
+            `SELECT P.* FROM PROFESSORES P
+            INNER JOIN PROFESSORES_CURSOS P_C ON P_C.ID_PROF = P.ID_PROF
+            INNER JOIN CURSOS C ON C.ID_CURSO = P_C.ID_CURSO
+            WHERE C.ID_CURSO = ?`
 
         connection.query(query, id, (err, data) => {
             if (err) console.error(err)
@@ -62,14 +67,21 @@ module.exports = {
         })
     },
 
-    update(_, res, pk, professor){
-        let query = `UPDATE PROFESSORES SET ID_CURSO = '${professor.id_curso}', NOME = '${professor.nome}', STATUS_PROF = '${professor.status}' WHERE `
+    findCoursesOfProfessor(_, res, id){
+        const query = 'SELECT ID_CURSO FROM PROFESSORES_CURSOS WHERE ID_PROF = ?'
+        connection.query(query, id, (err, data) => {
+            if (err) console.error(err)
 
-        if (validateCpf.cpf.isValid(pk)) {
-            query = query + `CPF_PROF = '${pk}'`
-        } else {
-            query = query + `ID_PROF = '${pk}'`
-        }
+            if (!hasData(data)) {
+                res.send([]) 
+            } else {
+                res.json(data)
+            }
+        })
+    },
+
+    update(_, res, id, professor){
+        let query = `UPDATE PROFESSORES SET NOME = '${professor.nome}', STATUS_PROF = '${professor.status}' WHERE ID_PROF = ${id} `
         
         connection.query(query, (err, _) => {
             if (err) console.error(err)
@@ -78,14 +90,8 @@ module.exports = {
         })
     },
 
-    delete(_, res, pk){
-        let query = `DELETE FROM PROFESSORES WHERE `
-
-        if (validateCpf.cpf.isValid(pk)) {
-            query = query + `CPF_PROF = '${pk}'`
-        } else {
-            query = query + `ID_PROF = '${pk}'`
-        }
+    delete(_, res, id){
+        let query = `DELETE FROM PROFESSORES WHERE ID_PROF = ${id} `
 
         connection.query(query, (err, _) => {
             if (err) console.error(err)
@@ -142,6 +148,24 @@ module.exports = {
                 }
             })
         })
-    }
+    },
+
+    deleteAllProfessorsCourses(idProf){
+        const query = `DELETE FROM PROFESSORES_CURSOS WHERE ID_PROF = '${idProf}'`
+        connection.query(query, (err, _) => {
+            if (err) console.error(err)
+        })
+    },
+
+    includeProfessorCourse(id,  professor){
+        let courses = professor.courses
+
+        courses.forEach(course => {
+            const query = `INSERT INTO PROFESSORES_CURSOS (ID_PROF, ID_CURSO) VALUES ('${id}', '${course}')`
+            connection.query(query, (err, _) => {
+                if (err) console.error(err)
+            })
+        })
+    },
 
 }

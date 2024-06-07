@@ -4,6 +4,29 @@ function hasData(data) {
     return data.lenght !== 0
 }
 
+function getWeekInitialDay(){
+    let date = new Date()
+    let dayOfWeek = date.getDay()
+    let dayCurrent = date.getDate()
+    let month = date.getMonth()
+    let year = date.getFullYear()
+    while (dayOfWeek > 0) {
+        dayCurrent--
+        dayOfWeek--
+        if (dayCurrent === 0) {
+            month--
+            let lastDay = new Date(year, month + 1, 0).getDate()
+            dayCurrent = lastDay
+        }
+        if (month === -1) {
+            month = 11
+            year--
+        }
+    }
+    date.setDate(dayCurrent)
+    return date.toISOString().split('T')[0]
+}
+
 module.exports = {
     create(_, res, agenda) {
         const query = `INSERT INTO AGENDAMENTOS (ID_CURSO, ID_PROF, MATRICULA, ID_MODULO, HORARIO, AULA, DATA_AULA, LOGIN_USUARIO, DATA_ATUALIZACAO, STATUS_AGENDA, TIPO_AGENDAMENTO)` +
@@ -79,7 +102,8 @@ module.exports = {
         })
     },
 
-    findBySearchFilters(req, res, registry, student, professor, date, status) {
+    findBySearchFilters(req, res, registry, student, professor, somenteDaSemana, status) {
+        let weekIniDay = getWeekInitialDay()
         let query = 
         `SELECT A.ID_AGENDA AS id, AL.NOME AS aluno, P.NOME AS professor, C.NOME_CURSO AS curso, M.NOME_MODULO AS modulo,
          A.AULA AS aula, A.DATA_AULA AS data, A.HORARIO AS horario, A.TIPO_AGENDAMENTO AS tipo, A.ID_CURSO, A.ID_PROF, A.MATRICULA,
@@ -88,7 +112,8 @@ module.exports = {
          INNER JOIN ALUNOS AL ON A.MATRICULA = AL.MATRICULA 
          INNER JOIN CURSOS C ON C.ID_CURSO = A.ID_CURSO
          INNER JOIN MODULOS M ON M.ID_CURSO = C.ID_CURSO AND M.ID_MODULO = A.ID_MODULO
-         INNER JOIN PROFESSORES P ON A.ID_PROF = P.ID_PROF AND P.ID_CURSO = C.ID_CURSO
+         INNER JOIN PROFESSORES P ON A.ID_PROF = P.ID_PROF
+         INNER JOIN PROFESSORES_CURSOS P_C ON P_C.ID_PROF = P.ID_PROF
          WHERE 1=1`
 
         if(registry){
@@ -100,14 +125,15 @@ module.exports = {
         if(professor){
             query += ` AND P.ID_PROF = ${professor} `
         }
-        if(date){
-            query += ` AND A.DATA_AULA = '${date}' `
-        }
+
         if(status && status !== "T"){
             query += ` AND A.STATUS_AGENDA = '${status}' `
         }
+        if(somenteDaSemana === "true"){
+            query += ` AND A.DATA_AULA >= '${weekIniDay}' `
+        }
 
-        query += ' ORDER BY A.STATUS_AGENDA, A.DATA_AULA, A.HORARIO '
+        query += ' ORDER BY A.STATUS_AGENDA, A.DATA_AULA desc, A.HORARIO '
 
         connection.query(query, (err, data) => {
             if (err) console.error(err)

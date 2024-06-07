@@ -12,11 +12,14 @@ module.exports = app => {
   // Retrieve professors by course id
   router.get("/professor/course/:id", professor.findProfessorByCourseId)
 
+  // Retrieve courses of professor
+  router.get("/professor/courses/:id", professor.findCoursesOfProfessor)
+
   // Update a professor with id or cpf
-  router.put("/professor", professor.update)
+  router.put("/professor/:id", professor.update)
 
   // Delete a professor with id or cpf
-  router.delete("/professor", professor.delete)
+  router.delete("/professor/:id", professor.delete)
 
   app.use('/api/scheduler', router)
 };
