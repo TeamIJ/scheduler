@@ -130,7 +130,7 @@ export default function ModalAgendamento({ calendar }) {
             let authBuffer = Buffer.from(auth, 'base64').toString('ascii')
             let user = JSON.parse(authBuffer)
             setUser(user)
-            console.log(user)
+
             setMatricula(prevMatricula => user.registry)
             setNomeAluno(prevNomeAluno => user.name)
         }

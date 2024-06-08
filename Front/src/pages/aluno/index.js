@@ -144,7 +144,7 @@ export default function Aluno({ resAgendamento, calendar }) {
       let authBuffer = Buffer.from(auth, 'base64').toString('ascii')
       let user = JSON.parse(authBuffer)
       setUser(user)
-      console.log(user)
+
       setMatricula(prevMatricula => user.registry)
       setNomeAluno(prevNomeAluno => user.name)
     }
@@ -379,8 +379,8 @@ export default function Aluno({ resAgendamento, calendar }) {
 
                 <div className={styles.historyList}>
                   {resAgendamento.map(agendamento => {
-                    console.log(agendamento)
-                    return (
+
+return (
                       <div key={agendamento.id} className={styles.agendamento}>
                         <p><span>Curso: </span> {agendamento.curso}</p>
                         <p><span>Módulo: </span> {agendamento.modulo} <span>Aula: </span> {agendamento.aula}</p>
