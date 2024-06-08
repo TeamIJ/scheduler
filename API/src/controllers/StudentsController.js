@@ -9,7 +9,7 @@ module.exports = {
 
         let studentReturn = {
             registry: student.matricula,
-            name: student.nome.split(' ')[0],
+            name: student.nome,
             role: 'S'
         }
 

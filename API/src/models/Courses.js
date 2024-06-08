@@ -31,12 +31,12 @@ module.exports = {
     },
 
     findByName(_, res, name){
-        const query = `SELECT ID_CURSO as id, NOME_CURSO as curso FROM CURSOS WHERE NOME_CURSO LIKE '${name}%'`
+        const query = `SELECT ID_CURSO as id, NOME_CURSO as curso FROM CURSOS WHERE NOME_CURSO LIKE '%${name}%'`
         connection.query(query, (err, data) => {
             if (err) console.error(err)
 
             if (!hasData(data)){
-                res.send({message: 'Nenhum curso encontrado'})
+                res.json([])
             } else {
                 res.json(data)
             }

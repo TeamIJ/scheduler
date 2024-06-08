@@ -52,7 +52,6 @@ module.exports = {
         professor.deleteAllProfessorsCourses(id)
         professor.includeProfessorCourse(id, prof)
         professor.update(req, res, id, prof)
-
     },
 
     async delete(req, res, next) {

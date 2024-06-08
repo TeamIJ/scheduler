@@ -20,6 +20,7 @@ module.exports = {
                 if(err) console.error(err)
     
                 resolve(data.insertId)
+                return
             })
         })
     },
@@ -151,9 +152,13 @@ module.exports = {
     },
 
     deleteAllProfessorsCourses(idProf){
-        const query = `DELETE FROM PROFESSORES_CURSOS WHERE ID_PROF = '${idProf}'`
-        connection.query(query, (err, _) => {
-            if (err) console.error(err)
+        return new Promise((resolve) => { 
+            const query = `DELETE FROM PROFESSORES_CURSOS WHERE ID_PROF = '${idProf}'`
+            connection.query(query, (err, data) => {
+                if (err) console.error(err)
+                resolve(data)
+                return
+            })
         })
     },
 
@@ -164,6 +169,7 @@ module.exports = {
             const query = `INSERT INTO PROFESSORES_CURSOS (ID_PROF, ID_CURSO) VALUES ('${id}', '${course}')`
             connection.query(query, (err, _) => {
                 if (err) console.error(err)
+                return
             })
         })
     },

@@ -64,7 +64,7 @@ module.exports = {
              INNER JOIN CURSOS C ON M.ID_CURSO = C.ID_CURSO
              WHERE 1=1`
         if(modulo){
-            query += ` AND M.NOME_MODULO LIKE '${modulo}%'`
+            query += ` AND M.NOME_MODULO LIKE '%${modulo}%'`
         }
         if(curso){
             query += ` AND C.ID_CURSO = '${curso}'`
