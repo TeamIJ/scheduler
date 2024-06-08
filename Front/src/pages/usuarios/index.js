@@ -74,14 +74,14 @@ export default function Home({ usuarios }) {
             usuario.descricaoTipo = descricaoTipo
             usuario.botoes = <div className={styles.botoesGrid}>
                 {(user.role === "A" || (user.role === "P" && user.user === usuario.usuario)) &&
-                    <ButtonGrid key={'alterar'} content={<EditIcon />} onClick={() => {
+                    <ButtonGrid mensagemHover={"Alterar"} key={'alterar'} content={<EditIcon />} onClick={() => {
                         setModoModal("A")
                         setShowModalUser(true)
                         setPreencheUsuario(usuario)
                     }} />
                 }
                 {(user.role === "A" && user.user !== usuario.usuario) &&
-                    <ButtonGrid key={'excluir'} content={<DeleteIcon />} onClick={() => {
+                    <ButtonGrid mensagemHover={"Excluir"} key={'excluir'} content={<DeleteIcon />} onClick={() => {
                         setModoModal("E")
                         setShowModalUser(true)
                         setPreencheUsuario(usuario)
@@ -147,7 +147,7 @@ export default function Home({ usuarios }) {
                         }
                     }}>
                         <div className={styles.voltar}>
-                            <ButtonGrid onClick={() => Router.back()} content={<ArrowBackIosIcon />} />
+                            <ButtonGrid mensagemHover={"Voltar"} onClick={() => Router.back()} content={<ArrowBackIosIcon />} />
                         </div>
 
                         <TextField className={styles.nomeUsuario} sx={{ width: '100%' }}
@@ -178,8 +178,8 @@ export default function Home({ usuarios }) {
                         </FormControl>
 
                         <div className={styles.botoes}>
-                            <ButtonGrid content={<SearchIcon></SearchIcon>} />
-                            <ButtonGrid type='button' onClick={() => {
+                            <ButtonGrid mensagemHover={"Pesquisar"} content={<SearchIcon></SearchIcon>} />
+                            <ButtonGrid mensagemHover={"Incluir"} type='button' onClick={() => {
                                 setShowModalUser(true)
                                 setModoModal('I')
                             }} content={<AddIcon></AddIcon>} />

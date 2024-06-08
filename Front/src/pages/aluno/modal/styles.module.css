@@ -1,14 +1,7 @@
 .container {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100vw;
-    height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 500;
-    backdrop-filter: brightness(80%);
 }
 
 .main {
@@ -24,7 +17,6 @@
     padding: 24px;
     align-items: center;
     grid-template-areas:
-        "header header header header header"
         "matriculaAluno nomeAluno nomeAluno nomeAluno nomeAluno"
         "curso curso modulo modulo aula"
         "professor professor tipoAgendamento tipoAgendamento confirmacaoDiaHorario"
@@ -33,11 +25,6 @@
 
 }
 
-.header {
-    justify-self: end;
-    margin-bottom: 2px;
-    grid-area: header;
-}
 
 .matriculaAluno { grid-area: matriculaAluno }
 
@@ -92,7 +79,6 @@
         gap: 12px 15px;
         grid-auto-flow: row;
         grid-template-areas:
-            "header header header"
             "matriculaAluno matriculaAluno matriculaAluno"
             "nomeAluno nomeAluno nomeAluno"
             "curso curso curso"

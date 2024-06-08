@@ -70,12 +70,12 @@ export default function Home({ students }) {
         students.forEach(student => {
             student.statusDescricao = student.status === 'A' ? 'Ativo' : 'Inativo'
             student.botoes = <div className={styles.botoesGrid}>
-                <ButtonGrid key={'alterar'} content={<EditIcon />} onClick={() => {
+                <ButtonGrid mensagemHover={"Alterar"} key={'alterar'} content={<EditIcon />} onClick={() => {
                     setModoModal("A")
                     setShowModal(true)
                     setPreencheStudent(student)
                 }}/>
-                <ButtonGrid key={'excluir'} content={<DeleteIcon />} onClick={() => {
+                <ButtonGrid mensagemHover={"Excluir"} key={'excluir'} content={<DeleteIcon />} onClick={() => {
                     setModoModal("E")
                     setShowModal(true)
                     setPreencheStudent(student)
@@ -150,7 +150,7 @@ export default function Home({ students }) {
                         }
                     }}>
                         <div className={styles.voltar}>
-                            <ButtonGrid onClick={() => Router.back()} content={<ArrowBackIosIcon />} />
+                            <ButtonGrid mensagemHover={"Voltar"} onClick={() => Router.back()} content={<ArrowBackIosIcon />} />
                         </div>
 
                         <TextField className={styles.student} sx={{ width: '100%' }}
@@ -188,8 +188,8 @@ export default function Home({ students }) {
                         </FormControl>
 
                         <div className={styles.botoes}>
-                            <ButtonGrid content={<SearchIcon></SearchIcon>} />
-                            <ButtonGrid type='button' onClick={() => {
+                            <ButtonGrid mensagemHover={"Pesquisar"} content={<SearchIcon></SearchIcon>} />
+                            <ButtonGrid mensagemHover={"Incluir"} type='button' onClick={() => {
                                 setShowModal(true)
                                 setModoModal('I')
                             }} content={<AddIcon></AddIcon>} />

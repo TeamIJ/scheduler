@@ -1,7 +1,7 @@
 import Head from "next/head";
 import { useState, useContext } from "react";
-import { useRouter } from "next/router";
 import styles from "../styles/home.module.css";
+import { PopOver } from '@/components/ui/PopOver';
 
 import { Input } from "../components/ui/Input";
 import { Button } from "../components/ui/Button";
@@ -27,17 +27,15 @@ export default function Home() {
   const { signIn } = useContext(AuthContext)
 
   const [user, setUser] = useState('')
-  const [logged, setLogged] = useState(false)
   const [password, setPassword] = useState('')
-  const [loading, setLoading] = useState(false)
 
-  const router = useRouter()
+  const [isHovering, setIsHovering] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [optionLoginChecked, setOptionLoginChecked] = useState('P')
 
   async function hadleLogin(event) {
     event.preventDefault()
-    let option = loginOptions.filter(e=> {
+    let option = loginOptions.filter(e => {
       return e.checked === true
     })[0].id
     await signIn(user, password, option)
@@ -66,15 +64,15 @@ export default function Home() {
                     },
                   ]}
                   ></CheckBox>
-                  <a href="/reset_password" className={[styles.passwordReset]}>
-                    Esqueci minha senha
+                  <a className={styles.info} onMouseEnter={() => setIsHovering(true)} onMouseLeave={() => setIsHovering(false)}><ion-icon name="information-circle-outline"></ion-icon>
+                    <PopOver isHovering={isHovering} type='error' message="Caso não lembre suas credêciais contate o administrador do sistema." />
                   </a>
                 </div>
                 <Button color="light-blue" content={<span>Acessar</span>} />
               </form>
               :
               <form className={styles.formStudent} onSubmit={(e) => hadleLogin(e)}>
-                <Input required placeholder="Matrícula" type="text" onChange={(e) => setUser(e.target.value)}  />
+                <Input required placeholder="Matrícula" type="text" onChange={(e) => setUser(e.target.value)} />
                 <Button color="light-blue" content={<span>Acessar</span>} />
               </form>
           }

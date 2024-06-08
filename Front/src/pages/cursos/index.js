@@ -37,20 +37,22 @@ export default function Cursos({ cursos }) {
     ]
 
     function formataListaCursos(cursos) {
-        cursos.forEach(curso => {
-            curso.botoes = <div className={styles.botoesGrid}>
-                <ButtonGrid key={'alterar'} content={<EditIcon />} onClick={() => {
-                    setModoModal("A")
-                    setShowModal(true)
-                    setPreencheCurso(curso)
-                }}/>
-                <ButtonGrid key={'excluir'} content={<DeleteIcon />} onClick={() => {
-                    setModoModal("E")
-                    setShowModal(true)
-                    setPreencheCurso(curso)
-                }}/>
-            </div>
-        })
+        if(cursos.length > 0){
+            cursos.forEach(curso => {
+                curso.botoes = <div key={curso.id} className={styles.botoesGrid}>
+                    <ButtonGrid mensagemHover={"Alterar"}  key={'alterar'} content={<EditIcon />} onClick={() => {
+                        setModoModal("A")
+                        setShowModal(true)
+                        setPreencheCurso(curso)
+                    }}/>
+                    <ButtonGrid mensagemHover={"Excluir"}  key={'excluir'} content={<DeleteIcon />} onClick={() => {
+                        setModoModal("E")
+                        setShowModal(true)
+                        setPreencheCurso(curso)
+                    }}/>
+                </div>
+            })
+        }
         return cursos
     }
 
@@ -97,7 +99,7 @@ export default function Cursos({ cursos }) {
                         }
                     }}>
                         <div className={styles.voltar}>
-                            <ButtonGrid onClick={() => Router.back()} content={<ArrowBackIosIcon />} />
+                            <ButtonGrid mensagemHover={"Voltar"}  onClick={() => Router.back()} content={<ArrowBackIosIcon />} />
                         </div>
 
                         <TextField className={styles.curso} sx={{ width: '100%' }}
@@ -114,8 +116,8 @@ export default function Cursos({ cursos }) {
                         />
 
                         <div className={styles.botoes}>
-                            <ButtonGrid content={<SearchIcon></SearchIcon>} />
-                            <ButtonGrid type='button' onClick={() => {
+                            <ButtonGrid mensagemHover={"Pesquisar"} content={<SearchIcon></SearchIcon>} />
+                            <ButtonGrid mensagemHover={"Incluir"} type='button' onClick={() => {
                                 setShowModal(true)
                                 setModoModal('I')
                             }} content={<AddIcon></AddIcon>} />
@@ -142,7 +144,7 @@ export default function Cursos({ cursos }) {
                                 {domLoaded &&
                                     listaCursos.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
                                         return (
-                                            <TableRow hover tabIndex={-1} key={row.idAgenda}>
+                                            <TableRow hover tabIndex={-1} key={row.id}>
                                                 {
                                                     columns.map((column) => {
                                                         const value = row[column.id]

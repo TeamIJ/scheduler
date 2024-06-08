@@ -14,9 +14,9 @@ export function signOut() {
     }
 }
 
-export function validateSession(){
+export function validateSession() {
     let auth = localStorage.getItem('auth')
-    if (auth === null){
+    if (auth === null) {
         Router.push('/')
         return false
     }
@@ -37,19 +37,26 @@ export function AuthProvider({ children }) {
 
                 setUser(response.data.user)
                 localStorage.setItem('auth', Buffer.from(JSON.stringify(response.data.user)).toString('base64'))
+                Router.push('/home')
             } else {
-                const response = await api.post(`/api/scheduler/students/auth/${user}`, {
-                    nome: user, senha: password
-                })
+                const regexNumeros = /^\d+$/
 
-                setUser(response.data.user)
-                localStorage.setItem('auth', Buffer.from(JSON.stringify(response.data.user)).toString('base64'))
+                if (!regexNumeros.test(user)) {
+                    throw new Error('matrícula não é números')
+                } else {
+                    const response = await api.post(`/api/scheduler/students/auth/${user}`, {
+                        nome: user, senha: password
+                    })
+
+                    setUser(response.data.user)
+                    localStorage.setItem('auth', Buffer.from(JSON.stringify(response.data.user)).toString('base64'))
+                    Router.push('/aluno')
+                }
             }
 
 
             toast.success('Logado com sucesso!')
 
-            Router.push('/home')
 
         } catch (err) {
             if (role === 'P') {

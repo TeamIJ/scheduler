@@ -103,7 +103,7 @@ export default function ModalProfessor({ cursos, modoModal, pesquisarProfessor, 
             <div className={styles.container}>
                 <form className={styles.main} onSubmit={(e) => submitProfessor(e)} >
                     <div className={styles.header}>
-                        <ButtonGrid content={
+                        <ButtonGrid mensagemHover={"Fechar"} content={
                             <CloseIcon />
                         } onClick={(e) => {
                             setShowModal(false)

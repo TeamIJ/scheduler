@@ -1,4 +1,6 @@
 import styles from './styles.module.css'
+import {useState} from 'react'
+import { Popover, Typography } from '@mui/material'
 
 export function Button({ color, content, ...rest }) {
     let btnColor = color.includes("#") ? color : `var(--${color})`
@@ -9,11 +11,45 @@ export function Button({ color, content, ...rest }) {
     )
 }
 
-export function ButtonGrid({ content, ...rest }) {
+export function ButtonGrid({ mensagemHover, content, ...rest }) {
+
+    const [anchorEl, setAnchorEl] = useState(null)
+
+    const handlePopoverOpen = (event) => {
+        setAnchorEl(event.currentTarget)
+    };
+
+    const handlePopoverClose = () => {
+        setAnchorEl(null)
+    }
+
+    const open = Boolean(anchorEl)
+
     return (
-        <button className={styles.buttonGrid} {...rest}>
-            {content}
-        </button>
+        <>
+            <button onMouseEnter={handlePopoverOpen} onMouseLeave={handlePopoverClose} className={styles.buttonGrid} {...rest}>
+                {content}
+            </button>
+            <Popover id="mouse-over-popover"
+                sx={{
+                    pointerEvents: 'none',
+                }}
+                open={open}
+                anchorEl={anchorEl}
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'left',
+                }}
+                transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'left',
+                }}
+                onClose={handlePopoverClose}
+                disableRestoreFocus
+            >
+                <Typography sx={{ p: 1 }}>{mensagemHover}</Typography>
+            </Popover>
+        </>
     )
 }
 

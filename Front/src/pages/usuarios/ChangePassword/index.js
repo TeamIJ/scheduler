@@ -49,7 +49,7 @@ export default function ModalPassword({ user, setSenha, setShowModalPassword }) 
             <div className={styles.container}>
                 <form className={styles.main} onSubmit={(e) => submitChangePassword(e)} >
                     <div className={styles.header}>
-                        <ButtonGrid content={
+                        <ButtonGrid mensagemHover={"Fechar"} content={
                             <CloseIcon />
                         } onClick={() => {
                             setShowModalPassword(false)

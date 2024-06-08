@@ -27,12 +27,6 @@ const buttons = [
     roles: ['A', 'P']
   },
   {
-    title: 'Professores',
-    id: 'professores',
-    icon: <GroupOutlined fontSize='large' />,
-    roles: ['A', 'P']
-  },
-  {
     title: 'Cursos',
     id: 'cursos',
     icon: <AutoStoriesOutlined fontSize='large' />,
@@ -42,6 +36,12 @@ const buttons = [
     title: 'Módulos',
     id: 'modulos',
     icon: <Schema fontSize='large' />,
+    roles: ['A', 'P']
+  },
+  {
+    title: 'Professores',
+    id: 'professores',
+    icon: <GroupOutlined fontSize='large' />,
     roles: ['A', 'P']
   },
   {
@@ -80,7 +80,7 @@ export default function Home() {
           <div className={styles.containter}>
             <div className={styles.menu}>
               { user.role !== 'S' ?
-                <div className={styles.buttonsContainer}>
+                <div className={user.role !== "U" ? styles.buttonsContainerGrid : styles.buttonsContainerFlex}>
                   {buttons.map((button) => {
                     if (button.roles.includes(user.role)) {
                       return <ButtonMenu key={button.id} color={'blue-main'} onClick={() => handleClick(button.id)} content={

@@ -112,7 +112,7 @@ export default function ModalUsuario({ modoModal, pesquisarUsuarios, setShowModa
             <div className={styles.container}>
                 <form className={styles.main} onSubmit={(e) => submitUsuario(e)} >
                     <div className={styles.header}>
-                        <ButtonGrid content={
+                        <ButtonGrid mensagemHover={"Fechar"} content={
                             <CloseIcon />
                         } onClick={(e) => {
                             setShowModalUser(false)

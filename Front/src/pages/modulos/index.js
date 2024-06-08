@@ -70,12 +70,12 @@ export default function Home({ modulos }) {
     function formataListaModulos(modulos) {
         modulos.forEach(modulo => {
             modulo.botoes = <div className={styles.botoesGrid}>
-                <ButtonGrid key={'alterar'} content={<EditIcon />} onClick={() => {
+                <ButtonGrid mensagemHover={"Alterar"} key={'alterar'} content={<EditIcon />} onClick={() => {
                     setModoModal("A")
                     setShowModal(true)
                     setPreencheModulo(modulo)
                 }}/>
-                <ButtonGrid key={'excluir'} content={<DeleteIcon />} onClick={() => {
+                <ButtonGrid mensagemHover={"Excluir"} key={'excluir'} content={<DeleteIcon />} onClick={() => {
                     setModoModal("E")
                     setShowModal(true)
                     setPreencheModulo(modulo)
@@ -140,7 +140,7 @@ export default function Home({ modulos }) {
                         }
                     }}>
                         <div className={styles.voltar}>
-                            <ButtonGrid onClick={() => Router.back()} content={<ArrowBackIosIcon />} />
+                            <ButtonGrid mensagemHover={"Voltar"} onClick={() => Router.back()} content={<ArrowBackIosIcon />} />
                         </div>
 
                         <FormControl className={styles.curso} sx={{ width: '100%' }}>
@@ -174,8 +174,8 @@ export default function Home({ modulos }) {
                         />
 
                         <div className={styles.botoes}>
-                            <ButtonGrid content={<SearchIcon></SearchIcon>} />
-                            <ButtonGrid type='button' onClick={() => {
+                            <ButtonGrid mensagemHover={"Pesquisar"} content={<SearchIcon></SearchIcon>} />
+                            <ButtonGrid mensagemHover={"Incluir"} type='button' onClick={() => {
                                 setShowModal(true)
                                 setModoModal('I')
                             }} content={<AddIcon></AddIcon>} />

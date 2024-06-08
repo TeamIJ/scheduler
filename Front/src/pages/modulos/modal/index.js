@@ -98,7 +98,7 @@ export default function ModalModulo({ modoModal, pesquisarModulos, setShowModal,
             <div className={styles.container}>
                 <form className={styles.main} onSubmit={(e) => submitModulo(e)} >
                     <div className={styles.header}>
-                        <ButtonGrid content={
+                        <ButtonGrid mensagemHover={"Fechar"} content={
                             <CloseIcon />
                         } onClick={(e) => {
                             setShowModal(false)

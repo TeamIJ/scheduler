@@ -77,7 +77,7 @@ export default function Horarios({ calendar }) {
                 <form className={styles.pesquisaContainer} onSubmit={(e) => handleSalvarAction(e)}>
                     <div className={styles.filtrosContainer}>
                         <div className={styles.voltar}>
-                            <ButtonGrid type='button' onClick={() => Router.back()} content={<ArrowBackIosIcon />} />
+                            <ButtonGrid mensagemHover={"Voltar"} type='button' onClick={() => Router.back()} content={<ArrowBackIosIcon />} />
                         </div>
                     </div>
 

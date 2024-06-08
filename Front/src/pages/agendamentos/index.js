@@ -5,13 +5,14 @@ import { useState, useEffect } from "react"
 import { validateSession } from '@/contexts/AuthContext'
 import { Navbar } from '@/components/ui/Navbar'
 import styles from './styles.module.css'
+import global from '@/styles/global.module.css'
 import { ButtonGrid } from "@/components/ui/Button"
 import { api } from "@/services/apiClient"
 import ModalAgendamento from "./modal"
 import {
     Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
     FormControl, InputLabel, MenuItem, Select,
-    TextField
+    TextField, Popover, Typography
 } from '@mui/material'
 import EditIcon from '@mui/icons-material/Edit'
 import SearchIcon from '@mui/icons-material/Search'
@@ -75,10 +76,6 @@ async function getProfessores() {
     return professors
 }
 
-let matricula
-let nomeAluno
-let profSelected = ''
-let data
 
 export default function Agendamentos({ calendar, agendamentos }) {
 
@@ -93,6 +90,9 @@ export default function Agendamentos({ calendar, agendamentos }) {
     const [preencheAgendamento, setPreencheAgendamento] = useState({})
     const [statusSelected, setStatusSelected] = useState("T")
     const [somenteDaSemana, setSomenteDaSemana] = useState(true)
+    const [profSelected, setProfSelected] = useState('')
+    const [nomeAluno, setNomeAluno] = useState('')
+    const [matricula, setMatricula] = useState('')
 
     const columns = [
         { id: 'professor', label: 'Professor', minWidth: 170 },
@@ -118,7 +118,7 @@ export default function Agendamentos({ calendar, agendamentos }) {
             formataAgendamento.descricaoTipo = descricaoTipo
             formataAgendamento.statusDescricao = descricaoStatus
             formataAgendamento.botoes = formataAgendamento.status === 'A' ? <div className={styles.botoesGrid}>
-                <ButtonGrid onClick={() => {
+                <ButtonGrid mensagemHover={"Alterar"}  onClick={() => {
                     setShowModal(true)
                     setModoModal('A')
                     setPreencheAgendamento(formataAgendamento)
@@ -149,15 +149,15 @@ export default function Agendamentos({ calendar, agendamentos }) {
     }, 150)
 
     function handleMatriculaChange(e) {
-        matricula = e.target.value
+        setMatricula(e.target.value)
     }
 
     function handleNomeAlunoChange(e) {
-        nomeAluno = e.target.value
+        setNomeAluno(e.target.value)
     }
 
     function handleProfChange(e) {
-        profSelected = e.target.value
+        setProfSelected(e.target.value)
     }
 
     function handleStatusChange(e) {
@@ -221,7 +221,7 @@ export default function Agendamentos({ calendar, agendamentos }) {
                         }
                     }}>
                         <div className={styles.voltar}>
-                            <ButtonGrid onClick={() => Router.back()} content={<ArrowBackIosIcon />} />
+                            <ButtonGrid mensagemHover={"Voltar"}  onClick={() => Router.back()} content={<ArrowBackIosIcon />} />
                         </div>
                         <TextField className={styles.matricula} sx={{ width: '100%' }}
                             id="matriculaInput"
@@ -285,11 +285,11 @@ export default function Agendamentos({ calendar, agendamentos }) {
                         </FormControl>
 
                         <div className={styles.botoes}>
-                            <ButtonGrid content={<SearchIcon></SearchIcon>} />
-                            <ButtonGrid type='button' onClick={() => {
-                                setShowModal(true)
-                                setModoModal('I')
-                            }} content={<AddIcon></AddIcon>} />
+                            <ButtonGrid mensagemHover={"Pesquisar"} content={<SearchIcon></SearchIcon>} />
+                            <ButtonGrid mensagemHover={"Incluir"} type='button' onClick={() => {
+                                    setShowModal(true)
+                                    setModoModal('I')
+                                }} content={<AddIcon></AddIcon>} />
                         </div>
                     </form>
                     <TableContainer sx={{

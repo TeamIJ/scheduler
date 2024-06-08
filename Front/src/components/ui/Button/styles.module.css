@@ -35,11 +35,15 @@
     height: 150px;
     color: white;
     display: flex;
-    border-radius: 3px;
+    border-radius: 5px;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    box-shadow: 4px 2px 23px -18px rgba(0,0,0,0.75);
+    transition: 0.2s;
+}
+
+.buttonMenu:hover{
+    transform: scale(1.015);
 }
 
 .buttonMenu span{

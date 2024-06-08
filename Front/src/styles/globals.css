@@ -32,11 +32,13 @@ a{
 
 body {
   background-image: url('../../public/backuground_schedule_logo_white.jpg');
+  background-repeat: no-repeat;
 }
 
 body, input, textarea, select, button{
   font:400 1rem sans-serif;
 }
+
 
 @media (max-width: 720px) {
   html{

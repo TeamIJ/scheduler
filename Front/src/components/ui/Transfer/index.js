@@ -45,7 +45,7 @@ export default function Transfer({ cursos, checked, left, right, setChecked, set
                 return item !== value
             }))
         } else {
-            setLeft(prevLeft => [...left, value].toReversed())
+            setLeft(prevLeft => [...left, value].sort())
 
             setRight(prevRight => right.filter(item => {
                 return item !== value
