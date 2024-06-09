@@ -27,13 +27,14 @@ async function getCursos() {
     const response = await api.get('/api/scheduler/courses')
 
     let courses = response.data
-
-    courses.forEach(course => {
-        cursosOptions.push({
-            id: course.id,
-            nome: course.curso
+    if(courses.length > 0){
+        courses.forEach(course => {
+            cursosOptions.push({
+                id: course.id,
+                nome: course.curso
+            })
         })
-    })
+    }
 }
 
 getCursos()
@@ -199,7 +200,7 @@ export default function Home({ modulos }) {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {domLoaded &&
+                                {(domLoaded && listaModulos.length > 0) &&
                                     listaModulos.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
                                         return (
                                             <TableRow hover tabIndex={-1} key={row.idAgenda}>

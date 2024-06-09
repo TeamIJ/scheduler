@@ -213,7 +213,7 @@ export default function Home({ students }) {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {domLoaded &&
+                                {(domLoaded && listaStudents.length > 0) &&
                                     listaStudents.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
                                         return (
                                             <TableRow hover tabIndex={-1} key={row.idAgenda}>

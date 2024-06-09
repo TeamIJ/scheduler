@@ -1,7 +1,6 @@
 const e = require('express')
 const connection = require('../config/db.js')
 const validateCpf = require('cpf-cnpj-validator')
-const { includeProfessorCourse } = require('../controllers/ProfessorsControllers.js')
 
 function hasData(data) {
     return data.length !== 0
@@ -162,7 +161,7 @@ module.exports = {
         })
     },
 
-    includeProfessorCourse(id,  professor){
+    insertProfessorCourse(id,  professor){
         let courses = professor.courses
 
         courses.forEach(course => {

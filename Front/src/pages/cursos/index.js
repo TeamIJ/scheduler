@@ -141,7 +141,7 @@ export default function Cursos({ cursos }) {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {domLoaded &&
+                                {(domLoaded && listaCursos.length > 0) &&
                                     listaCursos.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
                                         return (
                                             <TableRow hover tabIndex={-1} key={row.id}>
@@ -164,7 +164,7 @@ export default function Cursos({ cursos }) {
                             </TableBody>
                         </Table>
                     </TableContainer>
-                    {domLoaded &&
+                    {domLoaded && 
                         <Pagination
                             total={listaCursos.length}
                             showSizeChanger={false}

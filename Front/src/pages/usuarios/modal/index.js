@@ -206,7 +206,7 @@ export default function ModalUsuario({ modoModal, pesquisarUsuarios, setShowModa
                         </RadioGroup>
                     </FormControl>
 
-                    {user.user === preencheUsuario.usuario &&
+                    {(preencheUsuario && user.user === preencheUsuario.usuario) &&
                         <CheckBox checked={showPassword} isLoginPage={false} onChange={() => {
                             setShowPassword(!showPassword)
                         }} options={[

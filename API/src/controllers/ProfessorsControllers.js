@@ -1,6 +1,5 @@
 const professor = require('../models/Professors.js')
 const validateCpf = require('cpf-cnpj-validator')
-const { existsProfessorSchedule } = require('../models/Schedules.js')
 
 module.exports = {
     async create(req, res, next) {
@@ -16,7 +15,7 @@ module.exports = {
             }
 
             let id = await professor.create(prof)
-            professor.includeProfessorCourse(id, prof)
+            professor.insertProfessorCourse(id, prof)
 
             res.status(200).send({ message: 'Professor(a) incluído(a) com sucesso!' })
         }
@@ -50,7 +49,7 @@ module.exports = {
         const { id } = req.params
 
         professor.deleteAllProfessorsCourses(id)
-        professor.includeProfessorCourse(id, prof)
+        professor.insertProfessorCourse(id, prof)
         professor.update(req, res, id, prof)
     },
 

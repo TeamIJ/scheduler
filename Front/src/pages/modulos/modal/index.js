@@ -15,12 +15,16 @@ async function getCursos() {
 
     let courses = response.data
     let coursesAux = []
-    courses.forEach(course => {
-        coursesAux.push({
-            id: course.id,
-            nome: course.curso
+
+    if(courses.length > 0){
+        courses.forEach(course => {
+            coursesAux.push({
+                id: course.id,
+                nome: course.curso
+            })
         })
-    })
+    }
+
     return coursesAux
 }
 

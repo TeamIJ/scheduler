@@ -1,12 +1,10 @@
 import Head from 'next/head'
 import { useEffect, useState } from "react"
-import Router from 'next/router'
 import styles from './styles.module.css'
 import { Navbar } from '../../components/ui/Navbar'
 import { validateSession } from '@/contexts/AuthContext'
 import { api } from "@/services/apiClient"
 import { replicateZeros } from "@/services/utils"
-import ModalAgendamento from './modal'
 
 import {
   FormControl, InputLabel, MenuItem, Select,
@@ -380,7 +378,7 @@ export default function Aluno({ resAgendamento, calendar }) {
                 <div className={styles.historyList}>
                   {resAgendamento.map(agendamento => {
 
-return (
+                  return (
                       <div key={agendamento.id} className={styles.agendamento}>
                         <p><span>Curso: </span> {agendamento.curso}</p>
                         <p><span>Módulo: </span> {agendamento.modulo} <span>Aula: </span> {agendamento.aula}</p>

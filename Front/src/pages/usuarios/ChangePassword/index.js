@@ -1,10 +1,7 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { api } from '@/services/apiClient'
-import { validateSession } from '@/contexts/AuthContext'
 import styles from './styles.module.css'
-import {
-    FormControl, TextField, FormControlLabel, FormLabel, Radio, RadioGroup
-} from '@mui/material'
+import { TextField } from '@mui/material'
 import { Button, ButtonGrid } from '@/components/ui/Button'
 import { toast } from 'react-toastify'
 import { CheckBox } from "@/components/ui/CheckBox"

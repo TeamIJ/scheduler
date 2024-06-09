@@ -11,23 +11,6 @@ import { Button, ButtonGrid } from '@/components/ui/Button';
 import { toast } from 'react-toastify'
 import CloseIcon from '@mui/icons-material/Close';
 
-const cursosOptions = []
-
-async function getCursos() {
-    const response = await api.get('/api/scheduler/courses')
-
-    let courses = response.data
-
-    courses.forEach(course => {
-        cursosOptions.push({
-            id: course.id,
-            nome: course.curso
-        })
-    })
-}
-
-getCursos()
-
 async function getModulos(curso) {
     const response = await api.get(`/api/scheduler/modules/course/${curso}`)
 
@@ -108,7 +91,7 @@ function formataHora(data) {
     return ''
 }
 
-export default function ModalAgendamento({ calendar, modoModal, pesquisaAgendamentos, setShowModal, preencheAgendamento }) {
+export default function ModalAgendamento({ calendar, modoModal, pesquisaAgendamentos, setShowModal, preencheAgendamento, cursosOptions }) {
 
     const [user, setUser] = useState('')
     const [profSelected, setProfSelected] = useState('')

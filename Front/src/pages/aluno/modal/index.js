@@ -7,9 +7,8 @@ import {
     TextField, Paper, RadioGroup, FormControlLabel, FormLabel, Radio
 } from '@mui/material';
 import { CalendarWeek } from '@/components/ui/CalendarWeek';
-import { Button, ButtonGrid } from '@/components/ui/Button';
+import { Button } from '@/components/ui/Button';
 import { toast } from 'react-toastify'
-import CloseIcon from '@mui/icons-material/Close';
 
 const cursosOptions = []
 

@@ -219,7 +219,7 @@ export default function Home({ professores, cursos }) {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {domLoaded &&
+                                {(domLoaded && listaProfessores.length > 0) &&
                                     listaProfessores.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
                                         return (
                                             <TableRow hover tabIndex={-1} key={row.idAgenda}>
@@ -242,7 +242,7 @@ export default function Home({ professores, cursos }) {
                             </TableBody>
                         </Table>
                     </TableContainer>
-                    {domLoaded &&
+                    {(domLoaded && listaProfessores.length > 0) &&
                         <Pagination
                             total={listaProfessores.length}
                             showSizeChanger={false}
@@ -272,12 +272,15 @@ export const getListaCursos = async () => {
     const resCursos = await api.get('/api/scheduler/courses')
     let courses = resCursos.data
     let coursesAux = []
-    courses.forEach(course => {
-        coursesAux.push({
-            id: course.id,
-            nome: course.curso
+
+    if(courses.length > 0){
+        courses.forEach(course => {
+            coursesAux.push({
+                id: course.id,
+                nome: course.curso
+            })
         })
-    })
+    }
     return coursesAux
 }
 

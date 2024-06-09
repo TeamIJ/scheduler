@@ -5,14 +5,13 @@ import { useState, useEffect } from "react"
 import { validateSession } from '@/contexts/AuthContext'
 import { Navbar } from '@/components/ui/Navbar'
 import styles from './styles.module.css'
-import global from '@/styles/global.module.css'
 import { ButtonGrid } from "@/components/ui/Button"
 import { api } from "@/services/apiClient"
 import ModalAgendamento from "./modal"
 import {
     Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
     FormControl, InputLabel, MenuItem, Select,
-    TextField, Popover, Typography
+    TextField
 } from '@mui/material'
 import EditIcon from '@mui/icons-material/Edit'
 import SearchIcon from '@mui/icons-material/Search'
@@ -22,7 +21,6 @@ import { CheckBox } from "@/components/ui/CheckBox"
 import { replicateZeros } from "@/services/utils"
 
 import { Pagination } from 'antd'
-import { toast } from 'react-toastify'
 
 function formataData(dataAtinga) {
     let data = new Date(dataAtinga)
@@ -30,10 +28,6 @@ function formataData(dataAtinga) {
     let mes = data.getMonth() + 1
     let ano = data.getFullYear()
     return replicateZeros(dia, 2) + '/' + replicateZeros(mes, 2) + '/' + ano
-}
-
-function formataDataSQL(dia, mes, ano) {
-    return ano + '-' + replicateZeros(mes + 1, 2) + '-' + replicateZeros(dia, 2)
 }
 
 let statusOptions = [
@@ -77,7 +71,7 @@ async function getProfessores() {
 }
 
 
-export default function Agendamentos({ calendar, agendamentos }) {
+export default function Agendamentos({ calendar, agendamentos, cursosOptions }) {
 
     const [domLoaded, setDomLoaded] = useState(false)
     const [user, setUser] = useState('')
@@ -310,7 +304,7 @@ export default function Agendamentos({ calendar, agendamentos }) {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {domLoaded &&
+                                {(domLoaded && listaAgendamentos.length > 0) &&
                                     listaAgendamentos.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
                                         return (
                                             <TableRow hover tabIndex={-1} key={row.idAgenda}>
@@ -346,7 +340,7 @@ export default function Agendamentos({ calendar, agendamentos }) {
             </div>
 
             {showModal &&
-                <ModalAgendamento calendar={calendar} modoModal={modoModal} preencheAgendamento={preencheAgendamento} pesquisaAgendamentos={pesquisaAgendamentos} setShowModal={setShowModal} />
+                <ModalAgendamento calendar={calendar} modoModal={modoModal} cursosOptions={cursosOptions} preencheAgendamento={preencheAgendamento} pesquisaAgendamentos={pesquisaAgendamentos} setShowModal={setShowModal} />
             }
         </>
     )
@@ -363,15 +357,35 @@ export const getCalendar = async () => {
     return resCalendar.data
 }
 
+export const getCursosOptions = async () => {
+    const response = await api.get('/api/scheduler/courses')
+
+    let courses = response.data
+
+    let cursosOptions = []
+
+    if(courses.length > 0){
+        courses.forEach(course => {
+        cursosOptions.push({
+                id: course.id,
+                nome: course.curso
+            })
+        })
+    }
+    
+    return cursosOptions
+}
+
 export const getServerSideProps = async () => {
 
     const listaAgendamentos = await getListaAgendamentos()
-
+    const listaCursos = await getCursosOptions()
     const calendar = await getCalendar()
     return {
         props: {
             agendamentos: listaAgendamentos,
-            calendar: calendar
+            calendar: calendar,
+            cursosOptions: listaCursos,
         }
     }
 }
