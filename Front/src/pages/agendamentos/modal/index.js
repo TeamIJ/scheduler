@@ -325,7 +325,7 @@ export default function ModalAgendamento({ calendar, modoModal, pesquisaAgendame
                             <MenuItem disabled value="">
                                 <em>Selecione um Curso</em>
                             </MenuItem>
-                            {cursosOptions.map((curso) => {
+                            {cursosOptions && cursosOptions.map((curso) => {
                                 return (
                                     <MenuItem key={curso.id} value={curso.id}>{curso.nome}</MenuItem>
                                 )

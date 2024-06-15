@@ -20,26 +20,7 @@ import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 
 import { Pagination } from 'antd'
 
-async function getProfessores() {
-    const response = await api.get(`/api/scheduler/professor/`)
 
-    let professors = []
-
-    if (response.data.length > 0) {
-        response.data.forEach(prof => {
-            professors.push({
-                id: prof.ID_PROF,
-                nome: prof.NOME,
-                disponivel: prof.STATUS_PROF === "D"
-            })
-        })
-    } else {
-        professors = []
-    }
-    return professors
-}
-
-getProfessores()
 
 let statusOptions = [
     {
@@ -151,7 +132,7 @@ export default function Home({ professores, cursos }) {
 
         let requestURL = `/api/scheduler/professor/${temFiltro ? '?' + filtro : ''}`
         const resProf = await api.get(requestURL)
-        setListaProfessores(formataListaProfessores(resProf.data))
+        setListaProfessores(formataListaProfessores(resProf.data, user.role))
         setPage(0)
     }
 
@@ -188,7 +169,7 @@ export default function Home({ professores, cursos }) {
                             </InputLabel>
                             <Select displayEmpty sx={{ width: '100%' }} label="Status" id="statusOptionsSelect"
                                 value={statusSelected} onChange={handleStatusChange}>
-                                {statusOptions.map((status) => {
+                                {statusOptions && statusOptions.map((status) => {
                                     return (
                                         <MenuItem key={status.char} value={status.char}>{status.label}</MenuItem>
                                     )
@@ -289,6 +270,7 @@ export const getListaCursos = async () => {
     }
     return coursesAux
 }
+
 
 export const getServerSideProps = async () => {
 

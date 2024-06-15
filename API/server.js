@@ -4,7 +4,7 @@ const cors = require("cors")
 const app = express()
 
 var corsOptions = {
-  origin: "http://localhost:3000"
+  origin: "*"
 }
 
 app.use(cors(corsOptions))
@@ -28,6 +28,6 @@ require("./src/routes/DaysRoutes.js")(app)
 
 // set port, listen for requests
 const PORT = 8080
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server is running on port ${PORT}.`)
 })

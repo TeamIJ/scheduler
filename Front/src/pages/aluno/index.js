@@ -111,7 +111,7 @@ function formataHora(data) {
   return ''
 }
 
-export default function Aluno({ resAgendamento, calendar }) {
+export default function Aluno({ resAgendamento, calendar, cursosOptions }) {
 
   const [user, setUser] = useState('')
   const [profSelected, setProfSelected] = useState('')
@@ -270,7 +270,7 @@ export default function Aluno({ resAgendamento, calendar }) {
                   <MenuItem disabled value="">
                     <em>Selecione um Curso</em>
                   </MenuItem>
-                  {cursosOptions.map((curso) => {
+                  {cursosOptions && cursosOptions.map((curso) => {
                     return (
                       <MenuItem key={curso.id} value={curso.id}>{curso.nome}</MenuItem>
                     )
@@ -417,14 +417,36 @@ export const getCalendar = async () => {
   return resCalendar.data
 }
 
+export const getCursosOptions = async () => {
+  const response = await api.get('/api/scheduler/courses')
+
+  let courses = response.data
+
+  let cursosOptions = []
+
+  if(courses.length > 0){
+      courses.forEach(course => {
+      cursosOptions.push({
+              id: course.id,
+              nome: course.curso
+          })
+      })
+  }
+  
+  return cursosOptions
+}
+
+
 export const getServerSideProps = async () => {
 
   const resAgendamento = await getListaAgendamentos()
   const resCalendar = await getCalendar()
+  const listaCursos = await getCursosOptions()
   return {
     props: {
       resAgendamento: resAgendamento,
       calendar: resCalendar,
+      cursosOptions: listaCursos
     }
   }
 }

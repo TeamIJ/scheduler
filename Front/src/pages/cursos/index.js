@@ -82,7 +82,7 @@ export default function Cursos({ cursos }) {
         e.preventDefault()
         let requestURL = `/api/scheduler/courses/${nomeCurso}`
         const resCurso = await api.get(requestURL)
-        setListaCursos(formataListaCursos(resCurso.data))
+        setListaCursos(formataListaCursos(resCurso.data, user.role))
         setPage(0)
     }
 

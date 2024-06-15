@@ -21,25 +21,8 @@ import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 
 import { Pagination } from 'antd'
 
-const cursosOptions = []
 
-async function getCursos() {
-    const response = await api.get('/api/scheduler/courses')
-
-    let courses = response.data
-    if(courses.length > 0){
-        courses.forEach(course => {
-            cursosOptions.push({
-                id: course.id,
-                nome: course.curso
-            })
-        })
-    }
-}
-
-getCursos()
-
-export default function Home({ modulos }) {
+export default function Home({ modulos, cursosOptions }) {
 
     const [domLoaded, setDomLoaded] = useState(false)
     const [user, setUser] = useState('')
@@ -124,7 +107,7 @@ export default function Home({ modulos }) {
 
         let requestURL = `/api/scheduler/modules/search${temFiltro ? '?' + filtro : ''}`
         const resModulo = await api.get(requestURL)
-        setListaModulos(formataListaModulos(resModulo.data))
+        setListaModulos(formataListaModulos(resModulo.data, user.role))
         setPage(0)
     }
 
@@ -154,7 +137,7 @@ export default function Home({ modulos }) {
                                 <MenuItem value="">
                                     <em>Selecione um Curso</em>
                                 </MenuItem>
-                                {cursosOptions.map((curso) => {
+                                {cursosOptions && cursosOptions.map((curso) => {
                                     return (
                                         <MenuItem key={curso.id} value={curso.id}>{curso.nome}</MenuItem>
                                     )
@@ -254,13 +237,34 @@ export const getListaModulos = async () => {
     return resModulo.data
 }
 
+export const getCursosOptions = async () => {
+    const response = await api.get('/api/scheduler/courses')
+
+    let courses = response.data
+
+    let cursosOptions = []
+
+    if(courses.length > 0){
+        courses.forEach(course => {
+        cursosOptions.push({
+                id: course.id,
+                nome: course.curso
+            })
+        })
+    }
+    
+    return cursosOptions
+}
+
+
 export const getServerSideProps = async () => {
 
     const listaModulos = await getListaModulos()
-
+    const listaCursos = await getCursosOptions()
     return {
         props: {
-            modulos: listaModulos
+            modulos: listaModulos,
+            cursosOptions: listaCursos
         }
     }
 }
