@@ -62,11 +62,13 @@ export default function Home({ students }) {
         if (validateSession()) {
             let auth = localStorage.getItem('auth')
             let authBuffer = Buffer.from(auth, 'base64').toString('ascii')
-            setUser(JSON.parse(authBuffer))
+            let user = JSON.parse(authBuffer)
+            setUser(user)
+            setListaStudents(formataListaStudents(students, user.role))
         }
     }, [])
 
-    function formataListaStudents(students) {
+    function formataListaStudents(students, userRole) {
         students.forEach(student => {
             student.statusDescricao = student.status === 'A' ? 'Ativo' : 'Inativo'
             student.botoes = <div className={styles.botoesGrid}>
@@ -75,20 +77,18 @@ export default function Home({ students }) {
                     setShowModal(true)
                     setPreencheStudent(student)
                 }}/>
-                <ButtonGrid mensagemHover={"Excluir"} key={'excluir'} content={<DeleteIcon />} onClick={() => {
-                    setModoModal("E")
-                    setShowModal(true)
-                    setPreencheStudent(student)
-                }}/>
+                {
+                    userRole === 'A' &&
+                    <ButtonGrid mensagemHover={"Excluir"} key={'excluir'} content={<DeleteIcon />} onClick={() => {
+                        setModoModal("E")
+                        setShowModal(true)
+                        setPreencheStudent(student)
+                    }}/>
+                }
             </div>
         })
         return students
     }
-
-    useEffect(() => {
-        setListaStudents(formataListaStudents(students))
-    }, [])
-
 
     setTimeout(() => {
         setDomLoaded(true)

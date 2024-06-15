@@ -1,12 +1,14 @@
 import Head from 'next/head'
 import Router from 'next/router'
 import React from "react"
-import { useState, useEffect } from "react"
+import styles from './styles.module.css'
+import { useState, useEffect, useRef } from "react"
 import { validateSession } from '@/contexts/AuthContext'
 import { Navbar } from '@/components/ui/Navbar'
-import styles from './styles.module.css'
 import { ButtonGrid } from "@/components/ui/Button"
 import { api } from "@/services/apiClient"
+import { CheckBox } from "@/components/ui/CheckBox"
+import { replicateZeros } from "@/services/utils"
 import ModalAgendamento from "./modal"
 import {
     Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
@@ -16,10 +18,9 @@ import {
 import EditIcon from '@mui/icons-material/Edit'
 import SearchIcon from '@mui/icons-material/Search'
 import AddIcon from '@mui/icons-material/Add'
+import PrintIcon from '@mui/icons-material/Print';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
-import { CheckBox } from "@/components/ui/CheckBox"
-import { replicateZeros } from "@/services/utils"
-
+import { useReactToPrint } from 'react-to-print'
 import { Pagination } from 'antd'
 
 function formataData(dataAtinga) {
@@ -88,6 +89,54 @@ export default function Agendamentos({ calendar, agendamentos, cursosOptions }) 
     const [nomeAluno, setNomeAluno] = useState('')
     const [matricula, setMatricula] = useState('')
 
+    const componentRef = useRef();
+
+    const TableAgendamentos = ({innerRef, imprimir}) => {
+
+        let gridColuna = imprimir ? columnsPrint : columns
+        return (
+            <TableContainer ref={innerRef} sx={{
+                height: '100%', maxHeight: '100%', width: '100%', backgroundColor: 'white',
+                boxShadow: '4px 2px 23px -18px rgba(0,0,0,0.75)', borderRadius: '5px', marginBottom: '8px'
+            }}>
+                <Table>
+                    <TableHead sx={{ '& .MuiTableRow-head': { backgroundColor: '#ebebeb' } }}>
+                        <TableRow>
+                            {gridColuna.map((column) => (
+                                <TableCell
+                                    key={column.id}
+                                    style={{ top: 57, fontWeight: 'bold' }}
+                                >
+                                    {column.label}
+                                </TableCell>
+                            ))}
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {(domLoaded && listaAgendamentos.length > 0) &&
+                            listaAgendamentos.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
+                                return (
+                                    <TableRow hover tabIndex={-1} key={row.idAgenda}>
+                                        {
+                                            gridColuna.map((column) => {
+                                                const value = row[column.id]
+                                                return (
+                                                    <TableCell key={column.id}>
+                                                        {value}
+                                                    </TableCell>
+                                                )
+                                            })
+                                        }
+                                    </TableRow>
+                                )
+                            })
+                        }
+                    </TableBody>
+                </Table>
+            </TableContainer>
+        )
+    }
+
     const columns = [
         { id: 'professor', label: 'Professor', minWidth: 170 },
         { id: 'aluno', label: 'Aluno', minWidth: 100 },
@@ -98,7 +147,20 @@ export default function Agendamentos({ calendar, agendamentos, cursosOptions }) 
         { id: 'horario', label: 'Horário', minWidth: 100 },
         { id: 'descricaoTipo', label: 'Tipo', minWidth: 100 },
         { id: 'statusDescricao', label: 'Status', minWidth: 100 },
-        { id: 'botoes', width: 20 }
+        { id: 'botoes', width: 20 },
+    ]
+
+    const columnsPrint = [
+        { id: 'professor', label: 'Professor', minWidth: 170 },
+        { id: 'aluno', label: 'Aluno', minWidth: 100 },
+        { id: 'curso', label: 'Curso', minWidth: 100 },
+        { id: 'modulo', label: 'Módulo', minWidth: 100 },
+        { id: 'aula', label: 'Aula', minWidth: 50 },
+        { id: 'data', label: 'Data', minWidth: 100 },
+        { id: 'horario', label: 'Horário', minWidth: 100 },
+        { id: 'descricaoTipo', label: 'Tipo', minWidth: 100 },
+        { id: 'statusDescricao', label: 'Status', minWidth: 100 },
+        { id: 'assinatura', label: 'Assinatura', width: 60}
     ]
 
     function formataListaAgendamentos(agendamentos) {
@@ -111,13 +173,13 @@ export default function Agendamentos({ calendar, agendamentos, cursosOptions }) 
             formataAgendamento.horario = horario.substring(0, 5)
             formataAgendamento.descricaoTipo = descricaoTipo
             formataAgendamento.statusDescricao = descricaoStatus
-            formataAgendamento.botoes = formataAgendamento.status === 'A' ? <div className={styles.botoesGrid}>
+                formataAgendamento.botoes = formataAgendamento.status === 'A' ? <div className={styles.botoesGrid}>
                 <ButtonGrid mensagemHover={"Alterar"}  onClick={() => {
                     setShowModal(true)
                     setModoModal('A')
                     setPreencheAgendamento(formataAgendamento)
                 }} content={<EditIcon sx={{ width: '20px', height: '20px' }}></EditIcon>} />
-            </div>
+                </div>
                 : <></>
         })
         return agendamentos
@@ -141,6 +203,12 @@ export default function Agendamentos({ calendar, agendamentos, cursosOptions }) 
     setTimeout(() => {
         setDomLoaded(true)
     }, 150)
+
+    const handlePrint = useReactToPrint({
+        content: () => componentRef.current,
+        pageStyle: "@page { size: landscape; }",
+        documentTitle: 'Lista de Agendamentos',
+    })
 
     function handleMatriculaChange(e) {
         setMatricula(e.target.value)
@@ -279,6 +347,7 @@ export default function Agendamentos({ calendar, agendamentos, cursosOptions }) 
                         </FormControl>
 
                         <div className={styles.botoes}>
+                            <ButtonGrid mensagemHover={"Imprimir"} onClick={handlePrint} content={<PrintIcon></PrintIcon>} />
                             <ButtonGrid mensagemHover={"Pesquisar"} content={<SearchIcon></SearchIcon>} />
                             <ButtonGrid mensagemHover={"Incluir"} type='button' onClick={() => {
                                     setShowModal(true)
@@ -286,45 +355,10 @@ export default function Agendamentos({ calendar, agendamentos, cursosOptions }) 
                                 }} content={<AddIcon></AddIcon>} />
                         </div>
                     </form>
-                    <TableContainer sx={{
-                        height: '100%', maxHeight: '100%', width: '100%', backgroundColor: 'white',
-                        boxShadow: '4px 2px 23px -18px rgba(0,0,0,0.75)', borderRadius: '5px', marginBottom: '8px'
-                    }}>
-                        <Table>
-                            <TableHead sx={{ '& .MuiTableRow-head': { backgroundColor: '#ebebeb' } }}>
-                                <TableRow>
-                                    {columns.map((column) => (
-                                        <TableCell
-                                            key={column.id}
-                                            style={{ top: 57, fontWeight: 'bold' }}
-                                        >
-                                            {column.label}
-                                        </TableCell>
-                                    ))}
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {(domLoaded && listaAgendamentos.length > 0) &&
-                                    listaAgendamentos.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                                        return (
-                                            <TableRow hover tabIndex={-1} key={row.idAgenda}>
-                                                {
-                                                    columns.map((column) => {
-                                                        const value = row[column.id]
-                                                        return (
-                                                            <TableCell key={column.id}>
-                                                                {value}
-                                                            </TableCell>
-                                                        )
-                                                    })
-                                                }
-                                            </TableRow>
-                                        )
-                                    })
-                                }
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
+                    <TableAgendamentos imprimir={false}/>
+                    <div style={{ display: 'none' }}>
+                        <TableAgendamentos innerRef={componentRef} imprimir={true}/>
+                    </div>
                     {domLoaded &&
                         <Pagination
                             total={listaAgendamentos.length}

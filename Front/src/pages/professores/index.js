@@ -76,16 +76,19 @@ export default function Home({ professores, cursos }) {
     ]
 
     useEffect(() => {
+        let user
         if (validateSession()) {
             let auth = localStorage.getItem('auth')
             let authBuffer = Buffer.from(auth, 'base64').toString('ascii')
-            setUser(JSON.parse(authBuffer))
-        }
+            user = JSON.parse(authBuffer)
+            setUser(user)
+            }
+        setListaProfessores(formataListaProfessores(professores, user.role))
     }, [])
 
 
     
-    function formataListaProfessores(professores) {
+    function formataListaProfessores(professores, userRole) {
         professores.forEach(professor => {
             let descricaoStatus = professor.STATUS_PROF === 'D' ? 'Dísponivel' : 'Ausente'
             professor.statusDescricao = descricaoStatus
@@ -93,27 +96,27 @@ export default function Home({ professores, cursos }) {
             professor.cpf = professor.CPF_PROF
             professor.nome = professor.NOME
             professor.id = professor.ID_PROF
-            professor.botoes = <div className={styles.botoesGrid}>
-                <ButtonGrid mensagemHover={"Alterar"} key={'alterar'} content={<EditIcon />} onClick={() => {
-                    setModoModal("A")
-                    setShowModal(true)
-                    setPreencheProfessor(professor)
-                }}/>
-                <ButtonGrid mensagemHover={"Excluir"} key={'excluir'} content={<DeleteIcon />} onClick={() => {
-                    setModoModal("E")
-                    setShowModal(true)
-                    setPreencheProfessor(professor)
-                }}/>
-            </div>
+            professor.botoes =  <div className={styles.botoesGrid}>
+                    {
+                        userRole === 'A' &&
+                        <>
+                            <ButtonGrid mensagemHover={"Alterar"} key={'alterar'} content={<EditIcon />} onClick={() => {
+                                setModoModal("A")
+                                setShowModal(true)
+                                setPreencheProfessor(professor)
+                            }}/>
+                            <ButtonGrid mensagemHover={"Excluir"} key={'excluir'} content={<DeleteIcon />} onClick={() => {
+                                setModoModal("E")
+                                setShowModal(true)
+                                setPreencheProfessor(professor)
+                            }}/>
+                        </>
+                    } 
+                </div>
         })
 
         return professores
-    }
-
-    useEffect(() => {
-        setListaProfessores(formataListaProfessores(professores))
-    }, [])
-
+        }
 
     setTimeout(() => {
         setDomLoaded(true)
@@ -195,10 +198,13 @@ export default function Home({ professores, cursos }) {
 
                         <div className={styles.botoes}>
                             <ButtonGrid mensagemHover={"Pesquisar"} content={<SearchIcon></SearchIcon>} />
-                            <ButtonGrid mensagemHover={"Incluir"} type='button' onClick={() => {
-                                setShowModal(true)
-                                setModoModal('I')
-                            }} content={<AddIcon></AddIcon>} />
+                            {
+                                user.role === 'A' &&
+                                <ButtonGrid mensagemHover={"Incluir"} type='button' onClick={() => {
+                                    setShowModal(true)
+                                    setModoModal('I')
+                                }} content={<AddIcon></AddIcon>} />
+                            }
                         </div>
                     </form>
                     <TableContainer sx={{

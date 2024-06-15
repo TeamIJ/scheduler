@@ -36,7 +36,7 @@ export default function Cursos({ cursos }) {
         { id: 'botoes', maxWidth: '40px' }
     ]
 
-    function formataListaCursos(cursos) {
+    function formataListaCursos(cursos, userRole) {
         if(cursos.length > 0){
             cursos.forEach(curso => {
                 curso.botoes = <div key={curso.id} className={styles.botoesGrid}>
@@ -45,11 +45,14 @@ export default function Cursos({ cursos }) {
                         setShowModal(true)
                         setPreencheCurso(curso)
                     }}/>
-                    <ButtonGrid mensagemHover={"Excluir"}  key={'excluir'} content={<DeleteIcon />} onClick={() => {
-                        setModoModal("E")
-                        setShowModal(true)
-                        setPreencheCurso(curso)
-                    }}/>
+                    {
+                        userRole === 'A' &&
+                        <ButtonGrid mensagemHover={"Excluir"}  key={'excluir'} content={<DeleteIcon />} onClick={() => {
+                            setModoModal("E")
+                            setShowModal(true)
+                            setPreencheCurso(curso)
+                        }}/>
+                    }
                 </div>
             })
         }
@@ -60,12 +63,10 @@ export default function Cursos({ cursos }) {
         if (validateSession()) {
             let auth = localStorage.getItem('auth')
             let authBuffer = Buffer.from(auth, 'base64').toString('ascii')
-            setUser(JSON.parse(authBuffer))
+            let user = JSON.parse(authBuffer)
+            setUser(user)
+            setListaCursos(formataListaCursos(cursos, user.role))
         }
-    }, [])
-
-    useEffect(() => {
-        setListaCursos(formataListaCursos(cursos))
     }, [])
 
     setTimeout(() => {
@@ -117,10 +118,13 @@ export default function Cursos({ cursos }) {
 
                         <div className={styles.botoes}>
                             <ButtonGrid mensagemHover={"Pesquisar"} content={<SearchIcon></SearchIcon>} />
-                            <ButtonGrid mensagemHover={"Incluir"} type='button' onClick={() => {
-                                setShowModal(true)
-                                setModoModal('I')
-                            }} content={<AddIcon></AddIcon>} />
+                            {
+                                user.role === 'A' &&
+                                <ButtonGrid mensagemHover={"Incluir"} type='button' onClick={() => {
+                                    setShowModal(true)
+                                    setModoModal('I')
+                                }} content={<AddIcon></AddIcon>} />
+                            }
                         </div>
                     </form>
                     <TableContainer sx={{

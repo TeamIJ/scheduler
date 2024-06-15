@@ -212,64 +212,73 @@ export default function ModalAgendamento({ calendar, modoModal, pesquisaAgendame
 
     async function gravaAgendamento(e){
         e.preventDefault()
-        if(!dateHourSelected) {
-            toast.error('Nenhum horário selecionado!')
-        }else{
-            let agendamento = {
-                "idCurso": cursoSelected,
-                "idProf": profSelected,
-                "matricula": matricula,
-                "idModulo": moduloSelected,
-                "horario": modoModal !== 'A' ? formataHora(dateHourSelected) : preencheAgendamento.horario,
-                "aula": aulaSelected,
-                "dataAula": modoModal !== 'A' ? formataDataSql(dateHourSelected, false) : formataDataSql(preencheAgendamento.data, true),
-                "diaSemana": diaSemanaSelecionado,
-                "login": user.user,
-                "statusAgenda": "A",
-                "tipoAgendamento": tipoAgendamento
-            }
-            try{
-
-                let response
-                if(modoModal !== 'A'){
-                    response = await api.post('/api/scheduler/schedules', agendamento)
-                } else {
-                    response = await api.put(`/api/scheduler/schedules/${preencheAgendamento.id}`, agendamento)
+        if(confirm("Deseja confirmar a alteração?")){
+            if(!dateHourSelected) {
+                toast.error('Nenhum horário selecionado!')
+            }else{
+                let agendamento = {
+                    "idCurso": cursoSelected,
+                    "idProf": profSelected,
+                    "matricula": matricula,
+                    "idModulo": moduloSelected,
+                    "horario": modoModal !== 'A' ? formataHora(dateHourSelected) : preencheAgendamento.horario,
+                    "aula": aulaSelected,
+                    "dataAula": modoModal !== 'A' ? formataDataSql(dateHourSelected, false) : formataDataSql(preencheAgendamento.data, true),
+                    "diaSemana": diaSemanaSelecionado,
+                    "login": user.user,
+                    "statusAgenda": "A",
+                    "tipoAgendamento": tipoAgendamento
                 }
-                setShowModal(false)
-                toast.success(response.data.message)
-            }catch(err){
-                toast.error(err.response.data.message)
+                try{
+    
+                    let response
+                    if(modoModal !== 'A'){
+                        response = await api.post('/api/scheduler/schedules', agendamento)
+                    } else {
+                        response = await api.put(`/api/scheduler/schedules/${preencheAgendamento.id}`, agendamento)
+                    }
+                    setShowModal(false)
+                    toast.success(response.data.message)
+                }catch(err){
+                    toast.error(err.response.data.message)
+                }
             }
+    
+    
+            pesquisaAgendamentos(e)
         }
-        pesquisaAgendamentos(e)
     }
 
     async function updateStatus(e, id, status) {
-        try {
-            let agendamento = {
-                "status": status,
-                "login": user.user,
-                "diaSemana": diaSemanaSelecionado,
-                "horario": modoModal !== 'A' ? formataHora(dateHourSelected) : preencheAgendamento.horario
-            }
-            const response = await api.put(`/api/scheduler/schedules/status/${id}`, agendamento)
+        let msg = status === 'C' ? "Deseja mesmo cancelar?" : "Deseja mesmo finalizar?"
 
-            if(status === "C") {
-                toast.success("Agendamento cancelado com sucesso!")
-            } else {
-                toast.success("Agendamento finalizado com sucesso!")
+        if(confirm(msg)){
+            try {
+                let agendamento = {
+                    "status": status,
+                    "login": user.user,
+                    "diaSemana": diaSemanaSelecionado,
+                    "horario": modoModal !== 'A' ? formataHora(dateHourSelected) : preencheAgendamento.horario
+                }
+                const response = await api.put(`/api/scheduler/schedules/status/${id}`, agendamento)
+    
+                if(status === "C") {
+                    toast.success("Agendamento cancelado com sucesso!")
+                } else {
+                    toast.success("Agendamento finalizado com sucesso!")
+                }
+            } catch (err) {
+                toast.error(err.response.data.message)
             }
-        } catch (err) {
-            toast.error(err.response.data.message)
+            setShowModal(false)
+            pesquisaAgendamentos(e)
         }
-        pesquisaAgendamentos(e)
     }
 
     return (
         <>
             <div className={styles.container}>
-                <form className={styles.main} onSubmit={(e) => gravaAgendamento(e)} >
+                <form className={styles.main} onSubmit={(e) => { gravaAgendamento(e) }} >
                     <div className={styles.header}>
                         <ButtonGrid mensagemHover={"Fechar"}  content={
                             <CloseIcon/>
@@ -416,31 +425,26 @@ export default function ModalAgendamento({ calendar, modoModal, pesquisaAgendame
                         </div>
                     }
 
-
                     <div className={styles.botoes}>
+                        {
+                            (modoModal === 'A' && user.role !== 'U') &&
+                            <>
+                                <Button color='red' content={
+                                    <span>Cancelar Aula</span>
+                                    } onClick={(e) => {
+                                        updateStatus(e, preencheAgendamento.id, "C")
+                                    }} type='button' />
+                                <Button color='dark-gray' content={
+                                    <span>Finalizar</span>
+                                    } onClick={(e) => {
+                                        updateStatus(e, preencheAgendamento.id, "F")
+                                        }} type='button' />
+                            </>
+                        }
                         <Button type='submit' color='light-blue' content={
                             <span>{modoModal === 'I' ? 'Agendar' : 'Alterar'}</span>
                         } />
-                        {
-                            modoModal === 'A' && 
-                            <>
-                                <Button color='dark-gray' content={
-                                    <span>Finalizar</span>
-                                } onClick={(e) => {
-                                    setShowModal(false)
-                                    updateStatus(e, preencheAgendamento.id, "F")
-                                }} />
-                                <Button color='red' content={
-                                    <span>Cancelar</span>
-                                } onClick={(e) => {
-                                    setShowModal(false)
-                                    updateStatus(e, preencheAgendamento.id, "C")
-                                }} />
-                            </>
-                        }
                     </div>
-
-
                 </form>
             </div >
         </>
