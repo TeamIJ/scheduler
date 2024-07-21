@@ -8,6 +8,7 @@ import styles from './styles.module.css'
 export default function Transfer({ cursos, checked, left, right, setChecked, setLeft, setRight, modoModal }) {
 
     const [domLoaded, setDomLoaded] = useState(false)
+    const [innerHeight, setInnerHeight] = useState(0)
 
     useEffect(() => {
 
@@ -19,6 +20,8 @@ export default function Transfer({ cursos, checked, left, right, setChecked, set
             })
             setLeft(cursosAux)
         }
+
+        setInnerHeight(window.innerHeight)
 
         setDomLoaded(true)
     }, [])
@@ -57,7 +60,7 @@ export default function Transfer({ cursos, checked, left, right, setChecked, set
 
     const customList = (items, direction) => (
         <div className={styles.list}>
-            <Paper sx={{ width: 220, height: 250, marginTop: '20px', marginBottom: '10px', marginLeft: "14px", marginRight: "14px", overflow: 'auto', boxShadow: '0 0.5rem 0.5rem rgba(0, 0, 0, 0.1)' }}>
+            <Paper sx={{ width: 220, height: innerHeight <= 620 ? 200 : 250, marginTop: '20px', marginBottom: '10px', marginLeft: "14px", marginRight: "14px", overflow: 'auto', boxShadow: '0 0.5rem 0.5rem rgba(0, 0, 0, 0.1)' }}>
                 <List dense component="div" role="list">
                     {items.map((item) => {
                         const labelId = `transfer-list-item-${item}-label`

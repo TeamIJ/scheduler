@@ -64,8 +64,8 @@
     text-align: right;
 }
 
-.radioLogin {
-    position: absolute;
+.titulo {
+    color: white;
     z-index: 5;
 }
 

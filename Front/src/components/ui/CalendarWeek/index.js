@@ -90,7 +90,7 @@ export function CalendarWeek({ calendar, tela, setDateHourSelected, setDiaSemana
     let day = parseInt(e.target.id.split('-')[0])
     let hourId = e.target.id
 
-
+    console.log(hourId)
     let hourFiltered = hoursEnabled.find(h => {
       return h === hourId
     })
@@ -136,9 +136,9 @@ export function CalendarWeek({ calendar, tela, setDateHourSelected, setDiaSemana
         daysAvailable.push(day.week)
       }
       day.hours.forEach(hour => {
-        daysHours[day.week].hoursIds.push(`${day.week}-${replicateZeros(day.day, 2)}-${replicateZeros(day.month + 1, 2)}-${day.year}-H${hour.hour.substring(0, 2)}`)
+        daysHours[day.week].hoursIds.push(`${day.week}-${replicateZeros(day.day, 2)}-${replicateZeros(day.month + 1, 2)}-${day.year}-H${hour.hour.substring(0, 5)}`)
         if (day.available && hour.available) {
-          hoursAvailable.push(`${day.week}-${replicateZeros(day.day, 2)}-${replicateZeros(day.month + 1, 2)}-${day.year}-H${hour.hour.substring(0, 2)}`)
+          hoursAvailable.push(`${day.week}-${replicateZeros(day.day, 2)}-${replicateZeros(day.month + 1, 2)}-${day.year}-H${hour.hour.substring(0, 5)}`)
           let dayHoursCountAux = dayHoursCount
           dayHoursCountAux[day.week].count++
           setDayHoursCount(prevDayHoursCount => dayHoursCountAux)
@@ -193,7 +193,7 @@ export function CalendarWeek({ calendar, tela, setDateHourSelected, setDiaSemana
                   <div className={styles.hourContainer}>
                     {(day.week !== 0 && day.week !== 6) &&
                       day.hours.map((hour) => {
-                        let dayHourId = `${day.week}-${replicateZeros(day.day, 2)}-${replicateZeros(day.month + 1, 2)}-${day.year}-H${hour.hour.substring(0, 2)}`
+                        let dayHourId = `${day.week}-${replicateZeros(day.day, 2)}-${replicateZeros(day.month + 1, 2)}-${day.year}-H${hour.hour.substring(0, 5)}`
                         let defineStyle = styles.hour
 
                         if (tela === 'HORARIOS') {

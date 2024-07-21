@@ -48,34 +48,29 @@ export default function Home() {
       </Head>
       <div className={styles.container}>
         <div className={styles.login}>
-          <RadioButton className={styles.radioLogin} options={loginOptions} func={setOptionLoginChecked} />
-          {
-            optionLoginChecked !== 'A' ?
-              <form className={styles.formProfessor} onSubmit={(e) => hadleLogin(e)}>
-                <Input required placeholder="Nome de Usuário" type="text" value={user} onChange={(e) => setUser(e.target.value)} />
-                <Input required placeholder="Senha" type={showPassword ? 'text' : 'password'} value={password} onChange={(e) => setPassword(e.target.value)} />
-                <div className={[styles.passwordContainer]}>
-                  <CheckBox isLoginPage={true} onChange={() => {
-                    setShowPassword(!showPassword)
-                  }} options={[
-                    {
-                      id: "S",
-                      title: "Mostrar Senha",
-                    },
-                  ]}
-                  ></CheckBox>
-                  <a className={styles.info} onMouseEnter={() => setIsHovering(true)} onMouseLeave={() => setIsHovering(false)}><ion-icon name="information-circle-outline"></ion-icon>
-                    <PopOver isHovering={isHovering} type='error' message="Caso não lembre suas credêciais contate o administrador do sistema." />
-                  </a>
-                </div>
-                <Button color="light-blue" content={<span>Acessar</span>} />
-              </form>
-              :
-              <form className={styles.formStudent} onSubmit={(e) => hadleLogin(e)}>
-                <Input required placeholder="Matrícula" type="text" onChange={(e) => setUser(e.target.value)} />
-                <Button color="light-blue" content={<span>Acessar</span>} />
-              </form>
-          }
+          <div className={styles.titulo}>
+            <h1>Faça seu Login</h1>
+          </div>
+
+          <form className={styles.formProfessor} onSubmit={(e) => hadleLogin(e)}>
+            <Input required placeholder="Nome de Usuário" type="text" value={user} onChange={(e) => setUser(e.target.value)} />
+            <Input required placeholder="Senha" type={showPassword ? 'text' : 'password'} value={password} onChange={(e) => setPassword(e.target.value)} />
+            <div className={[styles.passwordContainer]}>
+              <CheckBox isLoginPage={true} onChange={() => {
+                setShowPassword(!showPassword)
+              }} options={[
+                {
+                  id: "S",
+                  title: "Mostrar Senha",
+                },
+              ]}
+              ></CheckBox>
+              <a className={styles.info} onMouseEnter={() => setIsHovering(true)} onMouseLeave={() => setIsHovering(false)}><ion-icon name="information-circle-outline"></ion-icon>
+                <PopOver isHovering={isHovering} type='error' message="Caso não lembre suas credêciais contate o administrador do sistema." />
+              </a>
+            </div>
+            <Button color="light-blue" content={<span>Acessar</span>} />
+          </form>
         </div>
         <div className={styles.background}></div>
       </div>

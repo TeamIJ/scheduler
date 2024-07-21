@@ -32,6 +32,7 @@ a{
 
 body {
   background-image: url('../../public/backuground_schedule_logo_white.jpg');
+  background-size: cover;
   background-repeat: no-repeat;
 }
 

@@ -78,8 +78,16 @@
     visibility: hidden;
 }
 
+@media (max-height: 620px) {  
+    .main{
+        gap: 10px 12px;
+        padding: 12px;
+    }
+}
+
 @media (max-width: 1024px) {
     .main {
+        margin-top: 5%;
         width: 95%;
     }
 }

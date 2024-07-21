@@ -48,7 +48,7 @@ export default function Horarios({ calendar }) {
                 let horariosFormatados = []
 
                 horarios.forEach(horario => {
-                    horariosFormatados.push(`${horario.split('-')[4].slice(1)}:00:00`)
+                    horariosFormatados.push(`${horario.split('-')[4].slice(1)}`)
                 })
 
                 timetable.push({

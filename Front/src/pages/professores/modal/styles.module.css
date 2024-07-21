@@ -104,3 +104,9 @@
     }
 
 }
+
+@media (max-height: 620px) {
+    .main {
+        height: 90%;
+    }
+}

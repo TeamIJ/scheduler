@@ -263,6 +263,15 @@
 
 }
 
+@media (max-height: 620px) {
+  .month{
+    height: 3rem;
+  }
+  .calendar {
+    height: 20.3rem;
+  }
+}
+
 @media (max-width: 720px) {
   .calendar {
     width: 50vw;

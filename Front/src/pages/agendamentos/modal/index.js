@@ -86,7 +86,7 @@ function formataDataSql(data, alteracao) {
 function formataHora(data) {
     if (data) {
         let hour = data.split('-')[4].replace('H', '')
-        return hour + ":00"
+        return hour
     }
     return ''
 }
@@ -107,6 +107,7 @@ export default function ModalAgendamento({ calendar, modoModal, pesquisaAgendame
     const [statusAgendamento, setStatusAgendamento] = useState('')
     const [aulaOptions, setAulaOptions] = useState([])
     const [aulaSelected, setAulaSelected] = useState('')
+    const [innerHeight, setInnerHeight] = useState(0)
 
     useEffect(() => {
         if (validateSession()) {
@@ -139,6 +140,7 @@ export default function ModalAgendamento({ calendar, modoModal, pesquisaAgendame
     useEffect(() => {
         const days = ['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SAB']
         const diaSemana = new Date(formataDataSql(preencheAgendamento.data, true)).getDay()+1
+        setInnerHeight(window.innerHeight)
         if(modoModal === 'A') {
             preencheListaAlteracao(preencheAgendamento.ID_CURSO, preencheAgendamento.ID_MODULO)
             setProfSelected(preencheAgendamento.ID_PROF)
@@ -212,7 +214,7 @@ export default function ModalAgendamento({ calendar, modoModal, pesquisaAgendame
 
     async function gravaAgendamento(e){
         e.preventDefault()
-        if(confirm("Deseja confirmar a alteração?")){
+        if(confirm(modoModal === 'A' ? "Deseja confirmar a alteração?" : "Deseja confirmar o agendamento?")){
             if(!dateHourSelected) {
                 toast.error('Nenhum horário selecionado!')
             }else{
@@ -281,7 +283,7 @@ export default function ModalAgendamento({ calendar, modoModal, pesquisaAgendame
                 <form className={styles.main} onSubmit={(e) => { gravaAgendamento(e) }} >
                     <div className={styles.header}>
                         <ButtonGrid mensagemHover={"Fechar"}  content={
-                            <CloseIcon/>
+                            <CloseIcon fontSize="smaller"/>
                                 } onClick={(e) => {
                                     setShowModal(false)
                                 }
@@ -296,6 +298,7 @@ export default function ModalAgendamento({ calendar, modoModal, pesquisaAgendame
                         onBlur={handleMatriculaBlur}
                         label="Matrícula"
                         value={matricula}
+                        size={innerHeight <= 620 ? "small" : "medium"}
                         required
                         inputProps={{
                             maxLength: 11
@@ -310,6 +313,7 @@ export default function ModalAgendamento({ calendar, modoModal, pesquisaAgendame
                         id="nomeAlunoInput"
                         label="Nome do aluno"
                         value={nomeAluno}
+                        size={innerHeight <= 620 ? "small" : "medium"}
                         disabled
                         InputLabelProps={{
                             shrink: true,
@@ -320,7 +324,7 @@ export default function ModalAgendamento({ calendar, modoModal, pesquisaAgendame
                         <InputLabel required shrink htmlFor="cursosOptionsSelect">
                             Curso
                         </InputLabel>
-                        <Select required placeholder='Selecione um Curso' displayEmpty sx={{ width: '100%' }} label="Curso" id="cursosOptionsSelect"
+                        <Select required placeholder='Selecione um Curso' displayEmpty sx={{ width: '100%' }} size={innerHeight <= 620 ? "small" : "medium"} label="Curso" id="cursosOptionsSelect"
                             value={cursoSelected} onChange={handleCursoChange}>
                             <MenuItem disabled value="">
                                 <em>Selecione um Curso</em>
@@ -337,7 +341,7 @@ export default function ModalAgendamento({ calendar, modoModal, pesquisaAgendame
                         <InputLabel required shrink htmlFor="modulosOptionsSelect">
                             Módulo
                         </InputLabel>
-                        <Select required placeholder='Selecione um Módulo' displayEmpty sx={{ width: '100%' }} label="Módulo" id="modulosOptionsSelect"
+                        <Select required placeholder='Selecione um Módulo' displayEmpty sx={{ width: '100%' }} size={innerHeight <= 620 ? "small" : "medium"} label="Módulo" id="modulosOptionsSelect"
                             value={moduloSelected} onChange={handleModuloChange}>
                             <MenuItem disabled value="">
                                 <em>Selecione um Módulo</em>
@@ -354,7 +358,7 @@ export default function ModalAgendamento({ calendar, modoModal, pesquisaAgendame
                         <InputLabel required shrink htmlFor="aulaOptionsSelect">
                             Aula
                         </InputLabel>
-                        <Select required placeholder='Selecione a aula' displayEmpty sx={{ width: '100%' }} label="Aula" id="aulaOptionsSelect"
+                        <Select required placeholder='Selecione a aula' displayEmpty sx={{ width: '100%' }} size={innerHeight <= 620 ? "small" : "medium"} label="Aula" id="aulaOptionsSelect"
                             value={aulaSelected} onChange={handleAulaChange}>
                             <MenuItem disabled value="">
                                 <em>Selecione a aula</em>
@@ -371,7 +375,7 @@ export default function ModalAgendamento({ calendar, modoModal, pesquisaAgendame
                         <InputLabel required shrink htmlFor="profOptionsSelect">
                             Professor(a)
                         </InputLabel>
-                        <Select required placeholder='Selecione um professor' displayEmpty sx={{ width: '100%' }} label="Professore(a)" id="profOptionsSelect"
+                        <Select required placeholder='Selecione um professor' displayEmpty sx={{ width: '100%' }} size={innerHeight <= 620 ? "small" : "medium"} label="Professore(a)" id="profOptionsSelect"
                             value={profSelected} onChange={handleProfChange}>
                             <MenuItem disabled value="">
                                 <em>Selecione um professor</em>
@@ -395,10 +399,10 @@ export default function ModalAgendamento({ calendar, modoModal, pesquisaAgendame
 
                             >
                                 <FormControlLabel checked={tipoAgendamento === 'R'} value="R" control={<Radio size="small" />} label="Reposição" sx={{ '& .MuiFormControlLabel-label': {
-                                    fontSize: '90%'
+                                    fontSize: innerHeight <= 620 ? '80%' : '90%'
                                 }}} />
                                 <FormControlLabel checked={tipoAgendamento === 'T'} value="T" control={<Radio size="small" />} label="Treinamento" sx={{ '& .MuiFormControlLabel-label': {
-                                    fontSize: '90%'
+                                    fontSize: innerHeight <= 620 ? '80%' : '90%'
                                 }}} />
                             </RadioGroup>
                         </FormControl>
@@ -408,7 +412,7 @@ export default function ModalAgendamento({ calendar, modoModal, pesquisaAgendame
                         sx={{
                             display: 'flex', flexDirection: 'column', justifyContent: 'center',
                             alignItems: 'flex-start', height: '100%', width: '100%', padding: '5px', paddingLeft: '14px',
-                            border: dateHourSelected ? '2px solid var(--light-blue)' : ''
+                            border: dateHourSelected ? '2px solid var(--light-blue)' : '', fontSize: innerHeight <= 620 ? '80%' : '90%'
                         }}>
                         {(modoModal === 'A' || dateHourSelected)&&
                             <>
