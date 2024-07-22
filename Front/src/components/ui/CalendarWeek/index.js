@@ -90,7 +90,6 @@ export function CalendarWeek({ calendar, tela, setDateHourSelected, setDiaSemana
     let day = parseInt(e.target.id.split('-')[0])
     let hourId = e.target.id
 
-    console.log(hourId)
     let hourFiltered = hoursEnabled.find(h => {
       return h === hourId
     })

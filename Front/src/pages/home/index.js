@@ -57,8 +57,6 @@ export default function Home() {
   const [user, setUser] = useState('')
 
   useEffect(() => {
-    console.log("Largura: ", window.innerWidth)
-    console.log("Altura: ", window.innerHeight)
     if(validateSession()){
       let auth = localStorage.getItem('auth')
       let authBuffer = Buffer.from(auth, 'base64').toString('ascii')
